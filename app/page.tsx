@@ -21,6 +21,10 @@ import {
   Shield,
   Baby,
   ArrowRight,
+  MessageSquare,
+  Send,
+  User,
+  Bot,
 } from "lucide-react"
 
 // Expanded questions with explanations and better categorization
@@ -563,6 +567,44 @@ const categories = [
   },
 ]
 
+const caseStudyData = {
+  id: 1,
+  title: "Clinical Case Study",
+  scenario:
+    "A 60-year-old man presents with fatigue and generalized weakness that has been worsening over the past 2 months.",
+  question: "What is the most likely cause of this patient's anemia?",
+  options: ["Folate deficiency", "Iron deficiency", "Pernicious anemia", "Thalassemia", "Sideroblastic anemia"],
+  correct: 2,
+  explanation:
+    "The combination of macrocytic anemia (MCV 112 fL), low vitamin B12, and elevated methylmalonic acid is classic for pernicious anemia. The patient's age and presentation are also typical for this condition.",
+  mockedResponses: {
+    lab: "Hemoglobin is 8.1 g/dL, MCV is 112 fL, vitamin B12 is low at 150 pg/mL (normal 200-900), and methylmalonic acid is elevated at 500 nmol/L (normal <270).",
+    labs: "Hemoglobin is 8.1 g/dL, MCV is 112 fL, vitamin B12 is low at 150 pg/mL (normal 200-900), and methylmalonic acid is elevated at 500 nmol/L (normal <270).",
+    "lab values":
+      "Hemoglobin is 8.1 g/dL, MCV is 112 fL, vitamin B12 is low at 150 pg/mL (normal 200-900), and methylmalonic acid is elevated at 500 nmol/L (normal <270).",
+    "physical exam":
+      "Physical examination reveals pale conjunctiva and nail beds. No hepatosplenomegaly. Neurological exam shows decreased vibration sense in the lower extremities and mild ataxia.",
+    exam: "Physical examination reveals pale conjunctiva and nail beds. No hepatosplenomegaly. Neurological exam shows decreased vibration sense in the lower extremities and mild ataxia.",
+    history:
+      "Patient reports a 6-month history of gradually worsening fatigue, occasional numbness and tingling in his hands and feet, and difficulty with balance. He has a history of autoimmune thyroiditis. No history of GI bleeding or dietary restrictions.",
+    "past medical history":
+      "Patient has a history of autoimmune thyroiditis diagnosed 5 years ago, currently on levothyroxine. No other significant medical history. Family history is notable for autoimmune conditions in his sister.",
+    symptoms:
+      "Patient describes progressive fatigue over 2 months, making it difficult to perform daily activities. He also reports intermittent numbness and tingling in his extremities, and has noticed some difficulty with balance when walking.",
+    medications:
+      "Current medications include levothyroxine 100 mcg daily for hypothyroidism. No other regular medications. Denies use of metformin or proton pump inhibitors.",
+    "family history":
+      "Family history is significant for autoimmune thyroiditis in his sister and type 1 diabetes in his mother. No known history of hematologic disorders.",
+    "social history":
+      "Non-smoker, occasional alcohol use (1-2 drinks per week). Works as an accountant. No recent travel or dietary changes.",
+    diet: "Patient follows a regular omnivorous diet with adequate meat and dairy intake. No vegetarian or vegan dietary restrictions. Reports good appetite until recently.",
+    "gi symptoms":
+      "Patient denies any gastrointestinal symptoms such as nausea, vomiting, diarrhea, or abdominal pain. No history of peptic ulcer disease or GI bleeding.",
+    neurological:
+      "Neurological symptoms include numbness and tingling in hands and feet (stocking-glove distribution), mild difficulty with balance, and decreased vibration sense on examination.",
+  },
+}
+
 // ----------  Analytics types ----------
 interface AnalyticsSession {
   id: string
@@ -594,7 +636,7 @@ interface AnalyticsData {
 export default function USMLEQuizApp() {
   const [currentTab, setCurrentTab] = useState<"quiz" | "prepare">("quiz")
   const [currentPage, setCurrentPage] = useState<
-    "intro" | "quiz" | "loading" | "results" | "categories" | "practice" | "analytics"
+    "intro" | "quiz" | "loading" | "results" | "categories" | "practice" | "analytics" | "case-study"
   >("intro")
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [answers, setAnswers] = useState<Record<number, number>>({})
@@ -607,6 +649,14 @@ export default function USMLEQuizApp() {
   const [showFeedback, setShowFeedback] = useState(false)
   const [practiceComplete, setPracticeComplete] = useState(false)
   const questionRefs = useRef<(HTMLDivElement | null)[]>([])
+
+  const [caseStudyAnswer, setCaseStudyAnswer] = useState<number | null>(null)
+  const [caseStudyMessages, setCaseStudyMessages] = useState<
+    Array<{ id: number; type: "user" | "bot"; content: string }>
+  >([])
+  const [caseStudyInput, setCaseStudyInput] = useState("")
+  const [caseStudySubmitted, setCaseStudySubmitted] = useState(false)
+  const [showCaseStudyFeedback, setShowCaseStudyFeedback] = useState(false)
 
   //  Analytics and performance tracking
   const [analyticsData, setAnalyticsData] = useState<AnalyticsData>({
@@ -916,6 +966,64 @@ export default function USMLEQuizApp() {
     setPracticeComplete(false)
   }
 
+  const handleCaseStudyMessage = () => {
+    if (!caseStudyInput.trim()) return
+
+    const userMessage = {
+      id: Date.now(),
+      type: "user" as const,
+      content: caseStudyInput,
+    }
+
+    setCaseStudyMessages((prev) => [...prev, userMessage])
+
+    // Find matching response
+    const inputLower = caseStudyInput.toLowerCase()
+    let response =
+      "I don't have specific information about that aspect of the case. Try asking about lab values, physical exam findings, patient history, or symptoms."
+
+    for (const [key, value] of Object.entries(caseStudyData.mockedResponses)) {
+      if (inputLower.includes(key)) {
+        response = value
+        break
+      }
+    }
+
+    const botMessage = {
+      id: Date.now() + 1,
+      type: "bot" as const,
+      content: response,
+    }
+
+    setTimeout(() => {
+      setCaseStudyMessages((prev) => [...prev, botMessage])
+    }, 1000)
+
+    setCaseStudyInput("")
+  }
+
+  const handleCaseStudyAnswerSelect = (answerIndex: number) => {
+    setCaseStudyAnswer(answerIndex)
+  }
+
+  const submitCaseStudyAnswer = () => {
+    setCaseStudySubmitted(true)
+    setShowCaseStudyFeedback(true)
+  }
+
+  const resetCaseStudy = () => {
+    setCaseStudyAnswer(null)
+    setCaseStudyMessages([])
+    setCaseStudyInput("")
+    setCaseStudySubmitted(false)
+    setShowCaseStudyFeedback(false)
+  }
+
+  const startCaseStudy = () => {
+    setCurrentTab("prepare")
+    setCurrentPage("case-study")
+  }
+
   if (currentPage === "intro") {
     return (
       <div
@@ -1104,7 +1212,7 @@ export default function USMLEQuizApp() {
                 gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
                 gap: "2rem",
                 marginBottom: "3rem",
-                maxWidth: "40rem",
+                maxWidth: "60rem",
                 margin: "0 auto 3rem auto",
               }}
             >
@@ -1152,7 +1260,53 @@ export default function USMLEQuizApp() {
               </div>
 
               <div
-                onClick={startPrepare}
+                onClick={startCaseStudy}
+                style={{
+                  backgroundColor: "var(--card)",
+                  padding: "2rem",
+                  borderRadius: "var(--radius)",
+                  border: "2px solid var(--border)",
+                  boxShadow: "var(--shadow-lg)",
+                  textAlign: "center",
+                  cursor: "pointer",
+                  transition: "all 0.3s ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "translateY(-4px)"
+                  e.currentTarget.style.boxShadow = "var(--shadow-xl)"
+                  e.currentTarget.style.borderColor = "var(--primary)"
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "translateY(0)"
+                  e.currentTarget.style.boxShadow = "var(--shadow-lg)"
+                  e.currentTarget.style.borderColor = "var(--border)"
+                }}
+              >
+                <MessageSquare size={32} color="var(--primary)" style={{ margin: "0 auto 1rem auto" }} />
+                <h3
+                  style={{
+                    fontSize: "1.5rem",
+                    fontWeight: "700",
+                    color: "var(--card-foreground)",
+                    margin: "0 0 0.5rem 0",
+                  }}
+                >
+                  Case Study
+                </h3>
+                <p style={{ fontSize: "1rem", color: "var(--muted-foreground)", margin: "0 0 1rem 0" }}>
+                  Interactive clinical case with chat-based information gathering
+                </p>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}>
+                  <Brain size={16} color="var(--muted-foreground)" />
+                  <span style={{ fontSize: "0.875rem", color: "var(--muted-foreground)" }}>Interactive</span>
+                </div>
+              </div>
+
+              <div
+                onClick={() => {
+                  setCurrentTab("prepare")
+                  setCurrentPage("categories")
+                }}
                 style={{
                   backgroundColor: "var(--card)",
                   padding: "2rem",
@@ -1189,7 +1343,7 @@ export default function USMLEQuizApp() {
                   Study specific topics with detailed explanations and immediate feedback
                 </p>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}>
-                  <Brain size={16} color="var(--muted-foreground)" />
+                  <BookOpen size={16} color="var(--muted-foreground)" />
                   <span style={{ fontSize: "0.875rem", color: "var(--muted-foreground)" }}>5 Categories</span>
                 </div>
               </div>
@@ -2611,6 +2765,498 @@ export default function USMLEQuizApp() {
                     <ArrowRight size={16} />
                   </button>
                 ) : null}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (currentPage === "case-study") {
+    return (
+      <div
+        style={{
+          minHeight: "100vh",
+          backgroundColor: "var(--background)",
+          color: "var(--foreground)",
+        }}
+      >
+        {/* Header */}
+        <div
+          data-header
+          style={{
+            position: "sticky",
+            top: 0,
+            backgroundColor: "var(--background)",
+            backdropFilter: "blur(8px)",
+            borderBottom: "1px solid var(--border)",
+            zIndex: 40,
+          }}
+        >
+          <div style={{ maxWidth: "80rem", margin: "0 auto", padding: "1rem" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <div>
+                <h1 style={{ fontSize: "1.5rem", fontWeight: "bold", color: "var(--foreground)" }}>
+                  {caseStudyData.title}
+                </h1>
+                <p style={{ fontSize: "0.875rem", color: "var(--muted-foreground)" }}>Interactive Clinical Case</p>
+              </div>
+
+              <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                <button
+                  onClick={() => setCurrentPage("intro")}
+                  style={{
+                    backgroundColor: "var(--secondary)",
+                    color: "var(--secondary-foreground)",
+                    border: "1px solid var(--border)",
+                    borderRadius: "var(--radius)",
+                    padding: "0.5rem 1rem",
+                    fontSize: "0.875rem",
+                    fontWeight: "500",
+                    cursor: "pointer",
+                    transition: "all 0.2s ease",
+                  }}
+                >
+                  Back to Home
+                </button>
+
+                <button
+                  onClick={toggleTheme}
+                  style={{
+                    backgroundColor: "var(--card)",
+                    color: "var(--foreground)",
+                    border: "1px solid var(--border)",
+                    borderRadius: "var(--radius)",
+                    padding: "0.5rem",
+                    cursor: "pointer",
+                    boxShadow: "var(--shadow-sm)",
+                    transition: "all 0.2s ease",
+                    zIndex: 10,
+                  }}
+                >
+                  {isDark ? <Sun size={16} /> : <Moon size={16} />}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style={{ maxWidth: "80rem", margin: "0 auto", padding: "2rem 1rem" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem", height: "calc(100vh - 200px)" }}>
+            {/* Left Column - Case and Question */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
+              {/* Clinical Scenario */}
+              <div
+                style={{
+                  backgroundColor: "var(--card)",
+                  border: "1px solid var(--border)",
+                  borderRadius: "var(--radius)",
+                  boxShadow: "var(--shadow-lg)",
+                  padding: "2rem",
+                }}
+              >
+                <h2
+                  style={{
+                    fontSize: "1.25rem",
+                    fontWeight: "700",
+                    color: "var(--card-foreground)",
+                    marginBottom: "1rem",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.5rem",
+                  }}
+                >
+                  <Brain size={20} color="var(--primary)" />
+                  Clinical Scenario
+                </h2>
+                <p
+                  style={{
+                    fontSize: "1rem",
+                    color: "var(--card-foreground)",
+                    lineHeight: "1.6",
+                    marginBottom: "1.5rem",
+                  }}
+                >
+                  {caseStudyData.scenario}
+                </p>
+
+                <h3
+                  style={{
+                    fontSize: "1.125rem",
+                    fontWeight: "600",
+                    color: "var(--card-foreground)",
+                    marginBottom: "1rem",
+                  }}
+                >
+                  Case Question:
+                </h3>
+                <p
+                  style={{
+                    fontSize: "1rem",
+                    color: "var(--card-foreground)",
+                    lineHeight: "1.6",
+                  }}
+                >
+                  {caseStudyData.question}
+                </p>
+              </div>
+
+              {/* Answer Choices */}
+              <div
+                style={{
+                  backgroundColor: "var(--card)",
+                  border: "1px solid var(--border)",
+                  borderRadius: "var(--radius)",
+                  boxShadow: "var(--shadow-lg)",
+                  padding: "2rem",
+                  flex: 1,
+                }}
+              >
+                <h3
+                  style={{
+                    fontSize: "1.125rem",
+                    fontWeight: "600",
+                    color: "var(--card-foreground)",
+                    marginBottom: "1.5rem",
+                  }}
+                >
+                  Answer Choices:
+                </h3>
+
+                <div style={{ marginBottom: "2rem" }}>
+                  {caseStudyData.options.map((option, optionIndex) => {
+                    const isSelected = caseStudyAnswer === optionIndex
+                    const isCorrect = optionIndex === caseStudyData.correct
+                    const isIncorrect = showCaseStudyFeedback && isSelected && !isCorrect
+                    const optionLabel = String.fromCharCode(65 + optionIndex)
+
+                    let backgroundColor = "var(--card)"
+                    let borderColor = "var(--border)"
+                    let textColor = "var(--card-foreground)"
+
+                    if (showCaseStudyFeedback) {
+                      if (isCorrect) {
+                        backgroundColor = "#dcfce7"
+                        borderColor = "#10b981"
+                        textColor = "#065f46"
+                      } else if (isIncorrect) {
+                        backgroundColor = "#fee2e2"
+                        borderColor = "#ef4444"
+                        textColor = "#991b1b"
+                      }
+                    } else if (isSelected) {
+                      backgroundColor = "var(--accent)"
+                      borderColor = "var(--primary)"
+                      textColor = "var(--accent-foreground)"
+                    }
+
+                    return (
+                      <button
+                        key={optionIndex}
+                        onClick={() => !showCaseStudyFeedback && handleCaseStudyAnswerSelect(optionIndex)}
+                        disabled={showCaseStudyFeedback}
+                        style={{
+                          width: "100%",
+                          textAlign: "left",
+                          padding: "1rem",
+                          borderRadius: "var(--radius)",
+                          border: `2px solid ${borderColor}`,
+                          backgroundColor: backgroundColor,
+                          color: textColor,
+                          cursor: showCaseStudyFeedback ? "default" : "pointer",
+                          marginBottom: "0.75rem",
+                          transition: "all 0.2s ease",
+                          boxShadow: isSelected && !showCaseStudyFeedback ? "var(--shadow-md)" : "none",
+                        }}
+                      >
+                        <div style={{ display: "flex", alignItems: "flex-start", gap: "0.75rem" }}>
+                          <span
+                            style={{
+                              flexShrink: 0,
+                              width: "1.5rem",
+                              height: "1.5rem",
+                              borderRadius: "50%",
+                              border: `2px solid ${showCaseStudyFeedback && isCorrect ? "#10b981" : showCaseStudyFeedback && isIncorrect ? "#ef4444" : isSelected ? "var(--primary)" : "var(--muted-foreground)"}`,
+                              backgroundColor:
+                                showCaseStudyFeedback && isCorrect
+                                  ? "#10b981"
+                                  : showCaseStudyFeedback && isIncorrect
+                                    ? "#ef4444"
+                                    : isSelected
+                                      ? "var(--primary)"
+                                      : "transparent",
+                              color:
+                                showCaseStudyFeedback && (isCorrect || isIncorrect)
+                                  ? "white"
+                                  : isSelected
+                                    ? "var(--primary-foreground)"
+                                    : "var(--muted-foreground)",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              fontSize: "0.875rem",
+                              fontWeight: "500",
+                            }}
+                          >
+                            {showCaseStudyFeedback && isCorrect ? (
+                              <CheckCircle size={16} />
+                            ) : showCaseStudyFeedback && isIncorrect ? (
+                              <XCircle size={16} />
+                            ) : (
+                              optionLabel
+                            )}
+                          </span>
+                          <span style={{ fontWeight: "500", lineHeight: "1.6" }}>{option}</span>
+                        </div>
+                      </button>
+                    )
+                  })}
+                </div>
+
+                {/* Submit Button */}
+                {caseStudyAnswer !== null && !showCaseStudyFeedback && (
+                  <button
+                    onClick={submitCaseStudyAnswer}
+                    style={{
+                      backgroundColor: "var(--primary)",
+                      color: "var(--primary-foreground)",
+                      border: "none",
+                      borderRadius: "var(--radius)",
+                      padding: "1rem 2rem",
+                      fontSize: "1rem",
+                      fontWeight: "600",
+                      cursor: "pointer",
+                      boxShadow: "var(--shadow-md)",
+                      transition: "all 0.2s ease",
+                      width: "100%",
+                    }}
+                  >
+                    Submit Answer
+                  </button>
+                )}
+
+                {/* Explanation */}
+                {showCaseStudyFeedback && (
+                  <div
+                    style={{
+                      backgroundColor: "var(--accent)",
+                      border: "1px solid var(--border)",
+                      borderRadius: "var(--radius)",
+                      padding: "1.5rem",
+                      marginTop: "1rem",
+                    }}
+                  >
+                    <h4
+                      style={{
+                        fontSize: "1rem",
+                        fontWeight: "600",
+                        color: "var(--accent-foreground)",
+                        marginBottom: "0.75rem",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.5rem",
+                      }}
+                    >
+                      <Brain size={20} />
+                      Explanation
+                    </h4>
+                    <p
+                      style={{
+                        fontSize: "0.875rem",
+                        color: "var(--accent-foreground)",
+                        lineHeight: "1.6",
+                        margin: 0,
+                      }}
+                    >
+                      {caseStudyData.explanation}
+                    </p>
+                  </div>
+                )}
+
+                {/* Reset Button */}
+                {showCaseStudyFeedback && (
+                  <button
+                    onClick={resetCaseStudy}
+                    style={{
+                      backgroundColor: "var(--secondary)",
+                      color: "var(--secondary-foreground)",
+                      border: "1px solid var(--border)",
+                      borderRadius: "var(--radius)",
+                      padding: "1rem 2rem",
+                      fontSize: "1rem",
+                      fontWeight: "600",
+                      cursor: "pointer",
+                      boxShadow: "var(--shadow-md)",
+                      transition: "all 0.2s ease",
+                      width: "100%",
+                      marginTop: "1rem",
+                    }}
+                  >
+                    Try Again
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Right Column - Chat Interface */}
+            <div
+              style={{
+                backgroundColor: "var(--card)",
+                border: "1px solid var(--border)",
+                borderRadius: "var(--radius)",
+                boxShadow: "var(--shadow-lg)",
+                display: "flex",
+                flexDirection: "column",
+                height: "100%",
+              }}
+            >
+              {/* Chat Header */}
+              <div
+                style={{
+                  padding: "1.5rem",
+                  borderBottom: "1px solid var(--border)",
+                }}
+              >
+                <h3
+                  style={{
+                    fontSize: "1.125rem",
+                    fontWeight: "600",
+                    color: "var(--card-foreground)",
+                    margin: 0,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.5rem",
+                  }}
+                >
+                  <MessageSquare size={20} color="var(--primary)" />
+                  Ask Questions About the Patient
+                </h3>
+                <p
+                  style={{
+                    fontSize: "0.875rem",
+                    color: "var(--muted-foreground)",
+                    margin: "0.5rem 0 0 0",
+                  }}
+                >
+                  Gather more information before making your diagnosis
+                </p>
+              </div>
+
+              {/* Chat Messages */}
+              <div
+                style={{
+                  flex: 1,
+                  padding: "1rem",
+                  overflowY: "auto",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "1rem",
+                  minHeight: 0,
+                }}
+              >
+                {caseStudyMessages.length === 0 && (
+                  <div
+                    style={{
+                      textAlign: "center",
+                      color: "var(--muted-foreground)",
+                      fontSize: "0.875rem",
+                      padding: "2rem",
+                    }}
+                  >
+                    <Bot size={32} color="var(--muted-foreground)" style={{ margin: "0 auto 1rem auto" }} />
+                    <p style={{ margin: 0 }}>
+                      Start by asking about lab values, physical exam findings, patient history, or symptoms.
+                    </p>
+                  </div>
+                )}
+
+                {caseStudyMessages.map((message) => (
+                  <div
+                    key={message.id}
+                    style={{
+                      display: "flex",
+                      alignItems: "flex-start",
+                      gap: "0.75rem",
+                      flexDirection: message.type === "user" ? "row-reverse" : "row",
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: "2rem",
+                        height: "2rem",
+                        borderRadius: "50%",
+                        backgroundColor: message.type === "user" ? "var(--primary)" : "var(--secondary)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        flexShrink: 0,
+                      }}
+                    >
+                      {message.type === "user" ? (
+                        <User size={16} color="var(--primary-foreground)" />
+                      ) : (
+                        <Bot size={16} color="var(--secondary-foreground)" />
+                      )}
+                    </div>
+                    <div
+                      style={{
+                        backgroundColor: message.type === "user" ? "var(--primary)" : "var(--secondary)",
+                        color: message.type === "user" ? "var(--primary-foreground)" : "var(--secondary-foreground)",
+                        padding: "0.75rem 1rem",
+                        borderRadius: "var(--radius)",
+                        maxWidth: "80%",
+                        fontSize: "0.875rem",
+                        lineHeight: "1.5",
+                      }}
+                    >
+                      {message.content}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Chat Input */}
+              <div
+                style={{
+                  padding: "1rem",
+                  borderTop: "1px solid var(--border)",
+                }}
+              >
+                <div style={{ display: "flex", gap: "0.5rem" }}>
+                  <input
+                    type="text"
+                    value={caseStudyInput}
+                    onChange={(e) => setCaseStudyInput(e.target.value)}
+                    onKeyPress={(e) => e.key === "Enter" && handleCaseStudyMessage()}
+                    placeholder="Ask about lab values, physical exam, history..."
+                    style={{
+                      flex: 1,
+                      padding: "0.75rem",
+                      border: "1px solid var(--border)",
+                      borderRadius: "var(--radius)",
+                      backgroundColor: "var(--background)",
+                      color: "var(--foreground)",
+                      fontSize: "0.875rem",
+                      outline: "none",
+                    }}
+                  />
+                  <button
+                    onClick={handleCaseStudyMessage}
+                    disabled={!caseStudyInput.trim()}
+                    style={{
+                      backgroundColor: caseStudyInput.trim() ? "var(--primary)" : "var(--muted)",
+                      color: caseStudyInput.trim() ? "var(--primary-foreground)" : "var(--muted-foreground)",
+                      border: "none",
+                      borderRadius: "var(--radius)",
+                      padding: "0.75rem",
+                      cursor: caseStudyInput.trim() ? "pointer" : "not-allowed",
+                      transition: "all 0.2s ease",
+                    }}
+                  >
+                    <Send size={16} />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
