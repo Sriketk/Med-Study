@@ -1,9 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion, AnimatePresence, Transition } from "framer-motion"
 import { CalendarIcon, ChevronRight, CheckCircle } from "lucide-react"
-import { easeInOut } from "framer-motion"
 import { Calendar } from "@/components/ui/calendar"
 
 interface ExamDateStepProps {
@@ -17,8 +16,9 @@ const pageVariants = {
   out: { opacity: 0, x: -20 },
 }
 
-const pageTransition = {
-  ease: easeInOut,
+const pageTransition: Transition = {
+  type: "tween",
+  ease: "anticipate",
   duration: 0.4,
 }
 
@@ -44,98 +44,52 @@ export default function ExamDateStep({
       exit="out"
       transition={pageTransition}
     >
-      <div style={{ textAlign: "center", marginBottom: "2rem" }}>
+      <div className="text-center mb-8">
         <motion.div
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            justifyContent: "center",
-            width: "3rem",
-            height: "3rem",
-            backgroundColor: "var(--accent)",
-            borderRadius: "50%",
-            marginBottom: "1rem",
-          }}
+          className="inline-flex items-center justify-center w-12 h-12 bg-accent rounded-full mb-4"
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ duration: 0.3, delay: 0.2 }}
         >
-          <CalendarIcon size={24} color="var(--primary)" />
+          <CalendarIcon size={24} className="text-primary" />
         </motion.div>
-        <h2
-          style={{
-            fontSize: "1.5rem",
-            fontWeight: "700",
-            color: "var(--foreground)",
-            marginBottom: "0.5rem",
-          }}
-        >
+        <h2 className="text-2xl font-bold text-foreground mb-2">
           When is your exam?
         </h2>
-        <p
-          style={{
-            fontSize: "1rem",
-            color: "var(--muted-foreground)",
-            margin: 0,
-          }}
-        >
+        <p className="text-muted-foreground">
           Select your scheduled exam date
         </p>
       </div>
 
-      <div style={{ position: "relative", maxWidth: "400px", margin: "0 auto" }}>
-        {/* Selected Date Display */}
+      <div className="relative max-w-sm mx-auto">
         <div>
-          <label
-            style={{
-              display: "block",
-              fontSize: "0.875rem",
-              fontWeight: "500",
-              color: "var(--foreground)",
-              marginBottom: "0.5rem",
-            }}
-          >
+          <label className="block text-sm font-medium text-foreground mb-2">
             Selected Date
           </label>
           <button
             onClick={() => setIsCalendarOpen(!isCalendarOpen)}
-            style={{
-              width: "100%",
-              padding: "0.75rem 1rem",
-              border: "2px solid var(--border)",
-              borderRadius: "var(--radius)",
-              backgroundColor: "var(--card)",
-              fontSize: "1rem",
-              color: selectedDate ? "var(--foreground)" : "var(--muted-foreground)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              cursor: "pointer",
-              textAlign: "left",
-            }}
+            className="w-full flex items-center justify-between p-3 border-2 border-border rounded-lg bg-card text-left"
           >
-            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-              <CalendarIcon size={16} color="var(--muted-foreground)" />
-              {selectedDate
-                ? selectedDate.toLocaleDateString("en-US", {
-                    weekday: "long",
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })
-                : "Click to select date"}
+            <div className="flex items-center gap-2">
+              <CalendarIcon size={16} className="text-muted-foreground" />
+              <span className={selectedDate ? "text-foreground" : "text-muted-foreground"}>
+                {selectedDate
+                  ? selectedDate.toLocaleDateString("en-US", {
+                      weekday: "long",
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })
+                  : "Click to select date"}
+              </span>
             </div>
             <ChevronRight
               size={16}
-              style={{
-                transform: isCalendarOpen ? "rotate(90deg)" : "rotate(0deg)",
-                transition: "transform 0.2s ease",
-              }}
+              className={`transform transition-transform duration-200 ${isCalendarOpen ? "rotate-90" : ""}`}
             />
           </button>
         </div>
 
-        {/* Calendar - Conditionally rendered */}
         <AnimatePresence>
           {isCalendarOpen && (
             <motion.div
@@ -143,19 +97,7 @@ export default function ExamDateStep({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 10 }}
               transition={{ duration: 0.2 }}
-              style={{
-                position: "absolute",
-                bottom: "100%",
-                left: 0,
-                right: 0,
-                marginBottom: "0.5rem",
-                border: "1px solid var(--border)",
-                borderRadius: "var(--radius)",
-                backgroundColor: "var(--card)",
-                overflow: "hidden",
-                boxShadow: "var(--shadow-lg)",
-                zIndex: 10,
-              }}
+              className="absolute bottom-full left-0 right-0 mb-2 z-10"
             >
               <Calendar
                 mode="single"
@@ -163,6 +105,7 @@ export default function ExamDateStep({
                 onSelect={handleDateSelect}
                 initialFocus
                 defaultMonth={selectedDate}
+                className="rounded-md border bg-card shadow-lg"
               />
             </motion.div>
           )}
@@ -172,21 +115,14 @@ export default function ExamDateStep({
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            style={{
-              marginTop: "1rem",
-              padding: "1rem",
-              backgroundColor: "rgba(16, 185, 129, 0.1)",
-              borderRadius: "var(--radius)",
-              border: "1px solid rgba(16, 185, 129, 0.2)",
-            }}
+            className="mt-4 p-4 bg-green-500/10 border border-green-500/20 rounded-lg"
           >
-            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.5rem" }}>
-              <CheckCircle size={16} color="#10b981" />
-              <span style={{ fontSize: "0.875rem", fontWeight: "600", color: "#10b981" }}>Date Confirmed</span>
+            <div className="flex items-center gap-2 mb-2">
+              <CheckCircle size={16} className="text-green-500" />
+              <span className="text-sm font-semibold text-green-600">Date Confirmed</span>
             </div>
-            <p style={{ fontSize: "0.75rem", color: "#10b981", margin: 0 }}>
-              {selectedDate &&
-                `${Math.ceil((selectedDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))} days remaining`}
+            <p className="text-xs text-green-600">
+              {`${Math.ceil((selectedDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))} days remaining`}
             </p>
           </motion.div>
         )}

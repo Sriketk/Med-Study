@@ -1,6 +1,6 @@
 "use client"
 
-import { motion } from "framer-motion"
+import { motion, Transition } from "framer-motion"
 import { GraduationCap } from "lucide-react"
 
 interface AcademicYearStepProps {
@@ -24,11 +24,24 @@ const pageVariants = {
   out: { opacity: 0, x: -20 },
 }
 
-const pageTransition = {
+const pageTransition: Transition = {
   type: "tween",
   ease: "anticipate",
   duration: 0.4,
 }
+
+const listContainerVariants = {
+  show: {
+    transition: {
+      staggerChildren: 0.05,
+    },
+  },
+};
+
+const listItemVariants = {
+  hidden: { opacity: 0, y: 10 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.2 } },
+};
 
 export default function AcademicYearStep({ selectedYear, onYearSelect }: AcademicYearStepProps) {
   return (
@@ -40,70 +53,36 @@ export default function AcademicYearStep({ selectedYear, onYearSelect }: Academi
       exit="out"
       transition={pageTransition}
     >
-      <div style={{ textAlign: "center", marginBottom: "2rem" }}>
+      <div className="text-center mb-8">
         <motion.div
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            justifyContent: "center",
-            width: "3rem",
-            height: "3rem",
-            backgroundColor: "var(--accent)",
-            borderRadius: "50%",
-            marginBottom: "1rem",
-          }}
+          className="inline-flex items-center justify-center w-12 h-12 bg-accent rounded-full mb-4"
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ duration: 0.3, delay: 0.2 }}
         >
-          <GraduationCap size={24} color="var(--primary)" />
+          <GraduationCap size={24} className="text-primary" />
         </motion.div>
-        <h2
-          style={{
-            fontSize: "1.5rem",
-            fontWeight: "700",
-            color: "var(--foreground)",
-            marginBottom: "0.5rem",
-          }}
-        >
+        <h2 className="text-2xl font-bold text-foreground mb-2">
           What year are you in?
         </h2>
-        <p
-          style={{
-            fontSize: "1rem",
-            color: "var(--muted-foreground)",
-            margin: 0,
-          }}
-        >
+        <p className="text-muted-foreground">
           Help us understand your academic background
         </p>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
-        {academicYears.map((year, index) => (
-          <motion.button
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        {academicYears.map((year) => (
+          <button
             key={year}
             onClick={() => onYearSelect(year)}
-            style={{
-              width: "100%",
-              padding: "1rem",
-              textAlign: "left",
-              backgroundColor: selectedYear === year ? "var(--accent)" : "var(--card)",
-              border: selectedYear === year ? "2px solid var(--primary)" : "2px solid var(--border)",
-              borderRadius: "var(--radius)",
-              color: selectedYear === year ? "var(--primary)" : "var(--foreground)",
-              cursor: "pointer",
-              fontSize: "0.875rem",
-              fontWeight: "500",
-            }}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.2, delay: index * 0.05 }}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+            className={`w-full p-4 text-left rounded-lg border-2 transition-all duration-200 ${
+              selectedYear === year
+                ? "bg-accent border-primary text-primary"
+                : "bg-card border-border text-foreground hover:border-primary/50"
+            }`}
           >
-            {year}
-          </motion.button>
+            <span className="font-medium text-sm">{year}</span>
+          </button>
         ))}
       </div>
     </motion.div>

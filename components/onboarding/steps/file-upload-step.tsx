@@ -79,118 +79,52 @@ export default function FileUploadStep({
       exit="out"
       transition={pageTransition}
     >
-      <div style={{ textAlign: "center", marginBottom: "2rem" }}>
+      <div className="text-center mb-8">
         <motion.div
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            justifyContent: "center",
-            width: "3rem",
-            height: "3rem",
-            backgroundColor: "var(--accent)",
-            borderRadius: "50%",
-            marginBottom: "1rem",
-          }}
+          className="inline-flex items-center justify-center w-12 h-12 bg-accent rounded-full mb-4"
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ duration: 0.3, delay: 0.2 }}
         >
-          <Upload size={24} color="var(--primary)" />
+          <Upload size={24} className="text-primary" />
         </motion.div>
-        <h2
-          style={{
-            fontSize: "1.5rem",
-            fontWeight: "700",
-            color: "var(--foreground)",
-            marginBottom: "0.5rem",
-          }}
-        >
+        <h2 className="text-2xl font-bold text-foreground mb-2">
           Upload your study materials
         </h2>
-        <p
-          style={{
-            fontSize: "1rem",
-            color: "var(--muted-foreground)",
-            margin: 0,
-          }}
-        >
+        <p className="text-muted-foreground">
           Add your notes and study materials (optional)
         </p>
       </div>
 
-      <div style={{ maxWidth: "600px", margin: "0 auto" }}>
-        {/* Upload Area */}
+      <div className="max-w-xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.2 }}
-          style={{ marginBottom: "2rem" }}
+          className="mb-8"
         >
           <motion.div
             onDragOver={handleDragOver}
             onDragEnter={handleDragEnter}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
-            style={{
-              border: isDragOver
-                ? "2px dashed var(--primary)"
-                : "2px dashed var(--border)",
-              borderRadius: "var(--radius)",
-              padding: "3rem 2rem",
-              textAlign: "center",
-              backgroundColor: isDragOver ? "var(--accent)" : "var(--card)",
-              cursor: "pointer",
-              transition: "all 0.2s ease",
-            }}
-            whileHover={
-              !isDragOver
-                ? {
-                    borderColor: "var(--primary)",
-                    backgroundColor: "var(--accent)",
-                    scale: 1.02,
-                  }
-                : {}
-            }
+            className={`border-2 dashed rounded-lg p-12 text-center cursor-pointer transition-all duration-200 ease-in-out
+              ${isDragOver ? "border-primary bg-accent scale-105" : "border-border bg-card hover:border-primary/50 hover:bg-accent"}`}
             whileTap={{ scale: 0.98 }}
-            animate={{
-              scale: isDragOver ? 1.02 : 1,
-              borderColor: isDragOver ? "var(--primary)" : undefined,
-              backgroundColor: isDragOver ? "var(--accent)" : undefined,
-            }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
           >
-            <div style={{ marginBottom: "1.5rem" }}>
+            <div className={`mb-6 transition-transform duration-200 ease-in-out ${isDragOver ? "scale-110" : ""}`}>
               <Upload
                 size={48}
-                color="var(--primary)"
-                style={{
-                  margin: "0 auto",
-                  transform: isDragOver ? "scale(1.1)" : "scale(1)",
-                  transition: "transform 0.2s ease",
-                }}
+                className="text-primary mx-auto"
               />
             </div>
-            <h3
-              style={{
-                fontSize: "1.125rem",
-                fontWeight: "600",
-                color: "var(--foreground)",
-                marginBottom: "0.5rem",
-              }}
-            >
+            <h3 className="text-lg font-semibold text-foreground mb-2">
               {isDragOver ? "Yay!" : "Drop your files here"}
             </h3>
-            <p
-              style={{
-                fontSize: "0.875rem",
-                color: "var(--muted-foreground)",
-                marginBottom: "1.5rem",
-                lineHeight: "1.5",
-              }}
-            >
+            <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
               Drag and drop your study materials, or click to browse
               <br />
-              <span style={{ fontSize: "0.75rem" }}>
+              <span className="text-xs">
                 Supports PDF, DOC, DOCX, TXT, PNG, JPG files
               </span>
             </p>
@@ -199,25 +133,12 @@ export default function FileUploadStep({
               multiple
               accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg"
               onChange={onFileUpload}
-              style={{ display: "none" }}
+              className="hidden"
               id="file-upload"
             />
             <label
               htmlFor="file-upload"
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "0.5rem",
-                backgroundColor: "var(--primary)",
-                color: "var(--primary-foreground)",
-                padding: "0.75rem 1.5rem",
-                borderRadius: "var(--radius)",
-                cursor: "pointer",
-                fontSize: "0.875rem",
-                fontWeight: "600",
-                border: "none",
-                transition: "all 0.2s ease",
-              }}
+              className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-lg cursor-pointer text-sm font-semibold transition-all duration-200 hover:bg-primary/90"
             >
               <Plus size={16} />
               Choose Files
@@ -225,174 +146,51 @@ export default function FileUploadStep({
           </motion.div>
         </motion.div>
 
-        {/* Uploaded Files Section */}
         {uploadedFiles.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.3 }}
           >
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                marginBottom: "1rem",
-              }}
-            >
-              <h3
-                style={{
-                  fontSize: "1rem",
-                  fontWeight: "600",
-                  color: "var(--foreground)",
-                  margin: 0,
-                }}
-              >
-                Uploaded Files
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-base font-semibold text-foreground">
+                Uploaded Files ({uploadedFiles.length})
               </h3>
-              <span
-                style={{
-                  fontSize: "0.75rem",
-                  color: "var(--muted-foreground)",
-                  backgroundColor: "var(--secondary)",
-                  padding: "0.25rem 0.75rem",
-                  borderRadius: "1rem",
-                  fontWeight: "500",
-                }}
-              >
-                {uploadedFiles.length} file
-                {uploadedFiles.length !== 1 ? "s" : ""}
-              </span>
             </div>
-
-            <div
-              style={{
-                display: "grid",
-                gap: "0.75rem",
-                maxHeight: "300px",
-                overflowY: "auto",
-                padding: "0.5rem",
-                border: "1px solid var(--border)",
-                borderRadius: "var(--radius)",
-                backgroundColor: "var(--card)",
-              }}
-            >
+            <div className="space-y-3 max-h-48 overflow-y-auto pr-2">
               <AnimatePresence>
                 {uploadedFiles.map((file, index) => (
                   <motion.div
-                    key={`${file.name}-${index}`}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: 20 }}
-                    transition={{ duration: 0.2 }}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      padding: "1rem",
-                      backgroundColor: "var(--secondary)",
-                      borderRadius: "var(--radius)",
-                      border: "1px solid var(--border)",
-                      transition: "all 0.2s ease",
-                    }}
+                    key={index}
+                    layout
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, x: -20, transition: { duration: 0.2 } }}
+                    className="flex items-center justify-between p-3 bg-card border rounded-lg"
                   >
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "0.75rem",
-                        flex: 1,
-                        minWidth: 0,
-                      }}
-                    >
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          width: "2rem",
-                          height: "2rem",
-                          backgroundColor: "var(--primary)",
-                          borderRadius: "0.375rem",
-                          flexShrink: 0,
-                        }}
-                      >
-                        <FileText size={16} color="var(--primary-foreground)" />
-                      </div>
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div
-                          style={{
-                            fontSize: "0.875rem",
-                            color: "var(--foreground)",
-                            fontWeight: "500",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            whiteSpace: "nowrap",
-                            marginBottom: "0.25rem",
-                          }}
-                        >
+                    <div className="flex items-center gap-3">
+                      <FileText size={20} className="text-primary" />
+                      <div className="flex flex-col">
+                        <span className="text-sm font-medium text-foreground truncate max-w-xs">
                           {file.name}
-                        </div>
-                        <div
-                          style={{
-                            fontSize: "0.75rem",
-                            color: "var(--muted-foreground)",
-                          }}
-                        >
+                        </span>
+                        <span className="text-xs text-muted-foreground">
                           {(file.size / 1024).toFixed(1)} KB
-                        </div>
+                        </span>
                       </div>
                     </div>
                     <motion.button
                       onClick={() => onFileRemove(index)}
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        width: "2rem",
-                        height: "2rem",
-                        backgroundColor: "transparent",
-                        border: "1px solid var(--border)",
-                        borderRadius: "0.375rem",
-                        color: "var(--muted-foreground)",
-                        cursor: "pointer",
-                        transition: "all 0.2s ease",
-                        flexShrink: 0,
-                      }}
-                      whileHover={{
-                        backgroundColor: "#ef4444",
-                        borderColor: "#ef4444",
-                        color: "#ffffff",
-                        scale: 1.05,
-                      }}
-                      whileTap={{ scale: 0.95 }}
+                      className="p-1.5 rounded-full text-muted-foreground hover:bg-accent hover:text-destructive"
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
                     >
-                      <X size={14} />
+                      <X size={16} />
                     </motion.button>
                   </motion.div>
                 ))}
               </AnimatePresence>
             </div>
-          </motion.div>
-        )}
-
-        {uploadedFiles.length === 0 && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.3, delay: 0.4 }}
-            style={{
-              textAlign: "center",
-              padding: "2rem",
-              color: "var(--muted-foreground)",
-              fontSize: "0.875rem",
-              backgroundColor: "var(--secondary)",
-              borderRadius: "var(--radius)",
-              border: "1px solid var(--border)",
-            }}
-          >
-            No files uploaded yet. Your study materials will appear here once
-            uploaded.
           </motion.div>
         )}
       </div>
