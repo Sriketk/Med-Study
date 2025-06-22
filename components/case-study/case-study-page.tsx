@@ -90,57 +90,59 @@ export default function CaseStudyPage({ caseData, onBackToHome }: CaseStudyPageP
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              <h2 className="text-xl font-bold text-card-foreground mb-3">
-                What is the next best step?
-              </h2>
-              <p className="text-sm text-muted-foreground leading-relaxed mb-4">
-                {caseData.question}
-              </p>
+              <div className="flex-1 overflow-y-auto">
+                <h2 className="text-xl font-bold text-card-foreground mb-3">
+                  What is the next best step?
+                </h2>
+                <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+                  {caseData.question}
+                </p>
 
-              <div className="grid gap-3 mb-4 flex-1">
-                {caseData.options.map((option, index) => (
-                  <button
-                    key={index}
-                    onClick={() => dispatch({ type: "SELECT_ANSWER", payload: index })}
-                    className={`w-full p-3 text-left text-sm border-2 rounded-md cursor-pointer transition-colors duration-200 ${
-                      selectedAnswer === index
-                        ? showFeedback
-                          ? index === caseData.correct
-                            ? "bg-green-500 text-white border-green-500"
-                            : "bg-red-500 text-white border-red-500"
-                          : "bg-accent border-primary"
-                        : "bg-secondary border-border hover:bg-secondary/80"
-                    } ${isSubmitted ? "cursor-not-allowed" : ""}`}
-                    disabled={isSubmitted}
+                <div className="grid gap-3 mb-4">
+                  {caseData.options.map((option, index) => (
+                    <motion.button
+                      key={index}
+                      onClick={() => dispatch({ type: "SELECT_ANSWER", payload: index })}
+                      className={`w-full p-4 text-left text-base border-2 rounded-lg cursor-pointer transition-all duration-200 ${
+                        selectedAnswer === index
+                          ? showFeedback
+                            ? index === caseData.correct
+                              ? "bg-green-100 text-green-900 border-green-500"
+                              : "bg-red-100 text-red-900 border-red-500"
+                            : "bg-primary/20 border-primary text-primary-foreground"
+                          : "bg-secondary border-border text-card-foreground hover:bg-primary/10"
+                      } ${isSubmitted ? "cursor-not-allowed" : ""}`}
+                      disabled={isSubmitted}
+                    >
+                      <span className="font-semibold mr-2">
+                        {String.fromCharCode(65 + index)}.
+                      </span>
+                      {option}
+                    </motion.button>
+                  ))}
+                </div>
+
+                {showFeedback && (
+                  <motion.div
+                    className={`p-4 bg-secondary rounded-md border mb-4 ${
+                      selectedAnswer === caseData.correct ? "border-green-500" : "border-red-500"
+                    }`}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
                   >
-                    <span className="font-semibold mr-2">
-                      {String.fromCharCode(65 + index)}.
-                    </span>
-                    {option}
-                  </button>
-                ))}
+                    <h3 className={`text-base font-bold mb-2 ${
+                      selectedAnswer === caseData.correct ? "text-green-500" : "text-red-500"
+                    }`}>
+                      {selectedAnswer === caseData.correct ? "Correct" : "Incorrect"}
+                    </h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      {caseData.explanation}
+                    </p>
+                  </motion.div>
+                )}
               </div>
 
-              {showFeedback && (
-                <motion.div
-                  className={`p-4 bg-secondary rounded-md border mb-4 ${
-                    selectedAnswer === caseData.correct ? "border-green-500" : "border-red-500"
-                  }`}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                >
-                  <h3 className={`text-base font-bold mb-2 ${
-                    selectedAnswer === caseData.correct ? "text-green-500" : "text-red-500"
-                  }`}>
-                    {selectedAnswer === caseData.correct ? "Correct" : "Incorrect"}
-                  </h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    {caseData.explanation}
-                  </p>
-                </motion.div>
-              )}
-
-              <div className="flex justify-end mt-auto">
+              <div className="flex justify-end mt-4 flex-shrink-0">
                 {isSubmitted ? (
                   <button
                     onClick={() => dispatch({ type: "RESET" })}

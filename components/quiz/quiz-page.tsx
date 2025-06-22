@@ -138,14 +138,11 @@ export default function QuizPage({
                 <motion.button
                   key={optionIndex}
                   onClick={() => onAnswerSelect(currentQuestionData.id, optionIndex)}
-                  className={`w-full p-4 text-left rounded-lg text-base transition-all duration-200 ${
+                  className={`w-full p-4 text-left rounded-lg text-base transition-all hover:border-primary hover:bg-primary/10 duration-200 border-2 ${
                     answers[currentQuestionData.id] === optionIndex
-                      ? "bg-accent border-2 border-primary text-card-foreground"
-                      : "bg-secondary border-2 border-border text-card-foreground hover:bg-accent"
+                      ? " bg-primary/20 border-primary text-primary-foreground dark:text-white"
+                      : "bg-secondary border-border text-card-foreground hover:bg-primary/10"
                   }`}
-                  whileHover={{
-                    backgroundColor: answers[currentQuestionData.id] !== optionIndex ? "var(--accent)" : undefined,
-                  }}
                 >
                   <span className="font-semibold mr-2">
                     {String.fromCharCode(65 + optionIndex)}.
