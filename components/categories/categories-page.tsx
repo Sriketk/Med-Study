@@ -57,16 +57,8 @@ export default function CategoriesPage({
               <motion.div
                 key={category.name}
                 onClick={() => onSelectCategory(category.name)}
-                className="bg-card border-2 border-border rounded-lg shadow-lg p-8 cursor-pointer transition-all duration-150"
-                style={{
-                  '--hover-border-color': category.color,
-                } as React.CSSProperties}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = category.color
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = ''
-                }}
+                className="group bg-card border-2 border-border rounded-lg shadow-lg p-8 cursor-pointer transition-all duration-150 hover:border-[var(--hover-border-color)]"
+                style={{ '--hover-border-color': category.color } as React.CSSProperties}
                 whileHover={{
                   y: -4,
                   boxShadow: "var(--shadow-xl)",
