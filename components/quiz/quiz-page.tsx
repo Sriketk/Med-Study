@@ -1,24 +1,15 @@
 "use client"
 
 import { motion } from "framer-motion"
+import { useTheme } from "next-themes"
 import { ChevronLeft, ChevronRight, Moon, Sun } from "lucide-react"
-
-interface Question {
-  id: number
-  question: string
-  options: string[]
-  correct: number
-  category: string
-  difficulty: string
-  explanation: string
-}
+import type { Question } from "@/types"
 
 interface QuizPageProps {
   questions: Question[]
   currentQuestion: number
   answers: Record<number, number>
-  isDark: boolean
-  toggleTheme: () => void
+  progress: number
   onAnswerSelect: (questionId: number, answerIndex: number) => void
   onNext: () => void
   onPrevious: () => void
@@ -30,27 +21,36 @@ export default function QuizPage({
   questions,
   currentQuestion,
   answers,
-  isDark,
-  toggleTheme,
+  progress,
   onAnswerSelect,
   onNext,
   onPrevious,
   onSubmit,
   onQuestionNavigate,
 }: QuizPageProps) {
+  const { theme, setTheme } = useTheme()
   const canSubmitQuiz = () => {
     return Object.keys(answers).length === questions.length
   }
 
   const currentQuestionData = questions[currentQuestion]
 
+  const getDifficultyStyles = (difficulty: string) => {
+    switch (difficulty) {
+      case "Easy":
+        return "bg-green-50 text-green-800"
+      case "Medium":
+        return "bg-yellow-50 text-yellow-800"
+      case "Hard":
+        return "bg-red-50 text-red-800"
+      default:
+        return "bg-gray-50 text-gray-800"
+    }
+  }
+
   return (
     <motion.div
-      style={{
-        minHeight: "100vh",
-        backgroundColor: "var(--background)",
-        color: "var(--foreground)",
-      }}
+      className="min-h-screen bg-background text-foreground"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
@@ -58,229 +58,116 @@ export default function QuizPage({
       {/* Header */}
       <div
         data-header
-        style={{
-          position: "sticky",
-          top: 0,
-          backgroundColor: "var(--background)",
-          backdropFilter: "blur(8px)",
-          borderBottom: "1px solid var(--border)",
-          zIndex: 40,
-        }}
+        className="sticky top-0 bg-background/80 backdrop-blur-md border-b border-border z-40"
       >
-        <div style={{ maxWidth: "64rem", margin: "0 auto", padding: "1rem" }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div className="max-w-5xl mx-auto p-4">
+          <div className="flex items-center justify-between">
             <div>
-              <h1 style={{ fontSize: "1.5rem", fontWeight: "bold", color: "var(--foreground)" }}>Assessment Quiz</h1>
-              <p style={{ fontSize: "0.875rem", color: "var(--muted-foreground)" }}>
+              <h1 className="text-2xl font-bold text-foreground">Assessment Quiz</h1>
+              <p className="text-sm text-muted-foreground">
                 Question {currentQuestion + 1} of {questions.length}
               </p>
             </div>
 
-            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-              <div style={{ display: "flex", gap: "0.25rem" }}>
+            <div className="flex items-center gap-3">
+              <div className="flex gap-1">
                 {questions.map((_, index) => (
                   <button
                     key={index}
                     onClick={() => onQuestionNavigate(index)}
-                    style={{
-                      width: "0.75rem",
-                      height: "0.75rem",
-                      borderRadius: "50%",
-                      backgroundColor:
-                        index === currentQuestion
-                          ? "var(--primary)"
-                          : answers[questions[index].id] !== undefined
-                            ? "#10b981"
-                            : "var(--muted)",
-                      border: "none",
-                      cursor: "pointer",
-                      transition: "all 0.2s ease",
-                    }}
+                    className={`w-3 h-3 rounded-full border-none cursor-pointer transition-all duration-200 ${
+                      index === currentQuestion
+                        ? "bg-primary"
+                        : answers[questions[index].id] !== undefined
+                          ? "bg-green-500"
+                          : "bg-muted"
+                    }`}
                   />
                 ))}
               </div>
 
               <button
-                onClick={toggleTheme}
-                style={{
-                  backgroundColor: "var(--card)",
-                  color: "var(--foreground)",
-                  border: "1px solid var(--border)",
-                  borderRadius: "var(--radius)",
-                  padding: "0.5rem",
-                  cursor: "pointer",
-                  boxShadow: "var(--shadow-sm)",
-                  transition: "all 0.2s ease",
-                }}
+                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                className="bg-card text-foreground border border-border rounded-lg p-2 cursor-pointer shadow-sm transition-all duration-200 hover:bg-card/80"
               >
-                {isDark ? <Sun size={16} /> : <Moon size={16} />}
+                {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
               </button>
             </div>
+          </div>
+          {/* Progress Bar */}
+          <div className="w-full bg-muted rounded-full h-2 mt-4">
+            <div
+              className="bg-primary h-full rounded-full transition-all duration-300"
+              style={{ width: `${progress}%` }}
+            />
           </div>
         </div>
       </div>
 
       {/* Main Content - Single Question */}
-      <div style={{ maxWidth: "64rem", margin: "0 auto", padding: "2rem 1rem" }}>
+      <div className="max-w-5xl mx-auto p-4 pb-8">
         <motion.div
           key={currentQuestion}
-          style={{
-            backgroundColor: "var(--card)",
-            border: "1px solid var(--border)",
-            borderRadius: "var(--radius)",
-            boxShadow: "var(--shadow-lg)",
-            padding: "2rem",
-            marginBottom: "2rem",
-            minHeight: "60vh",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-between",
-          }}
+          className="bg-card border border-border rounded-lg shadow-lg p-8 mb-8 min-h-[60vh] flex flex-col justify-between"
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -20 }}
           transition={{ duration: 0.3 }}
         >
           <div>
-            <div style={{ marginBottom: "1.5rem" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "1rem" }}>
-                <span
-                  style={{
-                    backgroundColor: "var(--primary)",
-                    color: "var(--primary-foreground)",
-                    padding: "0.25rem 0.75rem",
-                    borderRadius: "9999px",
-                    fontSize: "0.875rem",
-                    fontWeight: "600",
-                  }}
-                >
+            <div className="mb-6">
+              <div className="flex items-center gap-2 mb-4">
+                <span className="bg-primary text-primary-foreground px-3 py-1 rounded-full text-sm font-semibold">
                   Question {currentQuestion + 1}
                 </span>
-                <span
-                  style={{
-                    backgroundColor: "var(--secondary)",
-                    color: "var(--secondary-foreground)",
-                    padding: "0.25rem 0.75rem",
-                    borderRadius: "9999px",
-                    fontSize: "0.75rem",
-                    fontWeight: "500",
-                  }}
-                >
+                <span className="bg-secondary text-secondary-foreground px-3 py-1 rounded-full text-xs font-medium">
                   {currentQuestionData.category}
                 </span>
-                <span
-                  style={{
-                    backgroundColor:
-                      currentQuestionData.difficulty === "Easy"
-                        ? "#dcfce7"
-                        : currentQuestionData.difficulty === "Medium"
-                          ? "#fef3c7"
-                          : "#fee2e2",
-                    color:
-                      currentQuestionData.difficulty === "Easy"
-                        ? "#065f46"
-                        : currentQuestionData.difficulty === "Medium"
-                          ? "#92400e"
-                          : "#991b1b",
-                    padding: "0.25rem 0.75rem",
-                    borderRadius: "9999px",
-                    fontSize: "0.75rem",
-                    fontWeight: "500",
-                  }}
-                >
+                <span className={`px-3 py-1 rounded-full text-xs font-medium ${getDifficultyStyles(currentQuestionData.difficulty)}`}>
                   {currentQuestionData.difficulty}
                 </span>
               </div>
 
-              <h3
-                style={{
-                  fontSize: "1.25rem",
-                  fontWeight: "600",
-                  color: "var(--card-foreground)",
-                  lineHeight: "1.6",
-                  margin: 0,
-                }}
-              >
+              <h3 className="text-xl font-semibold text-card-foreground leading-relaxed">
                 {currentQuestionData.question}
               </h3>
             </div>
 
-            <div style={{ display: "grid", gap: "0.75rem" }}>
+            <div className="grid gap-3">
               {currentQuestionData.options.map((option, optionIndex) => (
-                <button
+                <motion.button
                   key={optionIndex}
                   onClick={() => onAnswerSelect(currentQuestionData.id, optionIndex)}
-                  style={{
-                    width: "100%",
-                    padding: "1rem",
-                    textAlign: "left",
-                    backgroundColor:
-                      answers[currentQuestionData.id] === optionIndex ? "var(--accent)" : "var(--secondary)",
-                    border:
-                      answers[currentQuestionData.id] === optionIndex
-                        ? "2px solid var(--primary)"
-                        : "2px solid var(--border)",
-                    borderRadius: "var(--radius)",
-                    color: "var(--card-foreground)",
-                    cursor: "pointer",
-                    transition: "all 0.2s ease",
-                    fontSize: "1rem",
-                  }}
-                  onMouseEnter={(e) => {
-                    if (answers[currentQuestionData.id] !== optionIndex) {
-                      e.currentTarget.style.backgroundColor = "var(--accent)"
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (answers[currentQuestionData.id] !== optionIndex) {
-                      e.currentTarget.style.backgroundColor = "var(--secondary)"
-                    }
+                  className={`w-full p-4 text-left rounded-lg text-base transition-all duration-200 ${
+                    answers[currentQuestionData.id] === optionIndex
+                      ? "bg-accent border-2 border-primary text-card-foreground"
+                      : "bg-secondary border-2 border-border text-card-foreground hover:bg-accent"
+                  }`}
+                  whileHover={{
+                    backgroundColor: answers[currentQuestionData.id] !== optionIndex ? "var(--accent)" : undefined,
                   }}
                 >
-                  <span style={{ fontWeight: "600", marginRight: "0.5rem" }}>
+                  <span className="font-semibold mr-2">
                     {String.fromCharCode(65 + optionIndex)}.
                   </span>
                   {option}
-                </button>
+                </motion.button>
               ))}
             </div>
           </div>
         </motion.div>
 
         {/* Navigation and Submit Panel */}
-        <div
-          style={{
-            position: "sticky",
-            bottom: "2rem",
-            backgroundColor: "var(--card)",
-            border: "1px solid var(--border)",
-            borderRadius: "var(--radius)",
-            boxShadow: "var(--shadow-lg)",
-            padding: "1rem",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <div style={{ display: "flex", gap: "0.75rem" }}>
+        <div className="sticky bottom-8 bg-card border border-border rounded-lg shadow-lg p-4 flex items-center justify-between">
+          <div className="flex gap-3">
             <button
               onClick={onPrevious}
               disabled={currentQuestion === 0}
-              style={{
-                backgroundColor: "var(--secondary)",
-                color: "var(--secondary-foreground)",
-                border: "1px solid var(--border)",
-                borderRadius: "var(--radius)",
-                padding: "0.75rem 1rem",
-                fontSize: "0.875rem",
-                fontWeight: "500",
-                cursor: currentQuestion === 0 ? "not-allowed" : "pointer",
-                opacity: currentQuestion === 0 ? 0.5 : 1,
-                transition: "all 0.2s ease",
-                display: "flex",
-                alignItems: "center",
-                gap: "0.5rem",
-              }}
+              className={`bg-secondary text-secondary-foreground border border-border rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200 flex items-center gap-2 ${
+                currentQuestion === 0
+                  ? "cursor-not-allowed opacity-50"
+                  : "cursor-pointer hover:bg-secondary/80"
+              }`}
             >
               <ChevronLeft size={16} />
               Previous
@@ -289,47 +176,30 @@ export default function QuizPage({
             <button
               onClick={onNext}
               disabled={currentQuestion === questions.length - 1}
-              style={{
-                backgroundColor: "var(--secondary)",
-                color: "var(--secondary-foreground)",
-                border: "1px solid var(--border)",
-                borderRadius: "var(--radius)",
-                padding: "0.75rem 1rem",
-                fontSize: "0.875rem",
-                fontWeight: "500",
-                cursor: currentQuestion === questions.length - 1 ? "not-allowed" : "pointer",
-                opacity: currentQuestion === questions.length - 1 ? 0.5 : 1,
-                transition: "all 0.2s ease",
-                display: "flex",
-                alignItems: "center",
-                gap: "0.5rem",
-              }}
+              className={`bg-secondary text-secondary-foreground border border-border rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200 flex items-center gap-2 ${
+                currentQuestion === questions.length - 1
+                  ? "cursor-not-allowed opacity-50"
+                  : "cursor-pointer hover:bg-secondary/80"
+              }`}
             >
               Next
               <ChevronRight size={16} />
             </button>
           </div>
 
-          <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-            <span style={{ fontSize: "0.875rem", color: "var(--muted-foreground)" }}>
+          <div className="flex items-center gap-4">
+            <span className="text-sm text-muted-foreground">
               {Object.keys(answers).length} of {questions.length} answered
             </span>
 
             <button
               onClick={onSubmit}
               disabled={!canSubmitQuiz()}
-              style={{
-                backgroundColor: canSubmitQuiz() ? "var(--primary)" : "var(--muted)",
-                color: canSubmitQuiz() ? "var(--primary-foreground)" : "var(--muted-foreground)",
-                border: "none",
-                borderRadius: "var(--radius)",
-                padding: "0.75rem 2rem",
-                fontSize: "1rem",
-                fontWeight: "600",
-                cursor: canSubmitQuiz() ? "pointer" : "not-allowed",
-                boxShadow: "var(--shadow-md)",
-                transition: "all 0.2s ease",
-              }}
+              className={`rounded-lg px-8 py-3 text-base font-semibold shadow-md transition-all duration-200 ${
+                canSubmitQuiz()
+                  ? "bg-primary text-primary-foreground cursor-pointer hover:opacity-90"
+                  : "bg-muted text-muted-foreground cursor-not-allowed"
+              }`}
             >
               Submit Quiz
             </button>

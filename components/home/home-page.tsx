@@ -1,136 +1,92 @@
 "use client"
 
 import { motion } from "framer-motion"
+import { useTheme } from "next-themes"
+import { useState, useEffect } from "react"
 import { Moon, Sun, Brain, BookOpen, Target, TrendingUp, MessageSquare, Microscope } from "lucide-react"
+import { OnboardingData } from "@/types"
+import Link from "next/link"
 
 interface HomePageProps {
-  isDark: boolean
-  toggleTheme: () => void
-  startQuiz: () => void
-  startCaseStudy: () => void
-  startPrepare: () => void
-  viewAnalytics: () => void
+  onboardingData: OnboardingData
+  onStartQuiz: () => void
+  onStartCaseStudy: () => void
+  onStartPrepare: () => void
+  onViewAnalytics: () => void
 }
 
 export default function HomePage({
-  isDark,
-  toggleTheme,
-  startQuiz,
-  startCaseStudy,
-  startPrepare,
-  viewAnalytics,
+  onboardingData,
+  onStartQuiz,
+  onStartCaseStudy,
+  onStartPrepare,
+  onViewAnalytics,
 }: HomePageProps) {
+  const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+
+  // Ensure component is mounted to avoid hydration mismatch
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) {
+    return null
+  }
+
   return (
     <motion.div
-      style={{
-        minHeight: "100vh",
-        backgroundColor: "var(--background)",
-        color: "var(--foreground)",
-        position: "relative",
-        overflow: "hidden",
-      }}
+      className="min-h-screen bg-background text-foreground relative overflow-hidden"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
       {/* Background decoration */}
       <div
+        className="absolute -top-1/2 -right-1/4 w-2/5 h-full opacity-5 rounded-full transform -rotate-12"
         style={{
-          position: "absolute",
-          top: "-50%",
-          right: "-20%",
-          width: "40%",
-          height: "100%",
           background: `linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%)`,
-          opacity: 0.05,
-          borderRadius: "50%",
-          transform: "rotate(-15deg)",
         }}
       />
       <div
+        className="absolute -bottom-1/3 -left-1/4 w-1/3 h-3/5 opacity-5 rounded-full"
         style={{
-          position: "absolute",
-          bottom: "-30%",
-          left: "-10%",
-          width: "30%",
-          height: "60%",
           background: `linear-gradient(45deg, var(--primary) 0%, var(--accent) 100%)`,
-          opacity: 0.03,
-          borderRadius: "50%",
         }}
       />
 
       <motion.button
-        onClick={toggleTheme}
-        style={{
-          position: "fixed",
-          top: "1.5rem",
-          right: "1.5rem",
-          backgroundColor: "var(--card)",
-          color: "var(--foreground)",
-          border: "1px solid var(--border)",
-          borderRadius: "var(--radius)",
-          padding: "0.75rem",
-          cursor: "pointer",
-          boxShadow: "var(--shadow-lg)",
-          zIndex: 10,
-        }}
+        onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+        className="fixed top-6 right-6 bg-card text-foreground border border-border rounded-lg p-3 cursor-pointer shadow-lg z-50 hover:bg-card/80 transition-colors duration-200"
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.3, delay: 0.1 }}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
       >
-        {isDark ? <Sun size={20} /> : <Moon size={20} />}
+        {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
       </motion.button>
 
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          minHeight: "100vh",
-          padding: "2rem",
-          position: "relative",
-          zIndex: 1,
-        }}
-      >
-        <div style={{ textAlign: "center", maxWidth: "42rem" }}>
+      <div className="flex items-center justify-center min-h-screen p-8 relative z-10">
+        <div className="text-center max-w-7xl w-full">
           {/* Header with icon */}
           <motion.div
-            style={{ marginBottom: "3rem" }}
+            className="mb-12"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
             <motion.div
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center",
-                width: "5rem",
-                height: "5rem",
-                backgroundColor: "var(--primary)",
-                borderRadius: "50%",
-                marginBottom: "2rem",
-                boxShadow: "var(--shadow-xl)",
-              }}
+              className="inline-flex items-center justify-center w-20 h-20 bg-primary rounded-full mb-8 shadow-xl"
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
-              <Brain size={32} color="var(--primary-foreground)" />
+              <Brain size={32} className="text-primary-foreground" />
             </motion.div>
 
             <motion.h1
-              style={{
-                fontSize: "3.5rem",
-                fontWeight: "900",
-                color: "var(--foreground)",
-                marginBottom: "1rem",
-                letterSpacing: "var(--tracking-normal)",
-                lineHeight: "1.1",
-              }}
+              className="text-4xl md:text-6xl font-black text-foreground mb-4 tracking-normal leading-tight"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
@@ -138,12 +94,7 @@ export default function HomePage({
               USMLE Step 1
             </motion.h1>
             <motion.div
-              style={{
-                fontSize: "1.5rem",
-                fontWeight: "400",
-                color: "var(--foreground)",
-                marginBottom: "1.5rem",
-              }}
+              className="text-xl md:text-2xl font-normal text-foreground mb-6"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
@@ -151,14 +102,7 @@ export default function HomePage({
               Preparation Platform
             </motion.div>
             <motion.p
-              style={{
-                fontSize: "1.25rem",
-                color: "var(--muted-foreground)",
-                fontWeight: "400",
-                fontStyle: "italic",
-                maxWidth: "28rem",
-                margin: "0 auto",
-              }}
+              className="text-lg md:text-xl text-muted-foreground font-normal italic max-w-md mx-auto"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.5 }}
@@ -169,186 +113,115 @@ export default function HomePage({
 
           {/* Mode Selection */}
           <motion.div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-              gap: "2rem",
-              marginBottom: "3rem",
-              maxWidth: "80rem",
-              margin: "0 auto 3rem auto",
-            }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12 max-w-7xl mx-auto"
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.6 }}
           >
             {/* Assessment Quiz Card */}
-            <motion.div
-              onClick={startQuiz}
-              style={{
-                backgroundColor: "var(--card)",
-                padding: "2rem",
-                borderRadius: "var(--radius)",
-                border: "2px solid var(--border)",
-                boxShadow: "var(--shadow-lg)",
-                textAlign: "center",
-                cursor: "pointer",
-              }}
-              whileHover={{
-                y: -4,
-                boxShadow: "var(--shadow-xl)",
-                borderColor: "var(--primary)",
-              }}
-              whileTap={{ scale: 0.98 }}
-              transition={{ duration: 0.2 }}
-            >
-              <Target size={32} color="var(--primary)" style={{ margin: "0 auto 1rem auto" }} />
-              <h3
-                style={{
-                  fontSize: "1.5rem",
-                  fontWeight: "700",
-                  color: "var(--card-foreground)",
-                  margin: "0 0 0.5rem 0",
+            <Link href="/quiz" passHref>
+              <motion.div
+                className="bg-card p-6 rounded-lg border border-border hover:border-2 hover:border-primary shadow-lg text-center cursor-pointer h-full flex flex-col transition-all duration-200"
+                whileHover={{
+                  y: -4,
+                  boxShadow: "var(--shadow-xl)",
                 }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ duration: 0.2 }}
               >
-                Assessment Quiz
-              </h3>
-              <p style={{ fontSize: "1rem", color: "var(--muted-foreground)", margin: "0 0 1rem 0" }}>
-                Take a comprehensive quiz to gauge your current knowledge level
-              </p>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}>
-                <BookOpen size={16} color="var(--muted-foreground)" />
-                <span style={{ fontSize: "0.875rem", color: "var(--muted-foreground)" }}>5 Questions</span>
-              </div>
-            </motion.div>
+                <Target size={32} className="text-primary mx-auto mb-4" />
+                <h3 className="text-xl font-bold text-card-foreground mb-3 min-h-[3rem] flex items-center justify-center">
+                  Assessment Quiz
+                </h3>
+                <p className="text-sm text-muted-foreground mb-4 flex-grow min-h-[4rem] flex items-center">
+                  Take a comprehensive quiz to gauge your current knowledge level
+                </p>
+                <div className="flex items-center justify-center gap-2 mt-auto">
+                  <BookOpen size={16} className="text-muted-foreground" />
+                  <span className="text-sm text-muted-foreground">5 Questions</span>
+                </div>
+              </motion.div>
+            </Link>
 
             {/* Case Study Card */}
-            <motion.div
-              onClick={startCaseStudy}
-              style={{
-                backgroundColor: "var(--card)",
-                padding: "2rem",
-                borderRadius: "var(--radius)",
-                border: "2px solid var(--border)",
-                boxShadow: "var(--shadow-lg)",
-                textAlign: "center",
-                cursor: "pointer",
-              }}
-              whileHover={{
-                y: -4,
-                boxShadow: "var(--shadow-xl)",
-                borderColor: "var(--primary)",
-              }}
-              whileTap={{ scale: 0.98 }}
-              transition={{ duration: 0.2 }}
-            >
-              <MessageSquare size={32} color="var(--primary)" style={{ margin: "0 auto 1rem auto" }} />
-              <h3
-                style={{
-                  fontSize: "1.5rem",
-                  fontWeight: "700",
-                  color: "var(--card-foreground)",
-                  margin: "0 0 0.5rem 0",
+            <Link href="/case-study" passHref>
+              <motion.div
+                className="bg-card p-6 rounded-lg border border-border hover:border-2 hover:border-primary shadow-lg text-center cursor-pointer h-full flex flex-col transition-all duration-200"
+                whileHover={{
+                  y: -4,
+                  boxShadow: "var(--shadow-xl)",
                 }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ duration: 0.2 }}
               >
-                Case Study
-              </h3>
-              <p style={{ fontSize: "1rem", color: "var(--muted-foreground)", margin: "0 0 1rem 0" }}>
-                Interactive clinical case with chat-based information gathering
-              </p>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}>
-                <Brain size={16} color="var(--muted-foreground)" />
-                <span style={{ fontSize: "0.875rem", color: "var(--muted-foreground)" }}>Interactive</span>
-              </div>
-            </motion.div>
+                <MessageSquare size={32} className="text-primary mx-auto mb-4" />
+                <h3 className="text-xl font-bold text-card-foreground mb-3 min-h-[3rem] flex items-center justify-center">
+                  Case Study
+                </h3>
+                <p className="text-sm text-muted-foreground mb-4 flex-grow min-h-[4rem] flex items-center">
+                  Interactive clinical case with chat-based information gathering
+                </p>
+                <div className="flex items-center justify-center gap-2 mt-auto">
+                  <Brain size={16} className="text-muted-foreground" />
+                  <span className="text-sm text-muted-foreground">Interactive</span>
+                </div>
+              </motion.div>
+            </Link>
 
             {/* Study & Practice Card */}
-            <motion.div
-              onClick={startPrepare}
-              style={{
-                backgroundColor: "var(--card)",
-                padding: "2rem",
-                borderRadius: "var(--radius)",
-                border: "2px solid var(--border)",
-                boxShadow: "var(--shadow-lg)",
-                textAlign: "center",
-                cursor: "pointer",
-              }}
-              whileHover={{
-                y: -4,
-                boxShadow: "var(--shadow-xl)",
-                borderColor: "var(--primary)",
-              }}
-              whileTap={{ scale: 0.98 }}
-              transition={{ duration: 0.2 }}
-            >
-              <Microscope size={32} color="var(--primary)" style={{ margin: "0 auto 1rem auto" }} />
-              <h3
-                style={{
-                  fontSize: "1.5rem",
-                  fontWeight: "700",
-                  color: "var(--card-foreground)",
-                  margin: "0 0 0.5rem 0",
+            <Link href="/categories" passHref>
+              <motion.div
+                className="bg-card p-6 rounded-lg border border-border hover:border-2 hover:border-primary shadow-lg text-center cursor-pointer h-full flex flex-col transition-all duration-200"
+                whileHover={{
+                  y: -4,
+                  boxShadow: "var(--shadow-xl)",
                 }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ duration: 0.2 }}
               >
-                Study & Practice
-              </h3>
-              <p style={{ fontSize: "1rem", color: "var(--muted-foreground)", margin: "0 0 1rem 0" }}>
-                Study specific topics with detailed explanations and immediate feedback
-              </p>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}>
-                <BookOpen size={16} color="var(--muted-foreground)" />
-                <span style={{ fontSize: "0.875rem", color: "var(--muted-foreground)" }}>5 Categories</span>
-              </div>
-            </motion.div>
+                <Microscope size={32} className="text-primary mx-auto mb-4" />
+                <h3 className="text-xl font-bold text-card-foreground mb-3 min-h-[3rem] flex items-center justify-center">
+                  Study & Practice
+                </h3>
+                <p className="text-sm text-muted-foreground mb-4 flex-grow min-h-[4rem] flex items-center">
+                  Study specific topics with detailed explanations and immediate feedback
+                </p>
+                <div className="flex items-center justify-center gap-2 mt-auto">
+                  <BookOpen size={16} className="text-muted-foreground" />
+                  <span className="text-sm text-muted-foreground">5 Categories</span>
+                </div>
+              </motion.div>
+            </Link>
 
             {/* Analytics Card */}
-            <motion.div
-              onClick={viewAnalytics}
-              style={{
-                backgroundColor: "var(--card)",
-                padding: "2rem",
-                borderRadius: "var(--radius)",
-                border: "2px solid var(--border)",
-                boxShadow: "var(--shadow-lg)",
-                textAlign: "center",
-                cursor: "pointer",
-              }}
-              whileHover={{
-                y: -4,
-                boxShadow: "var(--shadow-xl)",
-                borderColor: "var(--primary)",
-              }}
-              whileTap={{ scale: 0.98 }}
-              transition={{ duration: 0.2 }}
-            >
-              <TrendingUp size={32} color="var(--primary)" style={{ margin: "0 auto 1rem auto" }} />
-              <h3
-                style={{
-                  fontSize: "1.5rem",
-                  fontWeight: "700",
-                  color: "var(--card-foreground)",
-                  margin: "0 0 0.5rem 0",
+            <Link href="/analytics" passHref>
+              <motion.div
+                className="bg-card p-6 rounded-lg border border-border hover:border-2 hover:border-primary shadow-lg text-center cursor-pointer h-full flex flex-col transition-all duration-200"
+                whileHover={{
+                  y: -4,
+                  boxShadow: "var(--shadow-xl)",
                 }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ duration: 0.2 }}
               >
-                Performance Analytics
-              </h3>
-              <p style={{ fontSize: "1rem", color: "var(--muted-foreground)", margin: "0 0 1rem 0" }}>
-                Track your progress and identify areas for improvement
-              </p>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}>
-                <Target size={16} color="var(--muted-foreground)" />
-                <span style={{ fontSize: "0.875rem", color: "var(--muted-foreground)" }}>Progress Tracking</span>
-              </div>
-            </motion.div>
+                <TrendingUp size={32} className="text-primary mx-auto mb-4" />
+                <h3 className="text-xl font-bold text-card-foreground mb-3 min-h-[3rem] flex items-center justify-center">
+                   Analytics
+                </h3>
+                <p className="text-sm text-muted-foreground mb-4 flex-grow min-h-[4rem] flex items-center">
+                  Track your progress and identify areas for improvement and growth
+                </p>
+                <div className="flex items-center justify-center gap-2 mt-auto">
+                  <Target size={16} className="text-muted-foreground" />
+                  <span className="text-sm text-muted-foreground">Progress Tracking</span>
+                </div>
+              </motion.div>
+            </Link>
           </motion.div>
 
           {/* Subtitle */}
           <motion.p
-            style={{
-              fontSize: "0.875rem",
-              color: "var(--muted-foreground)",
-              fontWeight: "300",
-            }}
+            className="text-sm text-muted-foreground font-light"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.8 }}

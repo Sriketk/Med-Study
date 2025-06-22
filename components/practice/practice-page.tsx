@@ -1,6 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
+import { useTheme } from "next-themes"
 import { Moon, Sun, Award } from "lucide-react"
 
 interface PracticeQuestion {
@@ -18,8 +19,6 @@ interface PracticePageProps {
   answers: Record<number, number>
   showFeedback: boolean
   practiceComplete: boolean
-  isDark: boolean
-  toggleTheme: () => void
   onBackToCategories: () => void
   onAnswerSelect: (questionId: number, answerIndex: number) => void
   onSubmitAnswer: () => void
@@ -34,54 +33,32 @@ export default function PracticePage({
   answers,
   showFeedback,
   practiceComplete,
-  isDark,
-  toggleTheme,
   onBackToCategories,
   onAnswerSelect,
   onSubmitAnswer,
   onNextQuestion,
   onPracticeAgain,
 }: PracticePageProps) {
+  const { theme, setTheme } = useTheme()
   const currentQuestion = questions[currentQuestionIndex]
 
   if (practiceComplete) {
     return (
       <motion.div
-        style={{
-          minHeight: "100vh",
-          backgroundColor: "var(--background)",
-          color: "var(--foreground)",
-          padding: "2rem",
-        }}
+        className="min-h-screen bg-background text-foreground p-8"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
       >
-        <div style={{ maxWidth: "48rem", margin: "0 auto" }}>
+        <div className="max-w-4xl mx-auto">
           <motion.div
-            style={{
-              textAlign: "center",
-              backgroundColor: "var(--card)",
-              border: "1px solid var(--border)",
-              borderRadius: "var(--radius)",
-              boxShadow: "var(--shadow-lg)",
-              padding: "3rem",
-            }}
+            className="text-center bg-card border border-border rounded-lg shadow-lg p-12"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6 }}
           >
             <motion.div
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center",
-                width: "4rem",
-                height: "4rem",
-                backgroundColor: "#10b981",
-                borderRadius: "50%",
-                marginBottom: "1.5rem",
-              }}
+              className="inline-flex items-center justify-center w-16 h-16 bg-green-500 rounded-full mb-6"
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ duration: 0.5, delay: 0.2 }}
@@ -89,60 +66,25 @@ export default function PracticePage({
               <Award size={24} color="white" />
             </motion.div>
 
-            <h2
-              style={{
-                fontSize: "2rem",
-                fontWeight: "900",
-                color: "var(--card-foreground)",
-                marginBottom: "1rem",
-              }}
-            >
+            <h2 className="text-3xl font-black text-card-foreground mb-4">
               Practice Complete!
             </h2>
 
-            <p
-              style={{
-                fontSize: "1.125rem",
-                color: "var(--muted-foreground)",
-                marginBottom: "2rem",
-              }}
-            >
+            <p className="text-lg text-muted-foreground mb-8">
               You've completed all {questions.length} questions in {selectedCategory}
             </p>
 
-            <div style={{ display: "flex", gap: "1rem", justifyContent: "center" }}>
+            <div className="flex gap-4 justify-center">
               <button
                 onClick={onPracticeAgain}
-                style={{
-                  backgroundColor: "var(--primary)",
-                  color: "var(--primary-foreground)",
-                  border: "none",
-                  borderRadius: "var(--radius)",
-                  padding: "1rem 2rem",
-                  fontSize: "1rem",
-                  fontWeight: "600",
-                  cursor: "pointer",
-                  boxShadow: "var(--shadow-md)",
-                  transition: "all 0.2s ease",
-                }}
+                className="bg-primary text-primary-foreground border-none rounded-lg px-8 py-4 text-base font-semibold cursor-pointer shadow-md transition-all duration-200 hover:opacity-90"
               >
                 Practice Again
               </button>
 
               <button
                 onClick={onBackToCategories}
-                style={{
-                  backgroundColor: "var(--secondary)",
-                  color: "var(--secondary-foreground)",
-                  border: "1px solid var(--border)",
-                  borderRadius: "var(--radius)",
-                  padding: "1rem 2rem",
-                  fontSize: "1rem",
-                  fontWeight: "600",
-                  cursor: "pointer",
-                  boxShadow: "var(--shadow-md)",
-                  transition: "all 0.2s ease",
-                }}
+                className="bg-secondary text-secondary-foreground border border-border rounded-lg px-8 py-4 text-base font-semibold cursor-pointer shadow-md transition-all duration-200 hover:bg-secondary/80"
               >
                 Choose Another Category
               </button>
@@ -153,107 +95,82 @@ export default function PracticePage({
     )
   }
 
+  const getOptionStyles = (index: number) => {
+    const isSelected = answers[currentQuestion.id] === index
+    const isCorrect = index === currentQuestion.correct
+    const isUserAnswerIncorrect = showFeedback && isSelected && !isCorrect
+    const isCorrectAnswer = showFeedback && isCorrect
+    const isUnselectedInFeedback = showFeedback && !isSelected && !isCorrect
+
+    let baseClasses = "w-full p-4 text-left rounded-lg text-base transition-all duration-200 "
+    
+    if (isCorrectAnswer) {
+      baseClasses += "bg-green-50 border-2 border-green-500 text-card-foreground cursor-not-allowed"
+    } else if (isUserAnswerIncorrect) {
+      baseClasses += "bg-red-50 border-2 border-red-500 text-card-foreground cursor-not-allowed"
+    } else if (isSelected) {
+      baseClasses += "bg-accent border-2 border-primary text-card-foreground cursor-pointer"
+    } else {
+      baseClasses += "bg-secondary border-2 border-border text-card-foreground hover:bg-secondary/80"
+      baseClasses += showFeedback ? " cursor-not-allowed" : " cursor-pointer"
+    }
+
+    if (isUnselectedInFeedback) {
+      baseClasses += " opacity-60"
+    }
+
+    return baseClasses
+  }
+
   return (
     <motion.div
-      style={{
-        minHeight: "100vh",
-        backgroundColor: "var(--background)",
-        color: "var(--foreground)",
-        padding: "2rem",
-      }}
+      className="min-h-screen bg-background text-foreground p-8"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      <div style={{ maxWidth: "48rem", margin: "0 auto" }}>
+      <div className="max-w-4xl mx-auto">
         {/* Header */}
         <motion.div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            marginBottom: "2rem",
-          }}
+          className="flex items-center justify-between mb-8"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
           <div>
-            <h1
-              style={{
-                fontSize: "1.5rem",
-                fontWeight: "700",
-                color: "var(--foreground)",
-                marginBottom: "0.25rem",
-              }}
-            >
+            <h1 className="text-2xl font-bold text-foreground mb-1">
               {selectedCategory} Practice
             </h1>
-            <p
-              style={{
-                fontSize: "0.875rem",
-                color: "var(--muted-foreground)",
-              }}
-            >
+            <p className="text-sm text-muted-foreground">
               Question {currentQuestionIndex + 1} of {questions.length}
             </p>
           </div>
 
-          <div style={{ display: "flex", gap: "0.75rem" }}>
+          <div className="flex gap-3">
             <button
               onClick={onBackToCategories}
-              style={{
-                backgroundColor: "var(--secondary)",
-                color: "var(--secondary-foreground)",
-                border: "1px solid var(--border)",
-                borderRadius: "var(--radius)",
-                padding: "0.75rem 1rem",
-                fontSize: "0.875rem",
-                fontWeight: "500",
-                cursor: "pointer",
-                transition: "all 0.2s ease",
-              }}
+              className="bg-secondary text-secondary-foreground border border-border rounded-lg px-4 py-3 text-sm font-medium cursor-pointer transition-all duration-200 hover:bg-secondary/80"
             >
               Back to Categories
             </button>
             <button
-              onClick={toggleTheme}
-              style={{
-                backgroundColor: "var(--card)",
-                color: "var(--foreground)",
-                border: "1px solid var(--border)",
-                borderRadius: "var(--radius)",
-                padding: "0.75rem",
-                cursor: "pointer",
-                boxShadow: "var(--shadow-sm)",
-                transition: "all 0.2s ease",
-              }}
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="bg-card text-foreground border border-border rounded-lg p-3 cursor-pointer shadow-sm transition-all duration-200 hover:bg-card/80"
             >
-              {isDark ? <Sun size={16} /> : <Moon size={16} />}
+              {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
             </button>
           </div>
         </motion.div>
 
         {/* Progress Bar */}
         <motion.div
-          style={{
-            width: "100%",
-            height: "0.5rem",
-            backgroundColor: "var(--muted)",
-            borderRadius: "9999px",
-            overflow: "hidden",
-            marginBottom: "2rem",
-          }}
+          className="w-full h-2 bg-muted rounded-full overflow-hidden mb-8"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.1 }}
         >
           <motion.div
-            style={{
-              height: "100%",
-              backgroundColor: "var(--primary)",
-              borderRadius: "9999px",
-            }}
+            className="h-full bg-primary rounded-full"
             initial={{ width: "0%" }}
             animate={{ width: `${((currentQuestionIndex + 1) / questions.length) * 100}%` }}
             transition={{ duration: 0.3 }}
@@ -262,68 +179,24 @@ export default function PracticePage({
 
         {/* Question Card */}
         <motion.div
-          style={{
-            backgroundColor: "var(--card)",
-            border: "1px solid var(--border)",
-            borderRadius: "var(--radius)",
-            boxShadow: "var(--shadow-lg)",
-            padding: "2rem",
-            marginBottom: "2rem",
-          }}
+          className="bg-card border border-border rounded-lg shadow-lg p-8 mb-8"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          <h2
-            style={{
-              fontSize: "1.25rem",
-              fontWeight: "600",
-              color: "var(--card-foreground)",
-              lineHeight: "1.6",
-              marginBottom: "2rem",
-            }}
-          >
+          <h2 className="text-xl font-semibold text-card-foreground leading-relaxed mb-8">
             {currentQuestion.question}
           </h2>
 
-          <div style={{ display: "grid", gap: "0.75rem", marginBottom: "2rem" }}>
+          <div className="grid gap-3 mb-8">
             {currentQuestion.options.map((option, index) => (
               <button
                 key={index}
                 onClick={() => onAnswerSelect(currentQuestion.id, index)}
                 disabled={showFeedback}
-                style={{
-                  width: "100%",
-                  padding: "1rem",
-                  textAlign: "left",
-                  backgroundColor:
-                    showFeedback && index === currentQuestion.correct
-                      ? "#dcfce7"
-                      : showFeedback && answers[currentQuestion.id] === index && index !== currentQuestion.correct
-                        ? "#fee2e2"
-                        : answers[currentQuestion.id] === index
-                          ? "var(--accent)"
-                          : "var(--secondary)",
-                  border:
-                    showFeedback && index === currentQuestion.correct
-                      ? "2px solid #10b981"
-                      : showFeedback && answers[currentQuestion.id] === index && index !== currentQuestion.correct
-                        ? "2px solid #ef4444"
-                        : answers[currentQuestion.id] === index
-                          ? "2px solid var(--primary)"
-                          : "2px solid var(--border)",
-                  borderRadius: "var(--radius)",
-                  color: "var(--card-foreground)",
-                  cursor: showFeedback ? "not-allowed" : "pointer",
-                  transition: "all 0.2s ease",
-                  fontSize: "1rem",
-                  opacity:
-                    showFeedback && index !== currentQuestion.correct && answers[currentQuestion.id] !== index
-                      ? 0.6
-                      : 1,
-                }}
+                className={getOptionStyles(index)}
               >
-                <span style={{ fontWeight: "600", marginRight: "0.5rem" }}>{String.fromCharCode(65 + index)}.</span>
+                <span className="font-semibold mr-2">{String.fromCharCode(65 + index)}.</span>
                 {option}
               </button>
             ))}
@@ -333,51 +206,38 @@ export default function PracticePage({
             <button
               onClick={onSubmitAnswer}
               disabled={answers[currentQuestion.id] === undefined}
-              style={{
-                width: "100%",
-                backgroundColor: answers[currentQuestion.id] !== undefined ? "var(--primary)" : "var(--muted)",
-                color:
-                  answers[currentQuestion.id] !== undefined ? "var(--primary-foreground)" : "var(--muted-foreground)",
-                border: "none",
-                borderRadius: "var(--radius)",
-                padding: "1rem 2rem",
-                fontSize: "1rem",
-                fontWeight: "600",
-                cursor: answers[currentQuestion.id] !== undefined ? "pointer" : "not-allowed",
-                boxShadow: "var(--shadow-md)",
-                transition: "all 0.2s ease",
-              }}
+              className={`w-full rounded-lg px-8 py-4 text-base font-semibold shadow-md transition-all duration-200 ${
+                answers[currentQuestion.id] !== undefined
+                  ? "bg-primary text-primary-foreground cursor-pointer hover:opacity-90"
+                  : "bg-muted text-muted-foreground cursor-not-allowed"
+              }`}
             >
               Submit Answer
             </button>
           ) : (
             <div>
               <div
-                style={{
-                  padding: "1rem",
-                  backgroundColor: answers[currentQuestion.id] === currentQuestion.correct ? "#dcfce7" : "#fee2e2",
-                  border: `1px solid ${answers[currentQuestion.id] === currentQuestion.correct ? "#10b981" : "#ef4444"}`,
-                  borderRadius: "var(--radius)",
-                  marginBottom: "1rem",
-                }}
+                className={`p-4 rounded-lg mb-4 ${
+                  answers[currentQuestion.id] === currentQuestion.correct
+                    ? "bg-green-50 border border-green-500"
+                    : "bg-red-50 border border-red-500"
+                }`}
               >
                 <h4
-                  style={{
-                    fontSize: "1rem",
-                    fontWeight: "600",
-                    color: answers[currentQuestion.id] === currentQuestion.correct ? "#065f46" : "#991b1b",
-                    margin: "0 0 0.5rem 0",
-                  }}
+                  className={`text-base font-semibold mb-2 ${
+                    answers[currentQuestion.id] === currentQuestion.correct
+                      ? "text-green-800"
+                      : "text-red-800"
+                  }`}
                 >
                   {answers[currentQuestion.id] === currentQuestion.correct ? "Correct!" : "Incorrect"}
                 </h4>
                 <p
-                  style={{
-                    fontSize: "0.875rem",
-                    color: answers[currentQuestion.id] === currentQuestion.correct ? "#047857" : "#dc2626",
-                    margin: 0,
-                    lineHeight: "1.4",
-                  }}
+                  className={`text-sm leading-relaxed ${
+                    answers[currentQuestion.id] === currentQuestion.correct
+                      ? "text-green-700"
+                      : "text-red-700"
+                  }`}
                 >
                   {currentQuestion.explanation}
                 </p>
@@ -385,19 +245,7 @@ export default function PracticePage({
 
               <button
                 onClick={onNextQuestion}
-                style={{
-                  width: "100%",
-                  backgroundColor: "var(--primary)",
-                  color: "var(--primary-foreground)",
-                  border: "none",
-                  borderRadius: "var(--radius)",
-                  padding: "1rem 2rem",
-                  fontSize: "1rem",
-                  fontWeight: "600",
-                  cursor: "pointer",
-                  boxShadow: "var(--shadow-md)",
-                  transition: "all 0.2s ease",
-                }}
+                className="w-full bg-primary text-primary-foreground border-none rounded-lg px-8 py-4 text-base font-semibold cursor-pointer shadow-md transition-all duration-200 hover:opacity-90"
               >
                 {currentQuestionIndex < questions.length - 1 ? "Next Question" : "Complete Practice"}
               </button>

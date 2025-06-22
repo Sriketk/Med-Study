@@ -1,14 +1,14 @@
 "use client"
 
+import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { CalendarIcon, ChevronRight, CheckCircle } from "lucide-react"
+import { easeInOut } from "framer-motion"
 import { Calendar } from "@/components/ui/calendar"
 
 interface ExamDateStepProps {
   selectedDate: Date | undefined
-  isCalendarOpen: boolean
   onDateSelect: (date: Date | undefined) => void
-  onCalendarToggle: () => void
 }
 
 const pageVariants = {
@@ -18,17 +18,23 @@ const pageVariants = {
 }
 
 const pageTransition = {
-  type: "tween",
-  ease: "anticipate",
+  ease: easeInOut,
   duration: 0.4,
 }
 
 export default function ExamDateStep({
   selectedDate,
-  isCalendarOpen,
   onDateSelect,
-  onCalendarToggle,
 }: ExamDateStepProps) {
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false)
+
+  const handleDateSelect = (date: Date | undefined) => {
+    onDateSelect(date)
+    setTimeout(() => {
+      setIsCalendarOpen(false)
+    }, 300)
+  }
+
   return (
     <motion.div
       key="step3"
@@ -77,123 +83,113 @@ export default function ExamDateStep({
         </p>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem", alignItems: "start" }}>
+      <div style={{ position: "relative", maxWidth: "400px", margin: "0 auto" }}>
         {/* Selected Date Display */}
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.3, delay: 0.2 }}
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "1rem",
-          }}
-        >
-          <div>
-            <label
+        <div>
+          <label
+            style={{
+              display: "block",
+              fontSize: "0.875rem",
+              fontWeight: "500",
+              color: "var(--foreground)",
+              marginBottom: "0.5rem",
+            }}
+          >
+            Selected Date
+          </label>
+          <button
+            onClick={() => setIsCalendarOpen(!isCalendarOpen)}
+            style={{
+              width: "100%",
+              padding: "0.75rem 1rem",
+              border: "2px solid var(--border)",
+              borderRadius: "var(--radius)",
+              backgroundColor: "var(--card)",
+              fontSize: "1rem",
+              color: selectedDate ? "var(--foreground)" : "var(--muted-foreground)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              cursor: "pointer",
+              textAlign: "left",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+              <CalendarIcon size={16} color="var(--muted-foreground)" />
+              {selectedDate
+                ? selectedDate.toLocaleDateString("en-US", {
+                    weekday: "long",
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })
+                : "Click to select date"}
+            </div>
+            <ChevronRight
+              size={16}
               style={{
-                display: "block",
-                fontSize: "0.875rem",
-                fontWeight: "500",
-                color: "var(--foreground)",
-                marginBottom: "0.5rem",
+                transform: isCalendarOpen ? "rotate(90deg)" : "rotate(0deg)",
+                transition: "transform 0.2s ease",
               }}
-            >
-              Selected Date
-            </label>
-            <button
-              onClick={onCalendarToggle}
-              style={{
-                width: "100%",
-                padding: "0.75rem 1rem",
-                border: "2px solid var(--border)",
-                borderRadius: "var(--radius)",
-                backgroundColor: "var(--card)",
-                fontSize: "1rem",
-                color: selectedDate ? "var(--foreground)" : "var(--muted-foreground)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                cursor: "pointer",
-                textAlign: "left",
-              }}
-            >
-              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                <CalendarIcon size={16} color="var(--muted-foreground)" />
-                {selectedDate
-                  ? selectedDate.toLocaleDateString("en-US", {
-                      weekday: "long",
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })
-                  : "Click to select date"}
-              </div>
-              <ChevronRight
-                size={16}
-                style={{
-                  transform: isCalendarOpen ? "rotate(90deg)" : "rotate(0deg)",
-                  transition: "transform 0.2s ease",
-                }}
-              />
-            </button>
-          </div>
+            />
+          </button>
+        </div>
 
-          {selectedDate && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              style={{
-                padding: "1rem",
-                backgroundColor: "#dcfce7",
-                borderRadius: "var(--radius)",
-                border: "1px solid #10b981",
-              }}
-            >
-              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.5rem" }}>
-                <CheckCircle size={16} color="#10b981" />
-                <span style={{ fontSize: "0.875rem", fontWeight: "600", color: "#065f46" }}>Date Confirmed</span>
-              </div>
-              <p style={{ fontSize: "0.75rem", color: "#047857", margin: 0 }}>
-                {selectedDate &&
-                  `${Math.ceil((selectedDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))} days remaining`}
-              </p>
-            </motion.div>
-          )}
-        </motion.div>
-
-        {/* Calendar - Only show when open */}
+        {/* Calendar - Conditionally rendered */}
         <AnimatePresence>
           {isCalendarOpen && (
             <motion.div
-              initial={{ opacity: 0, x: 20, scale: 0.9 }}
-              animate={{ opacity: 1, x: 0, scale: 1 }}
-              exit={{ opacity: 0, x: 20, scale: 0.9 }}
-              transition={{ duration: 0.3 }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 10 }}
+              transition={{ duration: 0.2 }}
               style={{
+                position: "absolute",
+                bottom: "100%",
+                left: 0,
+                right: 0,
+                marginBottom: "0.5rem",
                 border: "1px solid var(--border)",
                 borderRadius: "var(--radius)",
                 backgroundColor: "var(--card)",
                 overflow: "hidden",
                 boxShadow: "var(--shadow-lg)",
+                zIndex: 10,
               }}
             >
               <Calendar
                 mode="single"
                 selected={selectedDate}
-                onSelect={(date) => {
-                  onDateSelect(date)
-                  onCalendarToggle()
-                }}
-                disabled={(date) => date < new Date()}
-                className="rounded-md"
-                style={{
-                  width: "100%",
-                }}
+                onSelect={handleDateSelect}
+                initialFocus
+                defaultMonth={selectedDate}
               />
             </motion.div>
           )}
         </AnimatePresence>
+
+        {selectedDate && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            style={{
+              marginTop: "1rem",
+              padding: "1rem",
+              backgroundColor: "rgba(16, 185, 129, 0.1)",
+              borderRadius: "var(--radius)",
+              border: "1px solid rgba(16, 185, 129, 0.2)",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.5rem" }}>
+              <CheckCircle size={16} color="#10b981" />
+              <span style={{ fontSize: "0.875rem", fontWeight: "600", color: "#10b981" }}>Date Confirmed</span>
+            </div>
+            <p style={{ fontSize: "0.75rem", color: "#10b981", margin: 0 }}>
+              {selectedDate &&
+                `${Math.ceil((selectedDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))} days remaining`}
+            </p>
+          </motion.div>
+        )}
       </div>
     </motion.div>
   )

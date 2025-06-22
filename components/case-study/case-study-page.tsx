@@ -2,484 +2,226 @@
 
 import { useState } from "react"
 import { motion } from "framer-motion"
+import { useTheme } from "next-themes"
 import { Moon, Sun } from "lucide-react"
-
-interface CaseStudyData {
-  id: number
-  title: string
-  scenario: string
-  question: string
-  options: string[]
-  correct: number
-  explanation: string
-  mockedResponses: Record<string, string>
-}
+import type { CaseStudyData } from "@/types"
+import { useCaseStudy } from "@/hooks/use-case-study"
 
 interface CaseStudyPageProps {
   caseData: CaseStudyData
-  isDark: boolean
-  toggleTheme: () => void
   onBackToHome: () => void
 }
 
-export default function CaseStudyPage({ caseData, isDark, toggleTheme, onBackToHome }: CaseStudyPageProps) {
-  const [caseStudyAnswer, setCaseStudyAnswer] = useState<number | null>(null)
-  const [caseStudyMessages, setCaseStudyMessages] = useState<
-    Array<{ id: number; type: "user" | "bot"; content: string }>
-  >([])
-  const [caseStudyInput, setCaseStudyInput] = useState("")
-  const [caseStudySubmitted, setCaseStudySubmitted] = useState(false)
-  const [showCaseStudyFeedback, setShowCaseStudyFeedback] = useState(false)
+export default function CaseStudyPage({ caseData, onBackToHome }: CaseStudyPageProps) {
+  const { theme, setTheme } = useTheme()
+  const { state, dispatch, handleSendMessage } = useCaseStudy(caseData)
+  const [userInput, setUserInput] = useState("")
 
-  const handleCaseStudyMessage = () => {
-    if (!caseStudyInput.trim()) return
+  const { messages, selectedAnswer, isSubmitted, showFeedback } = state
 
-    const userMessage = {
-      id: Date.now(),
-      type: "user" as const,
-      content: caseStudyInput,
-    }
-
-    setCaseStudyMessages((prev) => [...prev, userMessage])
-
-    // Find matching response
-    const inputLower = caseStudyInput.toLowerCase()
-    let response =
-      "I don't have specific information about that aspect of the case. Try asking about lab values, physical exam findings, patient history, or symptoms."
-
-    for (const [key, value] of Object.entries(caseData.mockedResponses)) {
-      if (inputLower.includes(key)) {
-        response = value
-        break
-      }
-    }
-
-    const botMessage = {
-      id: Date.now() + 1,
-      type: "bot" as const,
-      content: response,
-    }
-
-    setTimeout(() => {
-      setCaseStudyMessages((prev) => [...prev, botMessage])
-    }, 1000)
-
-    setCaseStudyInput("")
-  }
-
-  const handleCaseStudyAnswerSelect = (answerIndex: number) => {
-    setCaseStudyAnswer(answerIndex)
-  }
-
-  const submitCaseStudyAnswer = () => {
-    setCaseStudySubmitted(true)
-    setShowCaseStudyFeedback(true)
-  }
-
-  const resetCaseStudy = () => {
-    setCaseStudyAnswer(null)
-    setCaseStudyMessages([])
-    setCaseStudyInput("")
-    setCaseStudySubmitted(false)
-    setShowCaseStudyFeedback(false)
+  const onMessageSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    handleSendMessage(userInput)
+    setUserInput("")
   }
 
   return (
     <motion.div
-      style={{
-        minHeight: "100vh",
-        backgroundColor: "var(--background)",
-        color: "var(--foreground)",
-        padding: "2rem",
-      }}
+      className="h-screen bg-background text-foreground p-6 flex flex-col overflow-hidden"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      <div style={{ maxWidth: "80rem", margin: "0 auto" }}>
+      <div className="max-w-7xl mx-auto h-full flex flex-col">
         {/* Header */}
         <motion.div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            marginBottom: "2rem",
-          }}
+          className="flex items-center justify-between mb-6 flex-shrink-0"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
           <div>
-            <h1
-              style={{
-                fontSize: "2rem",
-                fontWeight: "900",
-                color: "var(--foreground)",
-                marginBottom: "0.5rem",
-              }}
-            >
+            <h1 className="text-3xl font-black text-foreground mb-1">
               {caseData.title}
             </h1>
-            <p
-              style={{
-                fontSize: "1rem",
-                color: "var(--muted-foreground)",
-              }}
-            >
+            <p className="text-sm text-muted-foreground">
               Interactive clinical case study
             </p>
           </div>
 
-          <div style={{ display: "flex", gap: "0.75rem" }}>
+          <div className="flex gap-3">
             <button
               onClick={onBackToHome}
-              style={{
-                backgroundColor: "var(--secondary)",
-                color: "var(--secondary-foreground)",
-                border: "1px solid var(--border)",
-                borderRadius: "var(--radius)",
-                padding: "0.75rem 1rem",
-                fontSize: "0.875rem",
-                fontWeight: "500",
-                cursor: "pointer",
-                transition: "all 0.2s ease",
-              }}
+              className="bg-secondary text-secondary-foreground border border-border rounded-md px-3 py-2 text-sm font-medium cursor-pointer transition-all duration-200 hover:bg-secondary/80"
             >
               Back to Home
             </button>
             <button
-              onClick={toggleTheme}
-              style={{
-                backgroundColor: "var(--card)",
-                color: "var(--foreground)",
-                border: "1px solid var(--border)",
-                borderRadius: "var(--radius)",
-                padding: "0.75rem",
-                cursor: "pointer",
-                boxShadow: "var(--shadow-sm)",
-                transition: "all 0.2s ease",
-              }}
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="bg-card text-foreground border border-border rounded-md p-2 cursor-pointer shadow-sm transition-all duration-200 hover:bg-card/80"
             >
-              {isDark ? <Sun size={16} /> : <Moon size={16} />}
+              {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
             </button>
           </div>
         </motion.div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem" }}>
-          {/* Case Information */}
-          <motion.div
-            style={{
-              backgroundColor: "var(--card)",
-              border: "1px solid var(--border)",
-              borderRadius: "var(--radius)",
-              boxShadow: "var(--shadow-lg)",
-              padding: "2rem",
-              height: "fit-content",
-            }}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-          >
-            <h2
-              style={{
-                fontSize: "1.5rem",
-                fontWeight: "700",
-                color: "var(--card-foreground)",
-                marginBottom: "1rem",
-              }}
+        <div className="grid grid-cols-2 gap-6 flex-1 min-h-0">
+          {/* Case Information and Question */}
+          <div className="flex flex-col gap-4 min-h-0">
+            {/* Case Scenario */}
+            <motion.div
+              className="bg-card border border-border rounded-lg shadow-lg p-6 flex-shrink-0"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
             >
-              Case Scenario
-            </h2>
-            <p
-              style={{
-                fontSize: "1rem",
-                color: "var(--muted-foreground)",
-                lineHeight: "1.6",
-                marginBottom: "2rem",
-              }}
-            >
-              {caseData.scenario}
-            </p>
+              <h2 className="text-xl font-bold text-card-foreground mb-3">
+                Case Scenario
+              </h2>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                {caseData.scenario}
+              </p>
+            </motion.div>
 
-            {/* Chat Interface */}
-            <div
-              style={{
-                border: "1px solid var(--border)",
-                borderRadius: "var(--radius)",
-                backgroundColor: "var(--secondary)",
-                marginBottom: "1rem",
-              }}
+            {/* Question and Answer */}
+            <motion.div
+              className="bg-card border border-border rounded-lg shadow-lg p-6 flex-1 min-h-0 flex flex-col"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
             >
-              <div
-                style={{
-                  padding: "1rem",
-                  borderBottom: "1px solid var(--border)",
-                  backgroundColor: "var(--card)",
-                  borderRadius: "var(--radius) var(--radius) 0 0",
-                }}
-              >
-                <h3
-                  style={{
-                    fontSize: "1rem",
-                    fontWeight: "600",
-                    color: "var(--card-foreground)",
-                    margin: 0,
-                  }}
-                >
-                  Ask about the case
-                </h3>
-                <p
-                  style={{
-                    fontSize: "0.875rem",
-                    color: "var(--muted-foreground)",
-                    margin: "0.25rem 0 0 0",
-                  }}
-                >
-                  Try: "lab values", "physical exam", "history", "symptoms"
-                </p>
+              <h2 className="text-xl font-bold text-card-foreground mb-3">
+                What is the next best step?
+              </h2>
+              <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+                {caseData.question}
+              </p>
+
+              <div className="grid gap-3 mb-4 flex-1">
+                {caseData.options.map((option, index) => (
+                  <button
+                    key={index}
+                    onClick={() => dispatch({ type: "SELECT_ANSWER", payload: index })}
+                    className={`w-full p-3 text-left text-sm border-2 rounded-md cursor-pointer transition-colors duration-200 ${
+                      selectedAnswer === index
+                        ? showFeedback
+                          ? index === caseData.correct
+                            ? "bg-green-500 text-white border-green-500"
+                            : "bg-red-500 text-white border-red-500"
+                          : "bg-accent border-primary"
+                        : "bg-secondary border-border hover:bg-secondary/80"
+                    } ${isSubmitted ? "cursor-not-allowed" : ""}`}
+                    disabled={isSubmitted}
+                  >
+                    <span className="font-semibold mr-2">
+                      {String.fromCharCode(65 + index)}.
+                    </span>
+                    {option}
+                  </button>
+                ))}
               </div>
 
-              <div
-                style={{
-                  height: "300px",
-                  overflowY: "auto",
-                  padding: "1rem",
-                }}
-              >
-                {caseStudyMessages.length === 0 ? (
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      height: "100%",
-                      color: "var(--muted-foreground)",
-                      fontSize: "0.875rem",
-                    }}
+              {showFeedback && (
+                <motion.div
+                  className={`p-4 bg-secondary rounded-md border mb-4 ${
+                    selectedAnswer === caseData.correct ? "border-green-500" : "border-red-500"
+                  }`}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                >
+                  <h3 className={`text-base font-bold mb-2 ${
+                    selectedAnswer === caseData.correct ? "text-green-500" : "text-red-500"
+                  }`}>
+                    {selectedAnswer === caseData.correct ? "Correct" : "Incorrect"}
+                  </h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {caseData.explanation}
+                  </p>
+                </motion.div>
+              )}
+
+              <div className="flex justify-end mt-auto">
+                {isSubmitted ? (
+                  <button
+                    onClick={() => dispatch({ type: "RESET" })}
+                    className="px-4 py-2 text-sm bg-primary text-primary-foreground border-none rounded-md cursor-pointer hover:bg-primary/90 transition-colors duration-200"
                   >
-                    Start by asking about the patient's condition
-                  </div>
+                    Try Another Case
+                  </button>
                 ) : (
-                  <div style={{ display: "grid", gap: "1rem" }}>
-                    {caseStudyMessages.map((message) => (
-                      <div
-                        key={message.id}
-                        style={{
-                          display: "flex",
-                          justifyContent: message.type === "user" ? "flex-end" : "flex-start",
-                        }}
-                      >
-                        <div
-                          style={{
-                            maxWidth: "80%",
-                            padding: "0.75rem 1rem",
-                            borderRadius: "var(--radius)",
-                            backgroundColor: message.type === "user" ? "var(--primary)" : "var(--card)",
-                            color: message.type === "user" ? "var(--primary-foreground)" : "var(--card-foreground)",
-                            border: message.type === "bot" ? "1px solid var(--border)" : "none",
-                          }}
-                        >
-                          <p style={{ margin: 0, fontSize: "0.875rem", lineHeight: "1.4" }}>{message.content}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                  <button
+                    onClick={() => dispatch({ type: "SUBMIT_ANSWER" })}
+                    disabled={selectedAnswer === null}
+                    className={`px-4 py-2 text-sm border-none rounded-md cursor-pointer transition-colors duration-200 ${
+                      selectedAnswer !== null
+                        ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                        : "bg-muted text-muted-foreground cursor-not-allowed"
+                    }`}
+                  >
+                    Submit Answer
+                  </button>
                 )}
               </div>
+            </motion.div>
+          </div>
 
-              <div
-                style={{
-                  padding: "1rem",
-                  borderTop: "1px solid var(--border)",
-                  display: "flex",
-                  gap: "0.5rem",
-                }}
+          {/* Chat Interface */}
+          <motion.div
+            className="bg-card border border-border rounded-lg shadow-lg p-6 flex flex-col min-h-0"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+          >
+            <h2 className="text-xl font-bold text-card-foreground mb-2">
+              Ask about the case
+            </h2>
+
+            <div className="border border-border rounded-lg bg-secondary flex flex-col flex-1 min-h-0">
+              <div className="flex-1 overflow-y-auto p-4 min-h-0">
+                {messages.length === 0 ? (
+                  <div className="flex items-center justify-center h-full text-muted-foreground text-center text-sm">
+                    Ask a question to begin your investigation.
+                  </div>
+                ) : (
+                  messages.map((message) => (
+                    <div
+                      key={message.id}
+                      className={`flex mb-3 ${
+                        message.type === "user" ? "justify-end" : "justify-start"
+                      }`}
+                    >
+                      <div
+                        className={`max-w-[80%] px-3 py-2 rounded-md text-sm ${
+                          message.type === "user"
+                            ? "bg-primary text-primary-foreground"
+                            : "bg-card text-card-foreground border border-border"
+                        }`}
+                      >
+                        {message.content}
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+              <form
+                onSubmit={onMessageSubmit}
+                className="flex p-3 border-t border-border gap-2 flex-shrink-0"
               >
                 <input
                   type="text"
-                  value={caseStudyInput}
-                  onChange={(e) => setCaseStudyInput(e.target.value)}
-                  onKeyPress={(e) => e.key === "Enter" && handleCaseStudyMessage()}
-                  placeholder="Ask about the case..."
-                  style={{
-                    flex: 1,
-                    padding: "0.75rem",
-                    border: "1px solid var(--border)",
-                    borderRadius: "var(--radius)",
-                    backgroundColor: "var(--background)",
-                    color: "var(--foreground)",
-                    fontSize: "0.875rem",
-                  }}
+                  value={userInput}
+                  onChange={(e) => setUserInput(e.target.value)}
+                  placeholder="e.g., 'What are the patient's vitals?'"
+                  className="flex-1 p-2 text-sm bg-background border border-border rounded-md text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                 />
                 <button
-                  onClick={handleCaseStudyMessage}
-                  disabled={!caseStudyInput.trim()}
-                  style={{
-                    backgroundColor: caseStudyInput.trim() ? "var(--primary)" : "var(--muted)",
-                    color: caseStudyInput.trim() ? "var(--primary-foreground)" : "var(--muted-foreground)",
-                    border: "none",
-                    borderRadius: "var(--radius)",
-                    padding: "0.75rem 1rem",
-                    fontSize: "0.875rem",
-                    fontWeight: "500",
-                    cursor: caseStudyInput.trim() ? "pointer" : "not-allowed",
-                    transition: "all 0.2s ease",
-                  }}
+                  type="submit"
+                  className="px-3 py-2 text-sm bg-primary text-primary-foreground border-none rounded-md cursor-pointer hover:bg-primary/90 transition-colors duration-200"
                 >
                   Send
                 </button>
-              </div>
+              </form>
             </div>
-          </motion.div>
-
-          {/* Question and Answer */}
-          <motion.div
-            style={{
-              backgroundColor: "var(--card)",
-              border: "1px solid var(--border)",
-              borderRadius: "var(--radius)",
-              boxShadow: "var(--shadow-lg)",
-              padding: "2rem",
-              height: "fit-content",
-            }}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            <h2
-              style={{
-                fontSize: "1.5rem",
-                fontWeight: "700",
-                color: "var(--card-foreground)",
-                marginBottom: "1rem",
-              }}
-            >
-              Diagnosis Question
-            </h2>
-            <p
-              style={{
-                fontSize: "1rem",
-                color: "var(--muted-foreground)",
-                lineHeight: "1.6",
-                marginBottom: "2rem",
-              }}
-            >
-              {caseData.question}
-            </p>
-
-            <div style={{ display: "grid", gap: "0.75rem", marginBottom: "2rem" }}>
-              {caseData.options.map((option, index) => (
-                <button
-                  key={index}
-                  onClick={() => handleCaseStudyAnswerSelect(index)}
-                  disabled={caseStudySubmitted}
-                  style={{
-                    width: "100%",
-                    padding: "1rem",
-                    textAlign: "left",
-                    backgroundColor:
-                      caseStudySubmitted && index === caseData.correct
-                        ? "#dcfce7"
-                        : caseStudySubmitted && caseStudyAnswer === index && index !== caseData.correct
-                          ? "#fee2e2"
-                          : caseStudyAnswer === index
-                            ? "var(--accent)"
-                            : "var(--secondary)",
-                    border:
-                      caseStudySubmitted && index === caseData.correct
-                        ? "2px solid #10b981"
-                        : caseStudySubmitted && caseStudyAnswer === index && index !== caseData.correct
-                          ? "2px solid #ef4444"
-                          : caseStudyAnswer === index
-                            ? "2px solid var(--primary)"
-                            : "2px solid var(--border)",
-                    borderRadius: "var(--radius)",
-                    color: "var(--card-foreground)",
-                    cursor: caseStudySubmitted ? "not-allowed" : "pointer",
-                    transition: "all 0.2s ease",
-                    fontSize: "1rem",
-                    opacity: caseStudySubmitted && index !== caseData.correct && caseStudyAnswer !== index ? 0.6 : 1,
-                  }}
-                >
-                  <span style={{ fontWeight: "600", marginRight: "0.5rem" }}>{String.fromCharCode(65 + index)}.</span>
-                  {option}
-                </button>
-              ))}
-            </div>
-
-            {!caseStudySubmitted ? (
-              <button
-                onClick={submitCaseStudyAnswer}
-                disabled={caseStudyAnswer === null}
-                style={{
-                  width: "100%",
-                  backgroundColor: caseStudyAnswer !== null ? "var(--primary)" : "var(--muted)",
-                  color: caseStudyAnswer !== null ? "var(--primary-foreground)" : "var(--muted-foreground)",
-                  border: "none",
-                  borderRadius: "var(--radius)",
-                  padding: "1rem 2rem",
-                  fontSize: "1rem",
-                  fontWeight: "600",
-                  cursor: caseStudyAnswer !== null ? "pointer" : "not-allowed",
-                  boxShadow: "var(--shadow-md)",
-                  transition: "all 0.2s ease",
-                }}
-              >
-                Submit Answer
-              </button>
-            ) : (
-              <div>
-                <div
-                  style={{
-                    padding: "1rem",
-                    backgroundColor: caseStudyAnswer === caseData.correct ? "#dcfce7" : "#fee2e2",
-                    border: `1px solid ${caseStudyAnswer === caseData.correct ? "#10b981" : "#ef4444"}`,
-                    borderRadius: "var(--radius)",
-                    marginBottom: "1rem",
-                  }}
-                >
-                  <h4
-                    style={{
-                      fontSize: "1rem",
-                      fontWeight: "600",
-                      color: caseStudyAnswer === caseData.correct ? "#065f46" : "#991b1b",
-                      margin: "0 0 0.5rem 0",
-                    }}
-                  >
-                    {caseStudyAnswer === caseData.correct ? "Correct!" : "Incorrect"}
-                  </h4>
-                  <p
-                    style={{
-                      fontSize: "0.875rem",
-                      color: caseStudyAnswer === caseData.correct ? "#047857" : "#dc2626",
-                      margin: 0,
-                      lineHeight: "1.4",
-                    }}
-                  >
-                    {caseData.explanation}
-                  </p>
-                </div>
-
-                <button
-                  onClick={resetCaseStudy}
-                  style={{
-                    width: "100%",
-                    backgroundColor: "var(--secondary)",
-                    color: "var(--secondary-foreground)",
-                    border: "1px solid var(--border)",
-                    borderRadius: "var(--radius)",
-                    padding: "1rem 2rem",
-                    fontSize: "1rem",
-                    fontWeight: "600",
-                    cursor: "pointer",
-                    boxShadow: "var(--shadow-md)",
-                    transition: "all 0.2s ease",
-                  }}
-                >
-                  Try Another Case
-                </button>
-              </div>
-            )}
           </motion.div>
         </div>
       </div>

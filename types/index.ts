@@ -1,0 +1,61 @@
+export interface OnboardingData {
+  academicYear: string
+  examType: string
+  examDate: Date | undefined
+  uploadedFiles: File[]
+}
+
+export interface AnalyticsSession {
+  id: string
+  type: "quiz" | "practice"
+  category?: string
+  date: Date
+  score: number
+  correct: number
+  total: number
+}
+
+export interface AnalyticsCategoryStats {
+  correct: number
+  total: number
+  sessions: number
+}
+
+export interface AnalyticsData {
+  sessions: AnalyticsSession[]
+  categoryStats: Record<string, AnalyticsCategoryStats>
+  overallStats: {
+    totalQuestions: number
+    totalCorrect: number
+    totalSessions: number
+  }
+}
+
+export interface Category {
+  name: string
+  icon: React.ComponentType<{ size: number; color: string }>
+  color: string
+  description: string
+  questionCount: number
+}
+
+export interface Question {
+  id: number
+  question: string
+  options: string[]
+  correct: number
+  category: string
+  difficulty: string
+  explanation: string
+}
+
+export interface CaseStudyData {
+  id: number
+  title: string
+  scenario: string
+  question: string
+  options: string[]
+  correct: number
+  explanation: string
+  mockedResponses: Record<string, string>
+} 

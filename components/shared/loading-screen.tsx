@@ -5,9 +5,18 @@ import { motion } from "framer-motion"
 interface LoadingScreenProps {
   progress: number
   step: string
+  showButton?: boolean
+  buttonText?: string
+  onButtonClick?: () => void
 }
 
-export default function LoadingScreen({ progress, step }: LoadingScreenProps) {
+export default function LoadingScreen({
+  progress,
+  step,
+  showButton = false,
+  buttonText = "Retry",
+  onButtonClick,
+}: LoadingScreenProps) {
   return (
     <motion.div
       style={{
@@ -83,6 +92,26 @@ export default function LoadingScreen({ progress, step }: LoadingScreenProps) {
         >
           {progress}% complete
         </p>
+        {showButton && (
+          <motion.button
+            onClick={onButtonClick}
+            style={{
+              marginTop: "2rem",
+              backgroundColor: "var(--primary)",
+              color: "var(--primary-foreground)",
+              border: "none",
+              borderRadius: "var(--radius)",
+              padding: "0.75rem 1.5rem",
+              fontSize: "1rem",
+              fontWeight: "500",
+              cursor: "pointer",
+            }}
+            whileHover={{ opacity: 0.9 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            {buttonText}
+          </motion.button>
+        )}
       </div>
     </motion.div>
   )

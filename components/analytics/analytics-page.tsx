@@ -1,6 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
+import { useTheme } from "next-themes"
 import { Moon, Sun, Brain, BookOpen, Target, TrendingUp, TrendingDown } from "lucide-react"
 
 interface AnalyticsSession {
@@ -40,8 +41,6 @@ interface Category {
 interface AnalyticsPageProps {
   analyticsData: AnalyticsData
   categories: Category[]
-  isDark: boolean
-  toggleTheme: () => void
   onBackToHome: () => void
   onSelectCategory: (categoryName: string) => void
 }
@@ -49,24 +48,35 @@ interface AnalyticsPageProps {
 export default function AnalyticsPage({
   analyticsData,
   categories,
-  isDark,
-  toggleTheme,
   onBackToHome,
   onSelectCategory,
 }: AnalyticsPageProps) {
+  const { theme, setTheme } = useTheme()
   const overallAccuracy =
     analyticsData.overallStats.totalQuestions > 0
       ? Math.round((analyticsData.overallStats.totalCorrect / analyticsData.overallStats.totalQuestions) * 100)
       : 0
 
-  const categoryPerformance = Object.entries(analyticsData.categoryStats)
-    .map(([category, stats]) => ({
-      category,
-      accuracy: stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0,
-      correct: stats.correct,
-      total: stats.total,
-      sessions: stats.sessions,
-    }))
+  const categoryPerformance = categories
+    .map((category) => {
+      const stats = analyticsData.categoryStats[category.name]
+      if (stats) {
+        return {
+          category: category.name,
+          accuracy: stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0,
+          correct: stats.correct,
+          total: stats.total,
+          sessions: stats.sessions,
+        }
+      }
+      return {
+        category: category.name,
+        accuracy: 0,
+        correct: 0,
+        total: 0,
+        sessions: 0,
+      }
+    })
     .sort((a, b) => b.accuracy - a.accuracy)
 
   const strongestAreas = categoryPerformance.filter((cat) => cat.accuracy >= 80).slice(0, 3)
@@ -74,338 +84,142 @@ export default function AnalyticsPage({
 
   return (
     <motion.div
-      style={{
-        minHeight: "100vh",
-        backgroundColor: "var(--background)",
-        color: "var(--foreground)",
-        padding: "2rem",
-      }}
+      className="min-h-screen bg-background text-foreground p-8"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      <div style={{ maxWidth: "64rem", margin: "0 auto" }}>
+      <div className="max-w-5xl mx-auto">
         {/* Header */}
         <motion.div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            marginBottom: "3rem",
-          }}
+          className="flex items-center justify-between mb-12"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
           <div>
-            <h1
-              style={{
-                fontSize: "2.5rem",
-                fontWeight: "900",
-                color: "var(--foreground)",
-                marginBottom: "0.5rem",
-              }}
-            >
+            <h1 className="text-4xl font-black text-foreground mb-2">
               Performance Analytics
             </h1>
-            <p
-              style={{
-                fontSize: "1.125rem",
-                color: "var(--muted-foreground)",
-              }}
-            >
+            <p className="text-lg text-muted-foreground">
               Track your progress and identify areas for improvement
             </p>
           </div>
 
-          <div style={{ display: "flex", gap: "0.75rem" }}>
+          <div className="flex gap-3">
             <button
               onClick={onBackToHome}
-              style={{
-                backgroundColor: "var(--secondary)",
-                color: "var(--secondary-foreground)",
-                border: "1px solid var(--border)",
-                borderRadius: "var(--radius)",
-                padding: "0.75rem 1rem",
-                fontSize: "0.875rem",
-                fontWeight: "500",
-                cursor: "pointer",
-                transition: "all 0.2s ease",
-              }}
+              className="bg-secondary text-secondary-foreground border border-border rounded-lg px-4 py-3 text-sm font-medium cursor-pointer transition-all duration-200 hover:bg-secondary/80"
             >
               Back to Home
             </button>
             <button
-              onClick={toggleTheme}
-              style={{
-                backgroundColor: "var(--card)",
-                color: "var(--foreground)",
-                border: "1px solid var(--border)",
-                borderRadius: "var(--radius)",
-                padding: "0.75rem",
-                cursor: "pointer",
-                boxShadow: "var(--shadow-sm)",
-                transition: "all 0.2s ease",
-              }}
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="bg-card text-foreground border border-border rounded-lg p-3 cursor-pointer shadow-sm transition-all duration-200 hover:bg-card/80"
             >
-              {isDark ? <Sun size={16} /> : <Moon size={16} />}
+              {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
             </button>
           </div>
         </motion.div>
 
         {/* Overview Stats */}
         <motion.div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-            gap: "1.5rem",
-            marginBottom: "3rem",
-          }}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
         >
-          <div
-            style={{
-              backgroundColor: "var(--card)",
-              border: "1px solid var(--border)",
-              borderRadius: "var(--radius)",
-              boxShadow: "var(--shadow-lg)",
-              padding: "1.5rem",
-              textAlign: "center",
-            }}
-          >
-            <div
-              style={{
-                fontSize: "2.5rem",
-                fontWeight: "900",
-                color: "var(--primary)",
-                marginBottom: "0.5rem",
-              }}
-            >
+          <div className="bg-card border border-border rounded-lg shadow-lg p-6 text-center">
+            <div className="text-4xl font-black text-primary mb-2">
               {overallAccuracy}%
             </div>
-            <div
-              style={{
-                fontSize: "0.875rem",
-                color: "var(--muted-foreground)",
-                fontWeight: "500",
-              }}
-            >
+            <div className="text-sm text-muted-foreground font-medium">
               Overall Accuracy
             </div>
           </div>
 
-          <div
-            style={{
-              backgroundColor: "var(--card)",
-              border: "1px solid var(--border)",
-              borderRadius: "var(--radius)",
-              boxShadow: "var(--shadow-lg)",
-              padding: "1.5rem",
-              textAlign: "center",
-            }}
-          >
-            <div
-              style={{
-                fontSize: "2.5rem",
-                fontWeight: "900",
-                color: "#10b981",
-                marginBottom: "0.5rem",
-              }}
-            >
+          <div className="bg-card border border-border rounded-lg shadow-lg p-6 text-center">
+            <div className="text-4xl font-black text-green-500 mb-2">
               {analyticsData.overallStats.totalSessions}
             </div>
-            <div
-              style={{
-                fontSize: "0.875rem",
-                color: "var(--muted-foreground)",
-                fontWeight: "500",
-              }}
-            >
+            <div className="text-sm text-muted-foreground font-medium">
               Total Sessions
             </div>
           </div>
 
-          <div
-            style={{
-              backgroundColor: "var(--card)",
-              border: "1px solid var(--border)",
-              borderRadius: "var(--radius)",
-              boxShadow: "var(--shadow-lg)",
-              padding: "1.5rem",
-              textAlign: "center",
-            }}
-          >
-            <div
-              style={{
-                fontSize: "2.5rem",
-                fontWeight: "900",
-                color: "#f59e0b",
-                marginBottom: "0.5rem",
-              }}
-            >
+          <div className="bg-card border border-border rounded-lg shadow-lg p-6 text-center">
+            <div className="text-4xl font-black text-amber-500 mb-2">
               {Object.keys(analyticsData.categoryStats).length}
             </div>
-            <div
-              style={{
-                fontSize: "0.875rem",
-                color: "var(--muted-foreground)",
-                fontWeight: "500",
-              }}
-            >
+            <div className="text-sm text-muted-foreground font-medium">
               Categories Practiced
             </div>
           </div>
 
-          <div
-            style={{
-              backgroundColor: "var(--card)",
-              border: "1px solid var(--border)",
-              borderRadius: "var(--radius)",
-              boxShadow: "var(--shadow-lg)",
-              padding: "1.5rem",
-              textAlign: "center",
-            }}
-          >
-            <div
-              style={{
-                fontSize: "2.5rem",
-                fontWeight: "900",
-                color: "#8b5cf6",
-                marginBottom: "0.5rem",
-              }}
-            >
+          <div className="bg-card border border-border rounded-lg shadow-lg p-6 text-center">
+            <div className="text-4xl font-black text-violet-500 mb-2">
               {analyticsData.overallStats.totalQuestions}
             </div>
-            <div
-              style={{
-                fontSize: "0.875rem",
-                color: "var(--muted-foreground)",
-                fontWeight: "500",
-              }}
-            >
-              Questions Answered
+            <div className="text-sm text-muted-foreground font-medium">
+              Total Questions
             </div>
           </div>
         </motion.div>
 
         {/* Performance by Category */}
         <motion.div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "2fr 1fr",
-            gap: "2rem",
-            marginBottom: "3rem",
-          }}
+          className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          <div
-            style={{
-              backgroundColor: "var(--card)",
-              border: "1px solid var(--border)",
-              borderRadius: "var(--radius)",
-              boxShadow: "var(--shadow-lg)",
-              padding: "2rem",
-            }}
-          >
-            <h3
-              style={{
-                fontSize: "1.5rem",
-                fontWeight: "700",
-                color: "var(--card-foreground)",
-                marginBottom: "1.5rem",
-              }}
-            >
+          <div className="lg:col-span-2 bg-card border border-border rounded-lg shadow-lg p-8">
+            <h3 className="text-2xl font-bold text-card-foreground mb-6">
               Performance by Category
             </h3>
 
-            <div style={{ display: "grid", gap: "1rem" }}>
+            <div className="grid gap-4">
               {categoryPerformance.map((category) => {
                 const categoryInfo = categories.find((cat) => cat.name === category.category)
 
                 return (
                   <div
                     key={category.category}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      padding: "1rem",
-                      backgroundColor: "var(--secondary)",
-                      borderRadius: "calc(var(--radius) - 2px)",
-                      border: "1px solid var(--border)",
-                    }}
+                    className="flex items-center justify-between p-4 bg-secondary rounded-md border border-border"
                   >
-                    <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                    <div className="flex items-center gap-3">
                       {categoryInfo && (
                         <div
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            width: "2rem",
-                            height: "2rem",
-                            backgroundColor: categoryInfo.color,
-                            borderRadius: "50%",
-                          }}
+                          className="flex items-center justify-center w-8 h-8 rounded-full"
+                          style={{ backgroundColor: categoryInfo.color }}
                         >
                           <categoryInfo.icon size={16} color="white" />
                         </div>
                       )}
                       <div>
-                        <h4
-                          style={{
-                            fontSize: "1rem",
-                            fontWeight: "600",
-                            color: "var(--card-foreground)",
-                            margin: 0,
-                          }}
-                        >
+                        <h4 className="text-base font-semibold text-card-foreground">
                           {category.category}
                         </h4>
-                        <p
-                          style={{
-                            fontSize: "0.875rem",
-                            color: "var(--muted-foreground)",
-                            margin: 0,
-                          }}
-                        >
+                        <p className="text-sm text-muted-foreground">
                           {category.correct}/{category.total} correct • {category.sessions} sessions
                         </p>
                       </div>
                     </div>
 
-                    <div style={{ textAlign: "right" }}>
-                      <div
-                        style={{
-                          fontSize: "1.25rem",
-                          fontWeight: "700",
-                          color: category.accuracy >= 80 ? "#10b981" : category.accuracy >= 60 ? "#f59e0b" : "#ef4444",
-                        }}
-                      >
+                    <div className="text-right">
+                      <div className={`text-xl font-bold ${
+                        category.accuracy >= 80 ? "text-green-500" : 
+                        category.accuracy >= 60 ? "text-amber-500" : "text-red-500"
+                      }`}>
                         {category.accuracy}%
                       </div>
-                      <div
-                        style={{
-                          width: "4rem",
-                          height: "0.25rem",
-                          backgroundColor: "var(--muted)",
-                          borderRadius: "9999px",
-                          overflow: "hidden",
-                          marginTop: "0.25rem",
-                        }}
-                      >
+                      <div className="w-16 h-1 bg-muted rounded-full overflow-hidden mt-1">
                         <div
-                          style={{
-                            width: `${category.accuracy}%`,
-                            height: "100%",
-                            backgroundColor:
-                              category.accuracy >= 80 ? "#10b981" : category.accuracy >= 60 ? "#f59e0b" : "#ef4444",
-                            borderRadius: "9999px",
-                          }}
+                          className={`h-full rounded-full transition-all duration-300 ${
+                            category.accuracy >= 80 ? "bg-green-500" : 
+                            category.accuracy >= 60 ? "bg-amber-500" : "bg-red-500"
+                          }`}
+                          style={{ width: `${category.accuracy}%` }}
                         />
                       </div>
                     </div>
@@ -415,174 +229,68 @@ export default function AnalyticsPage({
             </div>
 
             {categoryPerformance.length === 0 && (
-              <div
-                style={{
-                  textAlign: "center",
-                  padding: "3rem",
-                  color: "var(--muted-foreground)",
-                }}
-              >
-                <Brain size={48} color="var(--muted-foreground)" style={{ margin: "0 auto 1rem auto" }} />
-                <p style={{ fontSize: "1.125rem", marginBottom: "0.5rem" }}>No data yet</p>
-                <p style={{ fontSize: "0.875rem" }}>Take a quiz or practice session to see your analytics</p>
+              <div className="text-center py-12 text-muted-foreground">
+                <Brain size={48} className="mx-auto mb-4 text-muted-foreground" />
+                <p className="text-lg mb-2">No data yet</p>
+                <p className="text-sm">Take a quiz or practice session to see your analytics</p>
               </div>
             )}
           </div>
 
           {/* Areas for Improvement */}
-          <div style={{ display: "grid", gap: "1.5rem" }}>
+          <div className="grid gap-6">
             {/* Strongest Areas */}
-            <div
-              style={{
-                backgroundColor: "var(--card)",
-                border: "1px solid var(--border)",
-                borderRadius: "var(--radius)",
-                boxShadow: "var(--shadow-lg)",
-                padding: "1.5rem",
-              }}
-            >
-              <h4
-                style={{
-                  fontSize: "1.125rem",
-                  fontWeight: "600",
-                  color: "var(--card-foreground)",
-                  marginBottom: "1rem",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "0.5rem",
-                }}
-              >
-                <TrendingUp size={20} color="#10b981" />
+            <div className="bg-card border border-border rounded-lg shadow-lg p-6">
+              <h4 className="text-lg font-semibold text-card-foreground mb-4 flex items-center gap-2">
+                <TrendingUp size={20} className="text-green-500" />
                 Strongest Areas
               </h4>
 
               {strongestAreas.length > 0 ? (
-                <div style={{ display: "grid", gap: "0.75rem" }}>
+                <div className="grid gap-3">
                   {strongestAreas.map((area) => (
                     <div
                       key={area.category}
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        padding: "0.75rem",
-                        backgroundColor: "#dcfce7",
-                        borderRadius: "calc(var(--radius) - 2px)",
-                        border: "1px solid #10b981",
-                      }}
+                      className="flex items-center justify-between p-3 bg-green-50 rounded-md border border-green-500"
                     >
-                      <span
-                        style={{
-                          fontSize: "0.875rem",
-                          fontWeight: "500",
-                          color: "#065f46",
-                        }}
-                      >
+                      <span className="text-sm font-medium text-green-800">
                         {area.category}
                       </span>
-                      <span
-                        style={{
-                          fontSize: "0.875rem",
-                          fontWeight: "600",
-                          color: "#10b981",
-                        }}
-                      >
+                      <span className="text-sm font-semibold text-green-500">
                         {area.accuracy}%
                       </span>
                     </div>
                   ))}
                 </div>
               ) : (
-                <p
-                  style={{
-                    fontSize: "0.875rem",
-                    color: "var(--muted-foreground)",
-                    textAlign: "center",
-                  }}
-                >
+                <p className="text-sm text-muted-foreground text-center">
                   Complete more sessions to identify your strengths
                 </p>
               )}
             </div>
 
             {/* Areas for Improvement */}
-            <div
-              style={{
-                backgroundColor: "var(--card)",
-                border: "1px solid var(--border)",
-                borderRadius: "var(--radius)",
-                boxShadow: "var(--shadow-lg)",
-                padding: "1.5rem",
-              }}
-            >
-              <h4
-                style={{
-                  fontSize: "1.125rem",
-                  fontWeight: "600",
-                  color: "var(--card-foreground)",
-                  marginBottom: "1rem",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "0.5rem",
-                }}
-              >
-                <TrendingDown size={20} color="#ef4444" />
+            <div className="bg-card border border-border rounded-lg shadow-lg p-6">
+              <h4 className="text-lg font-semibold text-card-foreground mb-4 flex items-center gap-2">
+                <TrendingDown size={20} className="text-red-500" />
                 Areas for Improvement
               </h4>
 
               {weakestAreas.length > 0 ? (
-                <div style={{ display: "grid", gap: "0.75rem" }}>
+                <div className="grid gap-3">
                   {weakestAreas.map((area) => (
-                    <div
-                      key={area.category}
-                      style={{
-                        padding: "0.75rem",
-                        backgroundColor: "#fef2f2",
-                        borderRadius: "calc(var(--radius) - 2px)",
-                        border: "1px solid #ef4444",
-                      }}
-                    >
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                          marginBottom: "0.5rem",
-                        }}
-                      >
-                        <span
-                          style={{
-                            fontSize: "0.875rem",
-                            fontWeight: "500",
-                            color: "#991b1b",
-                          }}
-                        >
+                    <div key={area.category} className="p-3 bg-red-50 rounded-md border border-red-500">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium text-red-800">
                           {area.category}
                         </span>
-                        <span
-                          style={{
-                            fontSize: "0.875rem",
-                            fontWeight: "600",
-                            color: "#ef4444",
-                          }}
-                        >
+                        <span className="text-sm font-semibold text-red-500">
                           {area.accuracy}%
                         </span>
                       </div>
                       <button
                         onClick={() => onSelectCategory(area.category)}
-                        style={{
-                          width: "100%",
-                          backgroundColor: "#ef4444",
-                          color: "white",
-                          border: "none",
-                          borderRadius: "calc(var(--radius) - 4px)",
-                          padding: "0.5rem",
-                          fontSize: "0.75rem",
-                          fontWeight: "500",
-                          cursor: "pointer",
-                          transition: "all 0.2s ease",
-                        }}
+                        className="w-full text-xs text-red-600 bg-red-100 hover:bg-red-200 rounded px-2 py-1 transition-colors duration-200"
                       >
                         Practice Now
                       </button>
@@ -590,14 +298,8 @@ export default function AnalyticsPage({
                   ))}
                 </div>
               ) : (
-                <p
-                  style={{
-                    fontSize: "0.875rem",
-                    color: "var(--muted-foreground)",
-                    textAlign: "center",
-                  }}
-                >
-                  Great job! No weak areas identified yet
+                <p className="text-sm text-muted-foreground text-center">
+                  Great job! No weak areas identified
                 </p>
               )}
             </div>
@@ -606,110 +308,56 @@ export default function AnalyticsPage({
 
         {/* Recent Sessions */}
         <motion.div
-          style={{
-            backgroundColor: "var(--card)",
-            border: "1px solid var(--border)",
-            borderRadius: "var(--radius)",
-            boxShadow: "var(--shadow-lg)",
-            padding: "2rem",
-          }}
+          className="bg-card border border-border rounded-lg shadow-lg p-8"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
         >
-          <h3
-            style={{
-              fontSize: "1.5rem",
-              fontWeight: "700",
-              color: "var(--card-foreground)",
-              marginBottom: "1.5rem",
-            }}
-          >
+          <h3 className="text-2xl font-bold text-card-foreground mb-6">
             Recent Sessions
           </h3>
 
           {analyticsData.sessions.length > 0 ? (
-            <div style={{ display: "grid", gap: "1rem" }}>
-              {analyticsData.sessions
-                .slice(-5)
-                .reverse()
-                .map((session) => (
-                  <div
-                    key={session.id}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      padding: "1rem",
-                      backgroundColor: "var(--secondary)",
-                      borderRadius: "calc(var(--radius) - 2px)",
-                      border: "1px solid var(--border)",
-                    }}
-                  >
-                    <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          width: "2rem",
-                          height: "2rem",
-                          backgroundColor: session.type === "quiz" ? "var(--primary)" : "#8b5cf6",
-                          borderRadius: "50%",
-                        }}
-                      >
-                        {session.type === "quiz" ? (
-                          <Target size={16} color="white" />
-                        ) : (
-                          <BookOpen size={16} color="white" />
-                        )}
-                      </div>
-                      <div>
-                        <h4
-                          style={{
-                            fontSize: "1rem",
-                            fontWeight: "600",
-                            color: "var(--card-foreground)",
-                            margin: 0,
-                          }}
-                        >
-                          {session.type === "quiz" ? "Assessment Quiz" : `${session.category} Practice`}
-                        </h4>
-                        <p
-                          style={{
-                            fontSize: "0.875rem",
-                            color: "var(--muted-foreground)",
-                            margin: 0,
-                          }}
-                        >
-                          {session.date.toLocaleDateString()} • {session.correct}/{session.total} correct
-                        </p>
-                      </div>
+            <div className="grid gap-4">
+              {analyticsData.sessions.slice(0, 10).map((session) => (
+                <div
+                  key={session.id}
+                  className="flex items-center justify-between p-4 bg-secondary rounded-md border border-border"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className={`flex items-center justify-center w-8 h-8 rounded-full ${
+                      session.type === "quiz" ? "bg-primary" : "bg-violet-500"
+                    }`}>
+                      {session.type === "quiz" ? (
+                        <Target size={16} color="white" />
+                      ) : (
+                        <BookOpen size={16} color="white" />
+                      )}
                     </div>
-
-                    <div
-                      style={{
-                        fontSize: "1.125rem",
-                        fontWeight: "700",
-                        color: session.score >= 80 ? "#10b981" : session.score >= 60 ? "#f59e0b" : "#ef4444",
-                      }}
-                    >
-                      {session.score}%
+                    <div>
+                      <h4 className="text-base font-semibold text-card-foreground">
+                        {session.type === "quiz" ? "Assessment Quiz" : `${session.category} Practice`}
+                      </h4>
+                      <p className="text-sm text-muted-foreground">
+                        {session.date.toLocaleDateString()} • {session.correct}/{session.total} correct
+                      </p>
                     </div>
                   </div>
-                ))}
+
+                  <div className={`text-lg font-bold ${
+                    session.score >= 80 ? "text-green-500" : 
+                    session.score >= 60 ? "text-amber-500" : "text-red-500"
+                  }`}>
+                    {session.score}%
+                  </div>
+                </div>
+              ))}
             </div>
           ) : (
-            <div
-              style={{
-                textAlign: "center",
-                padding: "3rem",
-                color: "var(--muted-foreground)",
-              }}
-            >
-              <BookOpen size={48} color="var(--muted-foreground)" style={{ margin: "0 auto 1rem auto" }} />
-              <p style={{ fontSize: "1.125rem", marginBottom: "0.5rem" }}>No sessions yet</p>
-              <p style={{ fontSize: "0.875rem" }}>Your recent quiz and practice sessions will appear here</p>
+            <div className="text-center py-12 text-muted-foreground">
+              <BookOpen size={48} className="mx-auto mb-4 text-muted-foreground" />
+              <p className="text-lg mb-2">No sessions yet</p>
+              <p className="text-sm">Your recent quiz and practice sessions will appear here</p>
             </div>
           )}
         </motion.div>
