@@ -1,29 +1,47 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { motion } from "framer-motion"
-import { useTheme } from "next-themes"
-import { Moon, Sun } from "lucide-react"
-import type { CaseStudyData } from "@/types"
-import { useCaseStudy } from "@/hooks/use-case-study"
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { useTheme } from "next-themes";
+import { Moon, Sun } from "lucide-react";
+import type { CaseStudyData } from "@/types";
+import { useCaseStudy } from "@/hooks/use-case-study";
+import { useGraph } from "@/hooks/use-graph";
 
 interface CaseStudyPageProps {
-  caseData: CaseStudyData
-  onBackToHome: () => void
+  caseData: CaseStudyData;
+  onBackToHome: () => void;
 }
 
-export default function CaseStudyPage({ caseData, onBackToHome }: CaseStudyPageProps) {
-  const { theme, setTheme } = useTheme()
-  const { state, dispatch, handleSendMessage } = useCaseStudy(caseData)
-  const [userInput, setUserInput] = useState("")
+export default function CaseStudyPage({
+  caseData,
+  onBackToHome,
+}: CaseStudyPageProps) {
+  const [sendMessages, setSendMessages] = useState<any[]>([]);
 
-  const { messages, selectedAnswer, isSubmitted, showFeedback } = state
+  const { theme, setTheme } = useTheme();
+  const { state, dispatch, handleSendMessage } = useCaseStudy(caseData);
+  const [userInput, setUserInput] = useState("");
 
-  const onMessageSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    handleSendMessage(userInput)
-    setUserInput("")
-  }
+  const { messages, selectedAnswer, isSubmitted, showFeedback } = state;
+  console.log(messages);
+  const userSelection = caseData.options[selectedAnswer ?? 0];
+  const onMessageSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    handleSendMessage(userInput);
+    setUserInput("");
+
+    await useGraph({
+      question: caseData.question,
+      answer: "Pernicious anemia",
+      userAnswer: userSelection,
+      context: caseData.scenario,
+      options: caseData.options,
+      chatMessage: userInput,
+      setSendMessages: setSendMessages,
+    });
+
+  };
 
   return (
     <motion.div
@@ -68,6 +86,7 @@ export default function CaseStudyPage({ caseData, onBackToHome }: CaseStudyPageP
         <div className="grid grid-cols-2 gap-6 flex-1 min-h-0">
           {/* Case Information and Question */}
           <div className="flex flex-col gap-4 min-h-0">
+            
             {/* Case Scenario */}
             <motion.div
               className="bg-card border border-border rounded-lg shadow-lg p-6 flex-shrink-0"
@@ -77,6 +96,7 @@ export default function CaseStudyPage({ caseData, onBackToHome }: CaseStudyPageP
             >
               <h2 className="text-xl font-bold text-card-foreground mb-3">
                 Case Scenario
+                
               </h2>
               <p className="text-sm text-muted-foreground leading-relaxed">
                 {caseData.scenario}
@@ -102,7 +122,9 @@ export default function CaseStudyPage({ caseData, onBackToHome }: CaseStudyPageP
                   {caseData.options.map((option, index) => (
                     <motion.button
                       key={index}
-                      onClick={() => dispatch({ type: "SELECT_ANSWER", payload: index })}
+                      onClick={() =>
+                        dispatch({ type: "SELECT_ANSWER", payload: index })
+                      }
                       className={`w-full p-4 text-left text-base border-2 rounded-lg cursor-pointer transition-all duration-200 ${
                         selectedAnswer === index
                           ? showFeedback
@@ -125,15 +147,23 @@ export default function CaseStudyPage({ caseData, onBackToHome }: CaseStudyPageP
                 {showFeedback && (
                   <motion.div
                     className={`p-4 bg-secondary rounded-md border mb-4 ${
-                      selectedAnswer === caseData.correct ? "border-green-500" : "border-red-500"
+                      selectedAnswer === caseData.correct
+                        ? "border-green-500"
+                        : "border-red-500"
                     }`}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                   >
-                    <h3 className={`text-base font-bold mb-2 ${
-                      selectedAnswer === caseData.correct ? "text-green-500" : "text-red-500"
-                    }`}>
-                      {selectedAnswer === caseData.correct ? "Correct" : "Incorrect"}
+                    <h3
+                      className={`text-base font-bold mb-2 ${
+                        selectedAnswer === caseData.correct
+                          ? "text-green-500"
+                          : "text-red-500"
+                      }`}
+                    >
+                      {selectedAnswer === caseData.correct
+                        ? "Correct"
+                        : "Incorrect"}
                     </h3>
                     <p className="text-sm text-muted-foreground leading-relaxed">
                       {caseData.explanation}
@@ -189,7 +219,9 @@ export default function CaseStudyPage({ caseData, onBackToHome }: CaseStudyPageP
                     <div
                       key={message.id}
                       className={`flex mb-3 ${
-                        message.type === "user" ? "justify-end" : "justify-start"
+                        message.type === "user"
+                          ? "justify-end"
+                          : "justify-start"
                       }`}
                     >
                       <div
@@ -228,5 +260,5 @@ export default function CaseStudyPage({ caseData, onBackToHome }: CaseStudyPageP
         </div>
       </div>
     </motion.div>
-  )
+  );
 }
