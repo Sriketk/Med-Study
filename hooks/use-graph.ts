@@ -70,7 +70,9 @@ export async function useGraph({
   
   for await (const chunk of streamResponse) {
     console.log(chunk);
-    setSendMessages(prev => prev + (chunk?.data[0]?.content ?? ""));
+    if (Array.isArray(chunk?.data) && chunk.data[0]?.content) {
+      setSendMessages(prev => prev + chunk.data[0].content);
+    }
   }
   ;
 }

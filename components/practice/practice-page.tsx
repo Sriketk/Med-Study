@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion"
 import { useTheme } from "next-themes"
-import { Moon, Sun, Award } from "lucide-react"
+import { Moon, Sun, Award, ThumbsUp, ThumbsDown } from "lucide-react"
 import { useState, useEffect } from "react"
 
 interface PracticeQuestion {
@@ -42,6 +42,7 @@ export default function PracticePage({
 }: PracticePageProps) {
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
+  const [questionFeedback, setQuestionFeedback] = useState<Record<number, 'like' | 'dislike' | null>>({})
 
   // Ensure component is mounted to avoid hydration mismatch
   useEffect(() => {
@@ -202,6 +203,26 @@ export default function PracticePage({
               <h3 className="text-xl font-semibold text-card-foreground leading-relaxed">
                 {currentQuestion.question}
               </h3>
+
+              {/* Like/Dislike Buttons */}
+              <div className="flex gap-4 mt-3 mb-2">
+                <button
+                  type="button"
+                  aria-label="Like question"
+                  className={`flex items-center gap-1 px-3 py-1 rounded-md border transition-colors duration-150 ${questionFeedback[currentQuestion.id] === 'like' ? 'bg-green-100 border-green-500 text-green-700' : 'bg-secondary border-border text-muted-foreground hover:bg-green-50'}`}
+                  onClick={() => setQuestionFeedback(fb => ({ ...fb, [currentQuestion.id]: fb[currentQuestion.id] === 'like' ? null : 'like' }))}
+                >
+                  <ThumbsUp size={16} /> Like
+                </button>
+                <button
+                  type="button"
+                  aria-label="Dislike question"
+                  className={`flex items-center gap-1 px-3 py-1 rounded-md border transition-colors duration-150 ${questionFeedback[currentQuestion.id] === 'dislike' ? 'bg-red-100 border-red-500 text-red-700' : 'bg-secondary border-border text-muted-foreground hover:bg-red-50'}`}
+                  onClick={() => setQuestionFeedback(fb => ({ ...fb, [currentQuestion.id]: fb[currentQuestion.id] === 'dislike' ? null : 'dislike' }))}
+                >
+                  <ThumbsDown size={16} /> Dislike
+                </button>
+              </div>
             </div>
 
             <div className="grid gap-3">

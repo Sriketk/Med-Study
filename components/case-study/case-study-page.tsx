@@ -3,7 +3,7 @@
 import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { useTheme } from "next-themes";
-import { Moon, Sun } from "lucide-react";
+import { Moon, Sun, ThumbsUp, ThumbsDown } from "lucide-react";
 import type { CaseStudyData } from "@/types";
 import { useCaseStudy } from "@/hooks/use-case-study";
 import { useGraph } from "@/hooks/use-graph";
@@ -19,6 +19,7 @@ export default function CaseStudyPage({
   onBackToHome,
 }: CaseStudyPageProps) {
   const [sendMessages, setSendMessages] = useState("");
+  const [questionFeedback, setQuestionFeedback] = useState<'like' | 'dislike' | null>(null);
 
   const { theme, setTheme } = useTheme();
   const { state, dispatch, handleSendMessage, streamBotMessage } = useCaseStudy(caseData);
@@ -126,6 +127,26 @@ export default function CaseStudyPage({
                 <p className="text-sm text-muted-foreground leading-relaxed mb-4">
                   {caseData.question}
                 </p>
+
+                {/* Like/Dislike Buttons */}
+                <div className="flex gap-4 mt-1 mb-4">
+                  <button
+                    type="button"
+                    aria-label="Like question"
+                    className={`flex items-center gap-1 px-3 py-1 rounded-md border transition-colors duration-150 ${questionFeedback === 'like' ? 'bg-green-100 border-green-500 text-green-700' : 'bg-secondary border-border text-muted-foreground hover:bg-green-50'}`}
+                    onClick={() => setQuestionFeedback(fb => fb === 'like' ? null : 'like')}
+                  >
+                    <ThumbsUp size={16} /> Like
+                  </button>
+                  <button
+                    type="button"
+                    aria-label="Dislike question"
+                    className={`flex items-center gap-1 px-3 py-1 rounded-md border transition-colors duration-150 ${questionFeedback === 'dislike' ? 'bg-red-100 border-red-500 text-red-700' : 'bg-secondary border-border text-muted-foreground hover:bg-red-50'}`}
+                    onClick={() => setQuestionFeedback(fb => fb === 'dislike' ? null : 'dislike')}
+                  >
+                    <ThumbsDown size={16} /> Dislike
+                  </button>
+                </div>
 
                 <div className="grid gap-3 mb-4">
                   {caseData.options.map((option, index) => (
