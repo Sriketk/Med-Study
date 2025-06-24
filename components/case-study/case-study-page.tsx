@@ -7,6 +7,7 @@ import { Moon, Sun } from "lucide-react";
 import type { CaseStudyData } from "@/types";
 import { useCaseStudy } from "@/hooks/use-case-study";
 import { useGraph } from "@/hooks/use-graph";
+import ReactMarkdown from "react-markdown";
 
 interface CaseStudyPageProps {
   caseData: CaseStudyData;
@@ -26,6 +27,7 @@ export default function CaseStudyPage({
 
   const { messages, selectedAnswer, isSubmitted, showFeedback } = state;
   console.log(sendMessages)
+  console.log(isSubmitted)
 
   const userSelection = caseData.options[selectedAnswer ?? 0];
   const onMessageSubmit = async (e: React.FormEvent) => {
@@ -41,6 +43,7 @@ export default function CaseStudyPage({
       context: caseData.scenario,
       options: caseData.options,
       chatMessage: userInput,
+      questionAnswered: isSubmitted,
       setSendMessages: (updater) => {
         // updater is (prev: string) => string
         streamingContentRef.current = updater(streamingContentRef.current);
@@ -237,7 +240,7 @@ export default function CaseStudyPage({
                             : "bg-card text-card-foreground border border-border"
                         }`}
                       >
-                        {message.content}
+                        <ReactMarkdown>{message.content}</ReactMarkdown>
                       </div>
                     </div>
                   ))

@@ -6,6 +6,7 @@ export async function useGraph({
   userAnswer,
   context,
   options,
+  questionAnswered,
   chatMessage,
   setSendMessages,
 }: {
@@ -14,11 +15,12 @@ export async function useGraph({
   userAnswer: string;
   context: string;
   options: string[];
+  questionAnswered: boolean;
   chatMessage: string;
   setSendMessages: (updater: (prev: string) => string) => void;
 }) {
   const client = new Client({ apiUrl: "http://127.0.0.1:2024" });
-  console.log(question, answer, userAnswer, context, options, chatMessage);
+  console.log(question, answer, userAnswer, questionAnswered, context, options, chatMessage);
 
   // Using the graph deployed with the name "agent"
   const assistantID = "fe096781-5601-53d2-b2f6-0d3403f7e9ca";
@@ -42,7 +44,7 @@ export async function useGraph({
       question: question,
       answer: answer,
       userAnswer: userAnswer,
-      questionAnswered: false,
+      questionAnswered: questionAnswered || false,
       options: options,
 
       // Medical information arrays
