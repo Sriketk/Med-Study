@@ -15,7 +15,7 @@ export async function useGraph({
   context: string;
   options: string[];
   chatMessage: string;
-  setSendMessages: (updater: (prev: any[]) => any[]) => void;
+  setSendMessages: (updater: (prev: string) => string) => void;
 }) {
   const client = new Client({ apiUrl: "http://127.0.0.1:2024" });
   console.log(question, answer, userAnswer, context, options, chatMessage);
@@ -68,6 +68,7 @@ export async function useGraph({
   
   for await (const chunk of streamResponse) {
     console.log(chunk);
-    setSendMessages(prev => [...prev, chunk]);
+    setSendMessages(prev => prev + (chunk?.data[0]?.content ?? ""));
   }
+  ;
 }

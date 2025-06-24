@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { useTheme } from "next-themes";
 import { Moon, Sun } from "lucide-react";
@@ -17,20 +17,23 @@ export default function CaseStudyPage({
   caseData,
   onBackToHome,
 }: CaseStudyPageProps) {
-  const [sendMessages, setSendMessages] = useState<any[]>([]);
+  const [sendMessages, setSendMessages] = useState("");
 
   const { theme, setTheme } = useTheme();
-  const { state, dispatch, handleSendMessage } = useCaseStudy(caseData);
+  const { state, dispatch, handleSendMessage, streamBotMessage } = useCaseStudy(caseData);
   const [userInput, setUserInput] = useState("");
+  const streamingContentRef = useRef("");
 
   const { messages, selectedAnswer, isSubmitted, showFeedback } = state;
-  console.log(messages);
+  console.log(sendMessages)
+
   const userSelection = caseData.options[selectedAnswer ?? 0];
   const onMessageSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!userInput.trim()) return;
     handleSendMessage(userInput);
     setUserInput("");
-
+    streamingContentRef.current = "";
     await useGraph({
       question: caseData.question,
       answer: "Pernicious anemia",
@@ -38,9 +41,12 @@ export default function CaseStudyPage({
       context: caseData.scenario,
       options: caseData.options,
       chatMessage: userInput,
-      setSendMessages: setSendMessages,
+      setSendMessages: (updater) => {
+        // updater is (prev: string) => string
+        streamingContentRef.current = updater(streamingContentRef.current);
+        streamBotMessage(streamingContentRef.current);
+      },
     });
-
   };
 
   return (
