@@ -19,8 +19,17 @@ export async function useGraph({
   chatMessage: string;
   setSendMessages: (updater: (prev: string) => string) => void;
 }) {
-  const client = new Client({ apiUrl: "http://127.0.0.1:2024" });
-  console.log(question, answer, userAnswer, questionAnswered, context, options, chatMessage);
+  console.log(process.env.AI_SERVER);
+  const client = new Client({ apiUrl: process.env.NEXT_PUBLIC_AI_SERVER });
+  console.log(
+    question,
+    answer,
+    userAnswer,
+    questionAnswered,
+    context,
+    options,
+    chatMessage
+  );
 
   // Using the graph deployed with the name "agent"
   const assistantID = "fe096781-5601-53d2-b2f6-0d3403f7e9ca";
@@ -67,12 +76,11 @@ export async function useGraph({
     },
     streamMode: "messages-tuple",
   });
-  
+
   for await (const chunk of streamResponse) {
     console.log(chunk);
     if (Array.isArray(chunk?.data) && chunk.data[0]?.content) {
-      setSendMessages(prev => prev + chunk.data[0].content);
+      setSendMessages((prev) => prev + chunk.data[0].content);
     }
   }
-  ;
 }
