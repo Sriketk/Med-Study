@@ -6,6 +6,7 @@ import { usePracticeSession } from "@/hooks/use-practice-session"
 import PracticePage from "@/components/practice/practice-page"
 import LoadingScreen from "@/components/shared/loading-screen"
 
+
 export default function Practice() {
   const params = useParams()
   const router = useRouter()
