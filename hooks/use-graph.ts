@@ -19,7 +19,6 @@ export async function useGraph({
   chatMessage: string;
   setSendMessages: (updater: (prev: string) => string) => void;
 }) {
-  console.log(process.env.AI_SERVER);
   const client = new Client({ apiUrl: process.env.NEXT_PUBLIC_AI_SERVER });
   console.log(
     question,
