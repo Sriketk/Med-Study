@@ -1,5 +1,4 @@
-
-import { Target, Heart, Pill, Shield, Baby } from "lucide-react"
+import { Target, Heart, Pill, Shield, Baby, FlaskConical } from "lucide-react"
 import { practiceQuestions } from "./practice-questions"
 
 export const categories = [
@@ -36,6 +35,13 @@ export const categories = [
       icon: Baby,
       color: "#f59e0b",
       description: "Child health and development",
+      questionCount: practiceQuestions["Pediatrics"].length,
+    },
+    {
+      name: "Biochemistry",
+      icon: FlaskConical,
+      color: "#ec4899",
+      description: "Biochemical processes and disorders",
       questionCount: practiceQuestions["Pediatrics"].length,
     },
   ]
