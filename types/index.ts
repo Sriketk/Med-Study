@@ -58,4 +58,65 @@ export interface CaseStudyData {
   correct: number
   explanation: string
   mockedResponses: Record<string, string>
+}
+
+// New types for the question bank system
+export interface QbankQuestion {
+  topic: string
+  subtopic: string
+  question: string
+  choices: string[]
+  answer: string
+  explanation: string
+  source: string
+  created_at: string
+  embedding?: number[]
+}
+
+export interface QbankTopic {
+  name: string
+  subtopics: string[]
+}
+
+export interface QbankTopics {
+  [key: string]: string[]
+}
+
+// API Response types
+export interface ApiResponse<T = any> {
+  success: boolean
+  data?: T
+  error?: string
+  message?: string
+}
+
+export interface QuestionsApiResponse extends ApiResponse<QbankQuestion[]> {
+  count?: number
+  topic?: string
+  subtopic?: string
+}
+
+export interface ValidationError {
+  field: string
+  message: string
+}
+
+export interface ApiError {
+  error: string
+  details: string
+  validationErrors?: ValidationError[]
+}
+
+// Request parameter types
+export interface GetQuestionsParams {
+  topic: string
+  subtopic?: string
+  limit?: number
+  offset?: number
+}
+
+// Database connection types
+export interface DatabaseConnectionConfig {
+  uri: string
+  options?: any
 } 
