@@ -5,6 +5,7 @@ import {
   TrendingUp,
   BookOpen,
   Brain,
+  Scale,
   LucideIcon,
 } from "lucide-react";
 
@@ -87,13 +88,13 @@ export const HOME_CARDS: CardConfig[] = [
     },
   },
   {
-    title: "Question Training",
-    description: "Help us understand how good the questions are?",
-    href: "/flashcards",
-    icon: BookOpen,
+    title: "Question Comparison",
+    description: "Compare pairs of questions and help identify the better ones",
+    href: "/question-comparison",
+    icon: Scale,
     badge: {
-      icon: Brain,
-      text: "Memory Boost",
+      icon: Target,
+      text: "Compare & Rate",
     },
   },
 

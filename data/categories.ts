@@ -42,6 +42,6 @@ export const categories = [
       icon: FlaskConical,
       color: "#ec4899",
       description: "Biochemical processes and disorders",
-      questionCount: practiceQuestions["Pediatrics"].length,
+      questionCount: 0, // No questions available yet
     },
   ]
