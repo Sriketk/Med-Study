@@ -3,9 +3,10 @@
 import { motion } from "framer-motion"
 import { useTheme } from "next-themes"
 import { useState, useEffect } from "react"
-import { Moon, Sun, Brain, BookOpen, Target, TrendingUp, MessageSquare, Microscope } from "lucide-react"
+import { Moon, Sun, Brain } from "lucide-react"
 import { OnboardingData } from "@/types"
 import Link from "next/link"
+import { HOME_CARDS, CardConfig } from "./home-config"
 
 interface HomePageProps {
   onboardingData: OnboardingData
@@ -13,6 +14,63 @@ interface HomePageProps {
   onStartCaseStudy: () => void
   onStartPrepare: () => void
   onViewAnalytics: () => void
+}
+
+// Reusable Card Component
+interface CardProps {
+  config: CardConfig
+  index: number
+}
+
+/**
+ * 🎨 STYLING PATTERN: Hybrid CSS + Framer Motion
+ * 
+ * ✅ BEST PRACTICE:
+ * - Colors/borders: Use CSS classes (hover:border-primary) 
+ * - Transforms/position: Use Framer Motion (whileHover={{ y: -4 }})
+ * 
+ * ❌ AVOID:
+ * - CSS custom properties in Framer Motion: borderColor: "hsl(var(--primary))"
+ * - This doesn't work because Framer Motion treats it as literal string
+ * 
+ * 💡 WHY: CSS handles color transitions + CSS custom properties perfectly
+ *         Framer Motion handles transforms + complex animations perfectly
+ */
+
+function HomeCard({ config, index }: CardProps) {
+  const { title, description, href, icon: Icon, badge } = config
+  const BadgeIcon = badge.icon
+
+  return (
+    <Link href={href} passHref>
+      <motion.div
+        className="bg-card p-6 rounded-lg border border-border hover:border-2 hover:border-primary shadow-lg hover:shadow-xl text-center cursor-pointer h-full flex flex-col will-change-transform transition-colors duration-200"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        whileHover={{
+          y: -4,
+        }}
+        whileTap={{ scale: 0.98 }}
+        transition={{ 
+          duration: 0.4, 
+          delay: 0.7 + (index * 0.1),
+          ease: "easeOut"
+        }}
+      >
+        <Icon size={32} className="text-primary mx-auto mb-4" />
+        <h3 className="text-xl font-bold text-card-foreground mb-3 min-h-[3rem] flex items-center justify-center">
+          {title}
+        </h3>
+        <p className="text-sm text-muted-foreground mb-4 flex-grow min-h-[4rem] flex items-center">
+          {description}
+        </p>
+        <div className="flex items-center justify-center gap-2 mt-auto">
+          <BadgeIcon size={16} className="text-muted-foreground" />
+          <span className="text-sm text-muted-foreground">{badge.text}</span>
+        </div>
+      </motion.div>
+    </Link>
+  )
 }
 
 export default function HomePage({
@@ -57,12 +115,12 @@ export default function HomePage({
 
       <motion.button
         onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-        className="fixed top-6 right-6 bg-card text-foreground border border-border rounded-lg p-3 cursor-pointer shadow-lg z-50 hover:bg-card/80 transition-colors duration-200"
+        className="fixed top-6 right-6 bg-card hover:bg-card/80 text-foreground border border-border rounded-lg p-3 cursor-pointer shadow-lg z-50 transition-colors duration-200"
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.3, delay: 0.1 }}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
+        transition={{ duration: 0.3, delay: 0.1 }}
       >
         {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
       </motion.button>
@@ -111,113 +169,12 @@ export default function HomePage({
             </motion.p>
           </motion.div>
 
-          {/* Mode Selection */}
-          <motion.div
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12 max-w-7xl mx-auto"
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.6 }}
-          >
-            {/* Assessment Quiz Card */}
-            <Link href="/quiz" passHref>
-              <motion.div
-                className="bg-card p-6 rounded-lg border border-border hover:border-2 hover:border-primary shadow-lg text-center cursor-pointer h-full flex flex-col transition-all duration-200"
-                whileHover={{
-                  y: -4,
-                  boxShadow: "var(--shadow-xl)",
-                }}
-                whileTap={{ scale: 0.98 }}
-                transition={{ duration: 0.2 }}
-              >
-                <Target size={32} className="text-primary mx-auto mb-4" />
-                <h3 className="text-xl font-bold text-card-foreground mb-3 min-h-[3rem] flex items-center justify-center">
-                  Assessment Quiz
-                </h3>
-                <p className="text-sm text-muted-foreground mb-4 flex-grow min-h-[4rem] flex items-center">
-                  Take a comprehensive quiz to gauge your current knowledge level
-                </p>
-                <div className="flex items-center justify-center gap-2 mt-auto">
-                  <BookOpen size={16} className="text-muted-foreground" />
-                  <span className="text-sm text-muted-foreground">5 Questions</span>
-                </div>
-              </motion.div>
-            </Link>
-
-            {/* Case Study Card */}
-            <Link href="/case-study" passHref>
-              <motion.div
-                className="bg-card p-6 rounded-lg border border-border hover:border-2 hover:border-primary shadow-lg text-center cursor-pointer h-full flex flex-col transition-all duration-200"
-                whileHover={{
-                  y: -4,
-                  boxShadow: "var(--shadow-xl)",
-                }}
-                whileTap={{ scale: 0.98 }}
-                transition={{ duration: 0.2 }}
-              >
-                <MessageSquare size={32} className="text-primary mx-auto mb-4" />
-                <h3 className="text-xl font-bold text-card-foreground mb-3 min-h-[3rem] flex items-center justify-center">
-                  Case Study
-                </h3>
-                <p className="text-sm text-muted-foreground mb-4 flex-grow min-h-[4rem] flex items-center">
-                  Interactive clinical case with chat-based information gathering
-                </p>
-                <div className="flex items-center justify-center gap-2 mt-auto">
-                  <Brain size={16} className="text-muted-foreground" />
-                  <span className="text-sm text-muted-foreground">Interactive</span>
-                </div>
-              </motion.div>
-            </Link>
-
-            {/* Study & Practice Card */}
-            <Link href="/categories" passHref>
-              <motion.div
-                className="bg-card p-6 rounded-lg border border-border hover:border-2 hover:border-primary shadow-lg text-center cursor-pointer h-full flex flex-col transition-all duration-200"
-                whileHover={{
-                  y: -4,
-                  boxShadow: "var(--shadow-xl)",
-                }}
-                whileTap={{ scale: 0.98 }}
-                transition={{ duration: 0.2 }}
-              >
-                <Microscope size={32} className="text-primary mx-auto mb-4" />
-                <h3 className="text-xl font-bold text-card-foreground mb-3 min-h-[3rem] flex items-center justify-center">
-                  Study & Practice
-                </h3>
-                <p className="text-sm text-muted-foreground mb-4 flex-grow min-h-[4rem] flex items-center">
-                  Study specific topics with detailed explanations and immediate feedback
-                </p>
-                <div className="flex items-center justify-center gap-2 mt-auto">
-                  <BookOpen size={16} className="text-muted-foreground" />
-                  <span className="text-sm text-muted-foreground">5 Categories</span>
-                </div>
-              </motion.div>
-            </Link>
-
-            {/* Analytics Card */}
-            <Link href="/analytics" passHref>
-              <motion.div
-                className="bg-card p-6 rounded-lg border border-border hover:border-2 hover:border-primary shadow-lg text-center cursor-pointer h-full flex flex-col transition-all duration-200"
-                whileHover={{
-                  y: -4,
-                  boxShadow: "var(--shadow-xl)",
-                }}
-                whileTap={{ scale: 0.98 }}
-                transition={{ duration: 0.2 }}
-              >
-                <TrendingUp size={32} className="text-primary mx-auto mb-4" />
-                <h3 className="text-xl font-bold text-card-foreground mb-3 min-h-[3rem] flex items-center justify-center">
-                   Analytics
-                </h3>
-                <p className="text-sm text-muted-foreground mb-4 flex-grow min-h-[4rem] flex items-center">
-                  Track your progress and identify areas for improvement and growth
-                </p>
-                <div className="flex items-center justify-center gap-2 mt-auto">
-                  <Target size={16} className="text-muted-foreground" />
-                  <span className="text-sm text-muted-foreground">Progress Tracking</span>
-                </div>
-              </motion.div>
-            </Link>
-          </motion.div>
+          {/* Dynamic Cards Section */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12 max-w-7xl mx-auto">
+            {HOME_CARDS.map((card, index) => (
+              <HomeCard key={card.href} config={card} index={index} />
+            ))}
+          </div>
 
           {/* Subtitle */}
           <motion.p
