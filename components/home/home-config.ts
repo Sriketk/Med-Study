@@ -43,17 +43,17 @@ export interface CardConfig {
  * }
  */
 export const HOME_CARDS: CardConfig[] = [
-  {
-    title: "Assessment Quiz",
-    description:
-      "Take a comprehensive quiz to gauge your current knowledge level",
-    href: "/quiz",
-    icon: Target,
-    badge: {
-      icon: BookOpen,
-      text: "5 Questions",
-    },
-  },
+  // {
+  //   title: "Assessment Quiz",
+  //   description:
+  //     "Take a comprehensive quiz to gauge your current knowledge level",
+  //   href: "/quiz",
+  //   icon: Target,
+  //   badge: {
+  //     icon: BookOpen,
+  //     text: "5 Questions",
+  //   },
+  // },
   {
     title: "Case Study",
     description:
