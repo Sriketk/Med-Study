@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation"
 import { useQuiz } from "@/hooks/use-quiz"
-import { quizResultsStorage } from "@/lib/quiz-results-storage"
+import { quizResultsStorage } from "@/lib/mongo/quiz-results-storage"
 import QuizPage from "@/components/quiz/quiz-page"
 
 export default function Quiz() {
