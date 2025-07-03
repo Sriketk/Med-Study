@@ -1,58 +1,65 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
-import { CheckCircle, XCircle, Clock, ThumbsUp, Scale, Award } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { motion } from "framer-motion";
+import {
+  CheckCircle,
+  XCircle,
+  Clock,
+  ThumbsUp,
+  Scale,
+  Award,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface Question {
-  question: string
-  choices: string[]
-  answer: string
-  explanation: string
-  source?: string
+  question: string;
+  choices: string[];
+  answer: string;
+  explanation: string;
+  source?: string;
 }
 
 interface QuestionResult {
-  selectedAnswer: string
-  isCorrect: boolean
-  timeSpent: number
+  selectedAnswer: string;
+  isCorrect: boolean;
+  timeSpent: number;
 }
 
 interface ComparisonCardProps {
-  question1: Question
-  question2: Question
-  result1: QuestionResult
-  result2: QuestionResult
-  onSelectBetter: (betterQuestion: 1 | 2) => void
-  onSubmitComparison: () => void
-  selectedBetter: 1 | 2 | null
-  categoryColor: string
+  question1: Question;
+  question2: Question;
+  result1: QuestionResult;
+  result2: QuestionResult;
+  onSelectBetter: (betterQuestion: 1 | 2) => void;
+  onSubmitComparison: () => void;
+  selectedBetter: 1 | 2 | null;
+  categoryColor: string;
 }
 
-function QuestionSummary({ 
-  question, 
-  result, 
-  questionNumber, 
+function QuestionSummary({
+  question,
+  result,
+  questionNumber,
   categoryColor,
   isSelected,
-  onSelect 
+  onSelect,
 }: {
-  question: Question
-  result: QuestionResult
-  questionNumber: 1 | 2
-  categoryColor: string
-  isSelected: boolean
-  onSelect: () => void
+  question: Question;
+  result: QuestionResult;
+  questionNumber: 1 | 2;
+  categoryColor: string;
+  isSelected: boolean;
+  onSelect: () => void;
 }) {
   return (
     <motion.div
       className={`bg-card border rounded-lg p-6 transition-all duration-200 cursor-pointer ${
-        isSelected 
-          ? "border-2 shadow-lg" 
+        isSelected
+          ? "border-2 shadow-lg"
           : "border-border hover:border-primary/50 hover:shadow-md"
       }`}
       style={{
-        borderColor: isSelected ? categoryColor : undefined
+        borderColor: isSelected ? categoryColor : undefined,
       }}
       whileHover={!isSelected ? { y: -2 } : {}}
       whileTap={{ scale: 0.98 }}
@@ -61,7 +68,7 @@ function QuestionSummary({
       {/* Question Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <div 
+          <div
             className="inline-flex items-center justify-center w-8 h-8 rounded-full text-white font-bold"
             style={{ backgroundColor: categoryColor }}
           >
@@ -71,17 +78,22 @@ function QuestionSummary({
             Question {questionNumber}
           </h3>
         </div>
-        
+
         <div className="flex items-center gap-4">
           {/* Performance Stats */}
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Clock size={14} />
-            <span>{Math.floor(result.timeSpent / 60)}:{(result.timeSpent % 60).toString().padStart(2, '0')}</span>
+            <span>
+              {Math.floor(result.timeSpent / 60)}:
+              {(result.timeSpent % 60).toString().padStart(2, "0")}
+            </span>
           </div>
-          
-          <div className={`flex items-center gap-1 text-sm ${
-            result.isCorrect ? "text-green-600" : "text-red-600"
-          }`}>
+
+          <div
+            className={`flex items-center gap-1 text-sm ${
+              result.isCorrect ? "text-green-600" : "text-red-600"
+            }`}
+          >
             {result.isCorrect ? (
               <CheckCircle size={14} />
             ) : (
@@ -102,10 +114,10 @@ function QuestionSummary({
       {/* Answer Choices (Compact) */}
       <div className="space-y-2 mb-4">
         {question.choices.map((choice, index) => {
-          const letter = String.fromCharCode(65 + index)
-          const isUserAnswer = choice === result.selectedAnswer
-          const isCorrectAnswer = choice === question.answer
-          
+          const letter = String.fromCharCode(65 + index);
+          const isUserAnswer = choice === result.selectedAnswer;
+          const isCorrectAnswer = choice === question.answer;
+
           return (
             <div
               key={index}
@@ -117,18 +129,20 @@ function QuestionSummary({
                   : "bg-muted/30"
               }`}
             >
-              <span className={`flex-shrink-0 w-5 h-5 rounded-full border flex items-center justify-center text-xs font-medium ${
-                isCorrectAnswer
-                  ? "border-green-500 bg-green-500 text-white"
-                  : isUserAnswer && !isCorrectAnswer
-                  ? "border-red-500 bg-red-500 text-white"
-                  : "border-gray-300 text-gray-500"
-              }`}>
+              <span
+                className={`flex-shrink-0 w-5 h-5 rounded-full border flex items-center justify-center text-xs font-medium ${
+                  isCorrectAnswer
+                    ? "border-green-500 bg-green-500 text-white"
+                    : isUserAnswer && !isCorrectAnswer
+                    ? "border-red-500 bg-red-500 text-white"
+                    : "border-gray-300 text-gray-500"
+                }`}
+              >
                 {letter}
               </span>
               <span className="text-card-foreground">{choice}</span>
             </div>
-          )
+          );
         })}
       </div>
 
@@ -152,13 +166,16 @@ function QuestionSummary({
           transition={{ duration: 0.3 }}
         >
           <Award size={16} style={{ color: categoryColor }} />
-          <span className="text-sm font-medium" style={{ color: categoryColor }}>
+          <span
+            className="text-sm font-medium"
+            style={{ color: categoryColor }}
+          >
             Selected as Better Question
           </span>
         </motion.div>
       )}
     </motion.div>
-  )
+  );
 }
 
 export function ComparisonCard({
@@ -169,7 +186,7 @@ export function ComparisonCard({
   onSelectBetter,
   onSubmitComparison,
   selectedBetter,
-  categoryColor
+  categoryColor,
 }: ComparisonCardProps) {
   return (
     <motion.div
@@ -193,23 +210,23 @@ export function ComparisonCard({
 
       {/* Questions Comparison */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                 <QuestionSummary
-           question={question1}
-           result={result1}
-           questionNumber={1}
-           categoryColor={categoryColor}
-           isSelected={selectedBetter === 1}
-           onSelect={() => onSelectBetter(1)}
-         />
-         
-         <QuestionSummary
-           question={question2}
-           result={result2}
-           questionNumber={2}
-           categoryColor={categoryColor}
-           isSelected={selectedBetter === 2}
-           onSelect={() => onSelectBetter(2)}
-         />
+        <QuestionSummary
+          question={question1}
+          result={result1}
+          questionNumber={1}
+          categoryColor={categoryColor}
+          isSelected={selectedBetter === 1}
+          onSelect={() => onSelectBetter(1)}
+        />
+
+        <QuestionSummary
+          question={question2}
+          result={result2}
+          questionNumber={2}
+          categoryColor={categoryColor}
+          isSelected={selectedBetter === 2}
+          onSelect={() => onSelectBetter(2)}
+        />
       </div>
 
       {/* Comparison Criteria */}
@@ -225,7 +242,9 @@ export function ComparisonCard({
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
             <div>
-              <h4 className="font-medium text-card-foreground mb-2">Question Quality</h4>
+              <h4 className="font-medium text-card-foreground mb-2">
+                Question Quality
+              </h4>
               <ul className="space-y-1 text-muted-foreground">
                 <li>• Clear and well-written</li>
                 <li>• Clinically relevant</li>
@@ -233,7 +252,9 @@ export function ComparisonCard({
               </ul>
             </div>
             <div>
-              <h4 className="font-medium text-card-foreground mb-2">Learning Value</h4>
+              <h4 className="font-medium text-card-foreground mb-2">
+                Learning Value
+              </h4>
               <ul className="space-y-1 text-muted-foreground">
                 <li>• Comprehensive explanation</li>
                 <li>• Teaches important concepts</li>
@@ -244,31 +265,32 @@ export function ComparisonCard({
         </motion.div>
       )}
 
-             {/* Submit Section */}
-       <div className="text-center">
-         {!selectedBetter ? (
-           <p className="text-sm text-muted-foreground">
-             Click on a question above to select it as the better one
-           </p>
-         ) : (
-           <motion.div
-             initial={{ opacity: 0, y: 10 }}
-             animate={{ opacity: 1, y: 0 }}
-             transition={{ duration: 0.3 }}
-           >
-             <p className="text-sm text-muted-foreground mb-4">
-               Question {selectedBetter} selected. You can change your selection or submit.
-             </p>
-             <Button
-               onClick={onSubmitComparison}
-               style={{ backgroundColor: categoryColor }}
-               className="text-white hover:opacity-90 px-8 py-2"
-             >
-               Submit Comparison
-             </Button>
-           </motion.div>
-         )}
-       </div>
+      {/* Submit Section */}
+      <div className="text-center">
+        {!selectedBetter ? (
+          <p className="text-sm text-muted-foreground">
+            Click on a question above to select it as the better one
+          </p>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <p className="text-sm text-muted-foreground mb-4">
+              Question {selectedBetter} selected. You can change your selection
+              or submit.
+            </p>
+            <Button
+              onClick={onSubmitComparison}
+              style={{ backgroundColor: categoryColor }}
+              className="text-white hover:opacity-90 px-8 py-2"
+            >
+              Submit Comparison
+            </Button>
+          </motion.div>
+        )}
+      </div>
     </motion.div>
-  )
-} 
+  );
+}
