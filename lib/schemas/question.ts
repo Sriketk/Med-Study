@@ -3,7 +3,6 @@ import { QbankQuestion } from "@/types";
 
 // MongoDB document interface extending the base interface
 export interface QbankQuestionDocument extends QbankQuestion, Document {
-  _id: string;
   createdAt: Date;
   updatedAt: Date;
 }
