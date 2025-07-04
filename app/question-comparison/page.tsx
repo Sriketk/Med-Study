@@ -2,4 +2,4 @@ import { QuestionComparisonPage } from "@/components/question-comparison/questio
 
 export default function QuestionComparison() {
   return <QuestionComparisonPage />;
-} 
+}

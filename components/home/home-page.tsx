@@ -1,45 +1,45 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
-import { useTheme } from "next-themes"
-import { useState, useEffect } from "react"
-import { Moon, Sun, Brain } from "lucide-react"
-import { OnboardingData } from "@/types"
-import Link from "next/link"
-import { HOME_CARDS, CardConfig } from "./home-config"
+import { motion } from "framer-motion";
+import { useTheme } from "next-themes";
+import { useState, useEffect } from "react";
+import { Moon, Sun, Brain } from "lucide-react";
+import { OnboardingData } from "@/types";
+import Link from "next/link";
+import { HOME_CARDS, CardConfig } from "./home-config";
 
 interface HomePageProps {
-  onboardingData: OnboardingData
-  onStartQuiz: () => void
-  onStartCaseStudy: () => void
-  onStartPrepare: () => void
-  onViewAnalytics: () => void
+  onboardingData: OnboardingData;
+  onStartQuiz: () => void;
+  onStartCaseStudy: () => void;
+  onStartPrepare: () => void;
+  onViewAnalytics: () => void;
 }
 
 // Reusable Card Component
 interface CardProps {
-  config: CardConfig
-  index: number
+  config: CardConfig;
+  index: number;
 }
 
 /**
  * 🎨 STYLING PATTERN: Hybrid CSS + Framer Motion
- * 
+ *
  * ✅ BEST PRACTICE:
- * - Colors/borders: Use CSS classes (hover:border-primary) 
+ * - Colors/borders: Use CSS classes (hover:border-primary)
  * - Transforms/position: Use Framer Motion (whileHover={{ y: -4 }})
- * 
+ *
  * ❌ AVOID:
  * - CSS custom properties in Framer Motion: borderColor: "hsl(var(--primary))"
  * - This doesn't work because Framer Motion treats it as literal string
- * 
+ *
  * 💡 WHY: CSS handles color transitions + CSS custom properties perfectly
  *         Framer Motion handles transforms + complex animations perfectly
  */
 
 function HomeCard({ config, index }: CardProps) {
-  const { title, description, href, icon: Icon, badge } = config
-  const BadgeIcon = badge.icon
+  const { title, description, href, icon: Icon, badge } = config;
+  const BadgeIcon = badge.icon;
 
   return (
     <Link href={href} passHref>
@@ -51,10 +51,10 @@ function HomeCard({ config, index }: CardProps) {
           y: -4,
         }}
         whileTap={{ scale: 0.98 }}
-        transition={{ 
-          duration: 0.4, 
-          delay: 0.7 + (index * 0.1),
-          ease: "easeOut"
+        transition={{
+          duration: 0.4,
+          delay: 0.7 + index * 0.1,
+          ease: "easeOut",
         }}
       >
         <Icon size={32} className="text-primary mx-auto mb-4" />
@@ -70,7 +70,7 @@ function HomeCard({ config, index }: CardProps) {
         </div>
       </motion.div>
     </Link>
-  )
+  );
 }
 
 export default function HomePage({
@@ -80,16 +80,16 @@ export default function HomePage({
   onStartPrepare,
   onViewAnalytics,
 }: HomePageProps) {
-  const { theme, setTheme } = useTheme()
-  const [mounted, setMounted] = useState(false)
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
 
   // Ensure component is mounted to avoid hydration mismatch
   useEffect(() => {
-    setMounted(true)
-  }, [])
+    setMounted(true);
+  }, []);
 
   if (!mounted) {
-    return null
+    return null;
   }
 
   return (
@@ -188,5 +188,5 @@ export default function HomePage({
         </div>
       </div>
     </motion.div>
-  )
+  );
 }

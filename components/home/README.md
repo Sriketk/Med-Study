@@ -28,20 +28,21 @@ The home page is now **super easy to edit**! All the card configurations are in 
 
 ### Configuration Properties
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `title` | string | Card title (displayed prominently) |
-| `description` | string | Card description text |
-| `href` | string | Route/URL to navigate to |
-| `icon` | LucideIcon | Main icon for the card |
-| `badge.icon` | LucideIcon | Small icon in the badge |
-| `badge.text` | string | Text shown in the badge |
+| Property      | Type       | Description                        |
+| ------------- | ---------- | ---------------------------------- |
+| `title`       | string     | Card title (displayed prominently) |
+| `description` | string     | Card description text              |
+| `href`        | string     | Route/URL to navigate to           |
+| `icon`        | LucideIcon | Main icon for the card             |
+| `badge.icon`  | LucideIcon | Small icon in the badge            |
+| `badge.text`  | string     | Text shown in the badge            |
 
 ### Available Icons
 
 Browse icons at: [https://lucide.dev/icons/](https://lucide.dev/icons/)
 
 Popular choices:
+
 - `BookOpen`, `Brain`, `Target`, `TrendingUp`
 - `MessageSquare`, `Microscope`, `Calendar`
 - `Users`, `Settings`, `Award`, `Lightbulb`
@@ -52,7 +53,7 @@ Popular choices:
 ✅ **Responsive layout** - Automatically adapts to screen size  
 ✅ **Consistent styling** - All cards follow the same design system  
 ✅ **TypeScript support** - Full type checking and IntelliSense  
-✅ **Accessibility** - Proper ARIA labels and keyboard navigation  
+✅ **Accessibility** - Proper ARIA labels and keyboard navigation
 
 ### File Structure
 
@@ -72,4 +73,4 @@ components/home/
 
 ---
 
-**That's it!** The component handles all the styling, animations, and layout automatically. Just focus on your content! 🎉 
+**That's it!** The component handles all the styling, animations, and layout automatically. Just focus on your content! 🎉

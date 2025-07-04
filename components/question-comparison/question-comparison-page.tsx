@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
-import { ArrowLeft, Scale } from "lucide-react"
-import Link from "next/link"
-import { categories } from "@/data/categories"
+import { motion } from "framer-motion";
+import { ArrowLeft, Scale } from "lucide-react";
+import Link from "next/link";
+import { categories } from "@/data/categories";
 
 export function QuestionComparisonPage() {
   return (
@@ -16,14 +16,14 @@ export function QuestionComparisonPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <Link 
-            href="/" 
+          <Link
+            href="/"
             className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-6"
           >
             <ArrowLeft size={20} />
             Back to Home
           </Link>
-          
+
           <div className="flex items-center gap-4 mb-4">
             <div className="inline-flex items-center justify-center w-12 h-12 bg-primary rounded-full">
               <Scale size={24} className="text-primary-foreground" />
@@ -47,8 +47,8 @@ export function QuestionComparisonPage() {
           transition={{ duration: 0.6, delay: 0.2 }}
         >
           {categories.map((category, index) => {
-            const IconComponent = category.icon
-            
+            const IconComponent = category.icon;
+
             return (
               <Link
                 key={category.name}
@@ -67,27 +67,27 @@ export function QuestionComparisonPage() {
                     className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-4"
                     style={{ backgroundColor: `${category.color}20` }}
                   >
-                    <IconComponent 
-                      size={32} 
+                    <IconComponent
+                      size={32}
                       style={{ color: category.color }}
                     />
                   </div>
-                  
+
                   <h3 className="text-xl font-semibold text-card-foreground mb-2">
                     {category.name}
                   </h3>
-                  
+
                   <p className="text-sm text-muted-foreground mb-4">
                     {category.description}
                   </p>
-                  
+
                   <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
                     <Scale size={16} />
                     <span>Compare questions</span>
                   </div>
                 </motion.div>
               </Link>
-            )
+            );
           })}
         </motion.div>
 
@@ -130,5 +130,5 @@ export function QuestionComparisonPage() {
         </motion.div>
       </div>
     </div>
-  )
-} 
+  );
+}

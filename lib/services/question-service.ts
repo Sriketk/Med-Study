@@ -95,18 +95,18 @@ export class QuestionService {
         QbankQuestionModel.countDocuments(filter).exec(),
       ]);
 
-             // Transform MongoDB documents to our interface
-       const transformedQuestions: QbankQuestion[] = questions.map((doc) => ({
-         topic: doc.topic,
-         subtopic: doc.subtopic,
-         question: doc.question,
-         choices: doc.choices,
-         answer: doc.answer,
-         explanation: doc.explanation,
-         source: doc.source,
-         created_at: doc.created_at,
-         embedding: doc.embedding,
-       }));
+      // Transform MongoDB documents to our interface
+      const transformedQuestions: QbankQuestion[] = questions.map((doc) => ({
+        topic: doc.topic,
+        subtopic: doc.subtopic,
+        question: doc.question,
+        choices: doc.choices,
+        answer: doc.answer,
+        explanation: doc.explanation,
+        source: doc.source,
+        created_at: doc.created_at,
+        embedding: doc.embedding,
+      }));
 
       return {
         questions: transformedQuestions,
@@ -131,9 +131,9 @@ export class QuestionService {
   /**
    * Create a new question
    */
-     static async createQuestion(
-     questionData: Omit<QbankQuestion, "created_at"> & { created_at?: string }
-   ): Promise<QbankQuestion> {
+  static async createQuestion(
+    questionData: Omit<QbankQuestion, "created_at"> & { created_at?: string }
+  ): Promise<QbankQuestion> {
     // Validate required fields
     const validationErrors = this.validateParams(
       questionData.topic,
@@ -157,17 +157,17 @@ export class QuestionService {
 
       const savedQuestion = await newQuestion.save();
 
-             return {
-         topic: savedQuestion.topic,
-         subtopic: savedQuestion.subtopic,
-         question: savedQuestion.question,
-         choices: savedQuestion.choices,
-         answer: savedQuestion.answer,
-         explanation: savedQuestion.explanation,
-         source: savedQuestion.source,
-         created_at: savedQuestion.created_at,
-         embedding: savedQuestion.embedding,
-       };
+      return {
+        topic: savedQuestion.topic,
+        subtopic: savedQuestion.subtopic,
+        question: savedQuestion.question,
+        choices: savedQuestion.choices,
+        answer: savedQuestion.answer,
+        explanation: savedQuestion.explanation,
+        source: savedQuestion.source,
+        created_at: savedQuestion.created_at,
+        embedding: savedQuestion.embedding,
+      };
     } catch (error) {
       console.error("Error creating question:", error);
 

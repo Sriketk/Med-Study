@@ -1,64 +1,73 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { motion } from "framer-motion"
-import { CheckCircle, XCircle, Clock } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { CheckCircle, XCircle, Clock } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface Question {
-  question: string
-  choices: string[]
-  answer: string
-  explanation: string
-  source?: string
+  question: string;
+  choices: string[];
+  answer: string;
+  explanation: string;
+  source?: string;
 }
 
 interface QuestionCardProps {
-  question: Question
-  questionNumber: 1 | 2
-  onAnswer: (selectedAnswer: string, isCorrect: boolean, timeSpent: number) => void
-  categoryColor: string
+  question: Question;
+  questionNumber: 1 | 2;
+  onAnswer: (
+    selectedAnswer: string,
+    isCorrect: boolean,
+    timeSpent: number
+  ) => void;
+  categoryColor: string;
 }
 
-export function QuestionCard({ question, questionNumber, onAnswer, categoryColor }: QuestionCardProps) {
-  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null)
-  const [showResult, setShowResult] = useState(false)
-  const [startTime] = useState(Date.now())
-  const [timeSpent, setTimeSpent] = useState(0)
+export function QuestionCard({
+  question,
+  questionNumber,
+  onAnswer,
+  categoryColor,
+}: QuestionCardProps) {
+  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
+  const [showResult, setShowResult] = useState(false);
+  const [startTime] = useState(Date.now());
+  const [timeSpent, setTimeSpent] = useState(0);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setTimeSpent(Math.floor((Date.now() - startTime) / 1000))
-    }, 1000)
+      setTimeSpent(Math.floor((Date.now() - startTime) / 1000));
+    }, 1000);
 
-    return () => clearInterval(interval)
-  }, [startTime])
+    return () => clearInterval(interval);
+  }, [startTime]);
 
   const handleAnswerSelect = (answer: string) => {
-    if (showResult) return
-    setSelectedAnswer(answer)
-  }
+    if (showResult) return;
+    setSelectedAnswer(answer);
+  };
 
   const handleSubmit = () => {
-    if (!selectedAnswer) return
-    
-    const finalTimeSpent = Math.floor((Date.now() - startTime) / 1000)
-    const isCorrect = selectedAnswer === question.answer
-    setShowResult(true)
-    
+    if (!selectedAnswer) return;
+
+    const finalTimeSpent = Math.floor((Date.now() - startTime) / 1000);
+    const isCorrect = selectedAnswer === question.answer;
+    setShowResult(true);
+
     // Auto-advance after showing result
     setTimeout(() => {
-      onAnswer(selectedAnswer, isCorrect, finalTimeSpent)
-    }, 3000)
-  }
+      onAnswer(selectedAnswer, isCorrect, finalTimeSpent);
+    }, 3000);
+  };
 
   const handleContinue = () => {
-    if (!selectedAnswer) return
-    
-    const finalTimeSpent = Math.floor((Date.now() - startTime) / 1000)
-    const isCorrect = selectedAnswer === question.answer
-    onAnswer(selectedAnswer, isCorrect, finalTimeSpent)
-  }
+    if (!selectedAnswer) return;
+
+    const finalTimeSpent = Math.floor((Date.now() - startTime) / 1000);
+    const isCorrect = selectedAnswer === question.answer;
+    onAnswer(selectedAnswer, isCorrect, finalTimeSpent);
+  };
 
   return (
     <motion.div
@@ -70,7 +79,7 @@ export function QuestionCard({ question, questionNumber, onAnswer, categoryColor
       {/* Question Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <div 
+          <div
             className="inline-flex items-center justify-center w-8 h-8 rounded-full text-white font-bold"
             style={{ backgroundColor: categoryColor }}
           >
@@ -80,10 +89,13 @@ export function QuestionCard({ question, questionNumber, onAnswer, categoryColor
             Question {questionNumber}
           </h2>
         </div>
-        
+
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <Clock size={16} />
-          <span>{Math.floor(timeSpent / 60)}:{(timeSpent % 60).toString().padStart(2, '0')}</span>
+          <span>
+            {Math.floor(timeSpent / 60)}:
+            {(timeSpent % 60).toString().padStart(2, "0")}
+          </span>
         </div>
       </div>
 
@@ -97,11 +109,11 @@ export function QuestionCard({ question, questionNumber, onAnswer, categoryColor
       {/* Answer Choices */}
       <div className="space-y-3 mb-6">
         {question.choices.map((choice, index) => {
-          const letter = String.fromCharCode(65 + index) // A, B, C, D
-          const isSelected = selectedAnswer === choice
-          const isCorrect = choice === question.answer
-          const isIncorrect = showResult && isSelected && !isCorrect
-          
+          const letter = String.fromCharCode(65 + index); // A, B, C, D
+          const isSelected = selectedAnswer === choice;
+          const isCorrect = choice === question.answer;
+          const isIncorrect = showResult && isSelected && !isCorrect;
+
           return (
             <motion.button
               key={index}
@@ -122,17 +134,19 @@ export function QuestionCard({ question, questionNumber, onAnswer, categoryColor
               whileTap={!showResult ? { scale: 0.99 } : {}}
             >
               <div className="flex items-start gap-3">
-                <div className={`flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center text-sm font-medium ${
-                  showResult
-                    ? isCorrect
-                      ? "border-green-500 bg-green-500 text-white"
-                      : isIncorrect
-                      ? "border-red-500 bg-red-500 text-white"
+                <div
+                  className={`flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center text-sm font-medium ${
+                    showResult
+                      ? isCorrect
+                        ? "border-green-500 bg-green-500 text-white"
+                        : isIncorrect
+                        ? "border-red-500 bg-red-500 text-white"
+                        : "border-gray-300 text-gray-500"
+                      : isSelected
+                      ? "border-primary bg-primary text-primary-foreground"
                       : "border-gray-300 text-gray-500"
-                    : isSelected
-                    ? "border-primary bg-primary text-primary-foreground"
-                    : "border-gray-300 text-gray-500"
-                }`}>
+                  }`}
+                >
                   {showResult && isCorrect ? (
                     <CheckCircle size={16} />
                   ) : showResult && isIncorrect ? (
@@ -144,7 +158,7 @@ export function QuestionCard({ question, questionNumber, onAnswer, categoryColor
                 <span className="text-card-foreground">{choice}</span>
               </div>
             </motion.button>
-          )
+          );
         })}
       </div>
 
@@ -152,9 +166,11 @@ export function QuestionCard({ question, questionNumber, onAnswer, categoryColor
       {showResult && (
         <motion.div
           className="mb-6 p-4 rounded-lg border"
-          style={{ 
-            borderColor: selectedAnswer === question.answer ? "#10b981" : "#ef4444",
-            backgroundColor: selectedAnswer === question.answer ? "#10b98110" : "#ef444410"
+          style={{
+            borderColor:
+              selectedAnswer === question.answer ? "#10b981" : "#ef4444",
+            backgroundColor:
+              selectedAnswer === question.answer ? "#10b98110" : "#ef444410",
           }}
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -170,9 +186,11 @@ export function QuestionCard({ question, questionNumber, onAnswer, categoryColor
               {selectedAnswer === question.answer ? "Correct!" : "Incorrect"}
             </span>
           </div>
-          
+
           <div className="text-sm text-card-foreground">
-            <p className="mb-2"><strong>Explanation:</strong></p>
+            <p className="mb-2">
+              <strong>Explanation:</strong>
+            </p>
             <p className="leading-relaxed">{question.explanation}</p>
             {question.source && (
               <p className="mt-2 text-muted-foreground">
@@ -186,7 +204,7 @@ export function QuestionCard({ question, questionNumber, onAnswer, categoryColor
       {/* Action Button */}
       <div className="flex justify-center">
         {showResult ? (
-          <Button 
+          <Button
             onClick={handleContinue}
             style={{ backgroundColor: categoryColor }}
             className="text-white hover:opacity-90"
@@ -194,7 +212,7 @@ export function QuestionCard({ question, questionNumber, onAnswer, categoryColor
             Continue to Question {questionNumber === 1 ? "2" : "Comparison"}
           </Button>
         ) : (
-          <Button 
+          <Button
             onClick={handleSubmit}
             disabled={!selectedAnswer}
             style={{ backgroundColor: categoryColor }}
@@ -205,5 +223,5 @@ export function QuestionCard({ question, questionNumber, onAnswer, categoryColor
         )}
       </div>
     </motion.div>
-  )
-} 
+  );
+}

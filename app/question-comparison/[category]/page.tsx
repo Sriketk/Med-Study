@@ -6,4 +6,4 @@ interface Params {
 
 export default function CategoryComparison({ params }: { params: Params }) {
   return <ComparisonExperiencePage category={params.category} />;
-} 
+}
