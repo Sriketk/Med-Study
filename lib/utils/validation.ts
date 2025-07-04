@@ -30,6 +30,8 @@ export function parseLimit(
 ): number {
   if (!limitParam) return defaultLimit;
 
+  // Converts the limitParam string to a number using base 10
+  // For example: "50" becomes the number 50
   const limit = parseInt(limitParam, 10);
   if (isNaN(limit) || limit < 1 || limit > maxLimit) {
     throw new Error(`Limit must be a number between 1 and ${maxLimit}`);

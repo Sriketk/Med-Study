@@ -40,6 +40,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     }
 
     // Parse and validate optional parameters using utilities
+    // making sure the limit is a number between 1 and 100
     const limit = parseLimit(limitParam);
     const offset = parseOffset(offsetParam);
 
@@ -79,67 +80,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   }
 }
 
-/**
- * POST /api/questions
- *
- * Creates a new question in the database
- *
- * Request Body: QbankQuestion (without _id)
- */
-export async function POST(request: NextRequest): Promise<NextResponse> {
-  try {
-    // Parse request body
-    const body = await request.json();
 
-    // Validate required fields using utility
-    const requiredFields = [
-      "topic",
-      "subtopic",
-      "question",
-      "choices",
-      "answer",
-      "explanation",
-      "source",
-    ];
-    const missingFields = validateRequiredFields(body, requiredFields);
-
-    if (missingFields.length > 0) {
-      return createErrorResponse(
-        "Missing required fields",
-        `The following fields are required: ${missingFields.join(", ")}`,
-        400
-      );
-    }
-
-    // Validate choices array
-    if (!Array.isArray(body.choices) || body.choices.length < 2) {
-      return createErrorResponse(
-        "Invalid choices",
-        "At least 2 choices are required",
-        400
-      );
-    }
-
-    // Create question using service
-    const newQuestion = await QuestionService.createQuestion(body);
-
-    // Format successful response
-    const response: QuestionsApiResponse = {
-      success: true,
-      data: [newQuestion],
-      message: "Question created successfully",
-    };
-
-    return NextResponse.json(response, {
-      status: 201,
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-  } catch (error) {
-    return handleApiError(error, "POST /api/questions");
-  }
-}
 
 /**
  * OPTIONS /api/questions

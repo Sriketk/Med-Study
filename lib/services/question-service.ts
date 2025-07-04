@@ -63,7 +63,7 @@ export class QuestionService {
   }> {
     const { topic, subtopic, limit = 50, offset = 0 } = params;
 
-    // Validate parameters
+    // Validate topic and subtopic
     const validationErrors = this.validateParams(topic, subtopic);
     if (validationErrors.length > 0) {
       throw new Error(
@@ -78,6 +78,7 @@ export class QuestionService {
       await connectToDatabase();
 
       // Build query filter
+      //initializing the filter object with topic 
       const filter: { topic: string; subtopic?: string } = { topic };
       if (subtopic) {
         filter.subtopic = subtopic;
@@ -128,60 +129,7 @@ export class QuestionService {
     }
   }
 
-  /**
-   * Create a new question
-   */
-  static async createQuestion(
-    questionData: Omit<QbankQuestion, "created_at"> & { created_at?: string }
-  ): Promise<QbankQuestion> {
-    // Validate required fields
-    const validationErrors = this.validateParams(
-      questionData.topic,
-      questionData.subtopic
-    );
-    if (validationErrors.length > 0) {
-      throw new Error(
-        `Validation failed: ${validationErrors
-          .map((e) => e.message)
-          .join(", ")}`
-      );
-    }
-
-    try {
-      await connectToDatabase();
-
-      const newQuestion = new QbankQuestionModel({
-        ...questionData,
-        created_at: questionData.created_at || new Date().toISOString(),
-      });
-
-      const savedQuestion = await newQuestion.save();
-
-      return {
-        topic: savedQuestion.topic,
-        subtopic: savedQuestion.subtopic,
-        question: savedQuestion.question,
-        choices: savedQuestion.choices,
-        answer: savedQuestion.answer,
-        explanation: savedQuestion.explanation,
-        source: savedQuestion.source,
-        created_at: savedQuestion.created_at,
-        embedding: savedQuestion.embedding,
-      };
-    } catch (error) {
-      console.error("Error creating question:", error);
-
-      if (
-        error instanceof Error &&
-        error.message.includes("Validation failed")
-      ) {
-        throw error;
-      }
-
-      throw new Error("Failed to create question");
-    }
-  }
-
+ 
   /**
    * Get question statistics by topic
    */
