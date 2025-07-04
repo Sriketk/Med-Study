@@ -25,6 +25,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
     // Extract query parameters
     const { searchParams } = new URL(request.url);
+    const examType = searchParams.get("examType");
     const topic = searchParams.get("topic");
     const subtopic = searchParams.get("subtopic");
     const limitParam = searchParams.get("limit");
@@ -55,6 +56,10 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       params.subtopic = subtopic;
     }
 
+    if (examType) {
+      params.examType = examType;
+    }
+
     // Call service to get questions
     const result = await QuestionService.getQuestions(params);
 
@@ -63,6 +68,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       success: true,
       data: result.questions,
       count: result.count,
+      examType: result.examType,
       topic: result.topic,
       subtopic: result.subtopic,
       message: `Retrieved ${result.questions.length} questions`,

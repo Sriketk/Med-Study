@@ -62,6 +62,7 @@ export interface CaseStudyData {
 
 // New types for the question bank system
 export interface QbankQuestion {
+  examType: string;
   topic: string;
   subtopic: string;
   question: string;
@@ -91,6 +92,7 @@ export interface ApiResponse<T = any> {
 }
 
 export interface QuestionsApiResponse extends ApiResponse<QbankQuestion[]> {
+  examType?: string;
   count?: number;
   topic?: string;
   subtopic?: string;
@@ -109,6 +111,7 @@ export interface ApiError {
 
 // Request parameter types
 export interface GetQuestionsParams {
+  examType?: string;
   topic: string;
   subtopic?: string;
   limit?: number;

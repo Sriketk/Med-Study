@@ -17,7 +17,7 @@ export const MEDICAL_TOPICS: QbankTopics = {
     "Gene Expression",
     "Mutations",
   ],
-  AllergiesAndImmunology: [
+  AllergyAndImmunology: [
     "Hypersensitivity",
     "Autoimmune Disorders",
     "Immunodeficiencies",
@@ -144,6 +144,8 @@ export const MEDICAL_TOPICS: QbankTopics = {
   ],
 } as const
 
+export const EXAM_TYPES = ["Step-1", "Step-2"]
+
 /**
  * Get all available topic names
  */
@@ -163,6 +165,10 @@ export const getSubtopics = (topic: string): string[] => {
  */
 export const isValidTopic = (topic: string): boolean => {
   return topic in MEDICAL_TOPICS
+}
+
+export const isValidExamType = (examType: string): boolean => {
+  return EXAM_TYPES.includes(examType)
 }
 
 /**

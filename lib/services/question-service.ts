@@ -7,6 +7,7 @@ import { QbankQuestion, GetQuestionsParams, ValidationError } from "@/types";
 import {
   isValidTopic,
   isValidSubtopic,
+  isValidExamType,
   getTopicNames,
   getSubtopics,
 } from "@/data/topics";
@@ -19,7 +20,11 @@ export class QuestionService {
   /**
    * Validate topic and subtopic parameters
    */
-  static validateParams(topic: string, subtopic?: string): ValidationError[] {
+  static validateParams(
+    topic: string,
+    subtopic?: string,
+    examType?: string
+  ): ValidationError[] {
     const errors: ValidationError[] = [];
 
     if (!topic) {
@@ -49,6 +54,12 @@ export class QuestionService {
       });
     }
 
+    if (examType && !isValidExamType(examType)) {
+      errors.push({
+        field: "examType",
+        message: "Invalid exam type",
+      });
+    }
     return errors;
   }
 
@@ -60,11 +71,12 @@ export class QuestionService {
     count: number;
     topic: string;
     subtopic?: string;
+    examType?: string;
   }> {
-    const { topic, subtopic, limit = 50, offset = 0 } = params;
+    const { topic, subtopic, limit = 50, offset = 0, examType } = params;
 
     // Validate topic and subtopic
-    const validationErrors = this.validateParams(topic, subtopic);
+    const validationErrors = this.validateParams(topic, subtopic, examType);
     if (validationErrors.length > 0) {
       throw new Error(
         `Validation failed: ${validationErrors
@@ -78,8 +90,13 @@ export class QuestionService {
       await connectToDatabase();
 
       // Build query filter
-      //initializing the filter object with topic 
-      const filter: { topic: string; subtopic?: string } = { topic };
+      //initializing the filter object with topic
+      const filter: { topic: string; subtopic?: string; examType?: string } = {
+        topic,
+      };
+      if (examType) {
+        filter.examType = examType;
+      }
       if (subtopic) {
         filter.subtopic = subtopic;
       }
@@ -98,6 +115,7 @@ export class QuestionService {
 
       // Transform MongoDB documents to our interface
       const transformedQuestions: QbankQuestion[] = questions.map((doc) => ({
+        examType: doc.examType,
         topic: doc.topic,
         subtopic: doc.subtopic,
         question: doc.question,
@@ -114,6 +132,7 @@ export class QuestionService {
         count: totalCount,
         topic,
         subtopic,
+        examType,
       };
     } catch (error) {
       console.error("Error fetching questions:", error);
@@ -129,7 +148,6 @@ export class QuestionService {
     }
   }
 
- 
   /**
    * Get question statistics by topic
    */
