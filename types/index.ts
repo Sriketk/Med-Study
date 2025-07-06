@@ -61,7 +61,7 @@ export interface CaseStudyData {
 }
 
 // New types for the question bank system
-export interface QbankQuestion {
+export interface Step1Question {
   examType: string;
   topic: string;
   subtopic: string;
@@ -73,6 +73,15 @@ export interface QbankQuestion {
   created_at: string;
   embedding?: number[];
 }
+
+export interface Step2Question extends Step1Question {
+  baseQuestion: string;
+  patientDetails: Object;
+  entireQuestion: string;
+  shelfSubject: string;
+}
+
+export type MedExamQuestion = Step1Question | Step2Question;
 
 export interface QbankTopic {
   name: string;
@@ -91,7 +100,7 @@ export interface ApiResponse<T = any> {
   message?: string;
 }
 
-export interface QuestionsApiResponse extends ApiResponse<QbankQuestion[]> {
+export interface QuestionsApiResponse extends ApiResponse<Step1Question[]> {
   examType?: string;
   count?: number;
   topic?: string;

@@ -21,17 +21,27 @@ import { handleApiError, createErrorResponse } from "@/lib/api/utils/errors";
  *
  * Example: /api/questions?topic=Cardiovascular&subtopic=Heart%20Disease&limit=10
  */
-export async function GET(request: NextRequest): Promise<NextResponse> {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ exam: string }> }
+): Promise<NextResponse> {
   try {
     // Extract query parameters
+    const exam = (await params).exam;
     const { searchParams } = new URL(request.url);
-    const examType = searchParams.get("examType");
     const topic = searchParams.get("topic");
     const subtopic = searchParams.get("subtopic");
     const limitParam = searchParams.get("limit");
     const offsetParam = searchParams.get("offset");
 
     // Validate required parameters
+    if (!exam) {
+      return createErrorResponse(
+        "Missing required parameter",
+        "Exam parameter is required",
+        400
+      );
+    }
     if (!topic) {
       return createErrorResponse(
         "Missing required parameter",
@@ -46,22 +56,22 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const offset = parseOffset(offsetParam);
 
     // Prepare parameters for service
-    const params: GetQuestionsParams = {
+    const questionParams: GetQuestionsParams = {
       topic,
       limit,
       offset,
     };
 
     if (subtopic) {
-      params.subtopic = subtopic;
+      questionParams.subtopic = subtopic;
     }
 
-    if (examType) {
-      params.examType = examType;
+    if (exam) {
+      questionParams.examType = exam;
     }
 
     // Call service to get questions
-    const result = await QuestionService.getQuestions(params);
+    const result = await QuestionService.getQuestions(questionParams);
 
     // Format successful response
     const response: QuestionsApiResponse = {
@@ -85,8 +95,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     return handleApiError(error, "GET /api/questions");
   }
 }
-
-
 
 /**
  * OPTIONS /api/questions

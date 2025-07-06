@@ -1,14 +1,14 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
-import { QbankQuestion } from "@/types";
+import { Step1Question, Step2Question } from "@/types";
 
 // MongoDB document interface extending the base interface
-export interface QbankQuestionDocument extends QbankQuestion, Document {
+export interface Step1QuestionDocument extends Step1Question, Document {
   createdAt: Date;
   updatedAt: Date;
 }
 
 // MongoDB schema definition
-const QbankQuestionSchema = new Schema<QbankQuestionDocument>(
+export const Step1QuestionSchema = new Schema<Step1QuestionDocument>(
   {
     topic: {
       type: String,
@@ -68,12 +68,12 @@ const QbankQuestionSchema = new Schema<QbankQuestionDocument>(
 );
 
 // Compound indexes for better query performance
-QbankQuestionSchema.index({ topic: 1, subtopic: 1 });
-QbankQuestionSchema.index({ topic: 1, createdAt: -1 });
+Step1QuestionSchema.index({ topic: 1, subtopic: 1 });
+Step1QuestionSchema.index({ topic: 1, createdAt: -1 });
 
 // Create and export the model
-export const QbankQuestionModel: Model<QbankQuestionDocument> =
-  mongoose.models.qbanks ||
-  mongoose.model<QbankQuestionDocument>("qbanks", QbankQuestionSchema);
+export const Step1QuestionModel: Model<Step1QuestionDocument> =
+  mongoose.models.step1questions ||
+  mongoose.model<Step1QuestionDocument>("step1questions", Step1QuestionSchema);
 
-export default QbankQuestionModel;
+export default Step1QuestionModel;
