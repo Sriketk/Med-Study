@@ -1,8 +1,8 @@
-import { connectToDatabase } from "@/lib/mongodb";
+import { connectToDatabase } from "@/lib/api/mongo/mongodb";
 import {
   QbankQuestionModel,
   QbankQuestionDocument,
-} from "@/lib/schemas/question";
+} from "@/lib/api/schemas/question";
 import { QbankQuestion, GetQuestionsParams, ValidationError } from "@/types";
 import {
   isValidTopic,
