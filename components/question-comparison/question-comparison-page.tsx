@@ -19,8 +19,8 @@ export function QuestionComparisonPage() {
           </Link>
 
           <div className="flex items-center gap-4 mb-4">
-            <div className="inline-flex items-center justify-center w-12 h-12 bg-primary rounded-full">
-              <Scale size={24} className="text-primary-foreground" />
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary">
+              <Scale size={24} color="white" />
             </div>
             <div>
               <h1 className="text-3xl md:text-4xl font-bold text-foreground">
@@ -44,16 +44,18 @@ export function QuestionComparisonPage() {
                 href={`/question-comparison/${category.name.toLowerCase()}`}
                 className="block"
               >
-                <div className="bg-card hover:bg-card/80 border border-border rounded-lg p-6 text-center transition-all duration-200 hover:shadow-lg hover:border-primary/50">
-                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-4 bg-primary/20">
-                    <IconComponent size={32} className="text-primary" />
+                <div className="bg-card border-2 border-border rounded-lg shadow-lg p-8 cursor-pointer transition-all duration-150 hover:border-primary hover:-translate-y-1 hover:shadow-xl text-center">
+                  <div className="inline-flex items-center justify-center w-12 h-12 rounded-full mb-4 bg-primary">
+                    <IconComponent size={24} color="white" />
                   </div>
 
-                  <h3 className="text-xl font-semibold text-card-foreground mb-2">
-                    {category.name}
-                  </h3>
+                  <div>
+                    <h3 className="text-2xl font-bold text-card-foreground">
+                      {category.name}
+                    </h3>
+                  </div>
 
-                  <p className="text-sm text-muted-foreground mb-4">
+                  <p className="text-sm text-muted-foreground leading-relaxed mb-4">
                     {category.description}
                   </p>
 
@@ -68,7 +70,7 @@ export function QuestionComparisonPage() {
         </div>
 
         {/* Instructions */}
-        <div className="mt-12 bg-card border border-border rounded-lg p-6">
+        <div className="mt-12 bg-card border-2 border-border rounded-lg shadow-lg p-8 transition-all duration-150 hover:border-primary hover:-translate-y-1 hover:shadow-xl">
           <h2 className="text-lg font-semibold text-card-foreground mb-3">
             How it works
           </h2>

@@ -87,7 +87,7 @@ export default function CaseStudyPage({
           <div className="flex flex-col gap-4 min-h-0">
             
             {/* Case Scenario */}
-            <div className="bg-card border border-border rounded-lg shadow-lg p-6 flex-shrink-0">
+            <div className="bg-card border-2 border-border rounded-lg shadow-lg p-8 transition-all duration-150 hover:border-primary hover:-translate-y-1 hover:shadow-xl flex-shrink-0">
               <h2 className="text-xl font-bold text-card-foreground mb-3">
                 Case Scenario
                 
@@ -98,7 +98,7 @@ export default function CaseStudyPage({
             </div>
 
             {/* Question and Answer */}
-            <div className="bg-card border border-border rounded-lg shadow-lg p-6 flex-1 min-h-0 flex flex-col">
+            <div className="bg-card border-2 border-border rounded-lg shadow-lg p-8 transition-all duration-150 hover:border-primary hover:-translate-y-1 hover:shadow-xl flex-1 min-h-0 flex flex-col">
               <div className="flex-1 overflow-y-auto">
                 <h2 className="text-xl font-bold text-card-foreground mb-3">
                   What is the next best step?
@@ -205,7 +205,7 @@ export default function CaseStudyPage({
           </div>
 
           {/* Chat Interface */}
-          <div className="bg-card border border-border rounded-lg shadow-lg p-6 flex flex-col min-h-0">
+          <div className="bg-card border-2 border-border rounded-lg shadow-lg p-8 transition-all duration-150 hover:border-primary hover:-translate-y-1 hover:shadow-xl flex flex-col min-h-0">
             <h2 className="text-xl font-bold text-card-foreground mb-2">
               Ask about the case
             </h2>
