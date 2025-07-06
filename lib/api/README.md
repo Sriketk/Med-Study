@@ -11,13 +11,15 @@ This API provides access to a medical question bank system with proper TypeScrip
 ```
 lib/
 ├── schemas/
-│   └── question.ts         # MongoDB schema definitions
+│   └── question.ts         # Step1 MongoDB schema definitions
+│   └── step2questions.ts   # Step2 MongoDB schema definitions
 ├── services/
 │   └── question-service.ts # Business logic and database operations
 ├── utils/
 │   ├── validation.ts       # Validation utilities
-│   └── errors.ts          # Error handling utilities
-└── mongodb.ts             # Database connection
+│   └── errors.ts           # Error handling utilities
+└── mongo/
+    └── mongodb.ts          # Database connection
 ```
 
 ```
@@ -40,30 +42,32 @@ app/api/
 
 ### GET /api/questions
 
-Retrieves questions based on topic and optional subtopic.
+Retrieves questions based on topic, optional subtopic, and exam type (Step-1 or Step-2).
 
 #### Query Parameters
 
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `topic` | string | Yes | - | Medical topic (e.g., "Cardiovascular") |
-| `subtopic` | string | No | - | Specific subtopic (e.g., "Heart Disease") |
-| `limit` | number | No | 50 | Number of questions (1-100) |
-| `offset` | number | No | 0 | Number of questions to skip |
+| Parameter   | Type   | Required | Default | Description                                 |
+|-------------|--------|----------|---------|---------------------------------------------|
+| `topic`     | string | Yes      | -       | Medical topic (e.g., "Cardiovascular")      |
+| `subtopic`  | string | No       | -       | Specific subtopic (e.g., "Heart Disease")   |
+| `limit`     | number | No       | 50      | Number of questions (1-100)                 |
+| `offset`    | number | No       | 0       | Number of questions to skip                 |
+| `examType`  | string | No       | -       | Exam type: "Step-1" or "Step-2"            |
 
-#### Example Request
+#### Example Request (Step-1)
 
 ```http
-GET /api/questions?topic=Cardiovascular&subtopic=Heart%20Disease&limit=10&offset=0
+GET /api/questions?topic=Cardiovascular&subtopic=Heart%20Disease&limit=10&offset=0&examType=Step-1
 ```
 
-#### Example Response
+#### Example Response (Step-1)
 
 ```json
 {
   "success": true,
   "data": [
     {
+      "examType": "Step-1",
       "topic": "Cardiovascular",
       "subtopic": "Heart Disease",
       "question": "What is the most common cause of myocardial infarction?",
@@ -82,18 +86,61 @@ GET /api/questions?topic=Cardiovascular&subtopic=Heart%20Disease&limit=10&offset
   "count": 1,
   "topic": "Cardiovascular",
   "subtopic": "Heart Disease",
+  "examType": "Step-1",
+  "message": "Retrieved 1 questions"
+}
+```
+
+#### Example Request (Step-2)
+
+```http
+GET /api/questions?topic=Cardiovascular&subtopic=Heart%20Disease&limit=10&offset=0&examType=Step-2
+```
+
+#### Example Response (Step-2)
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "examType": "Step-2",
+      "topic": "Cardiovascular",
+      "subtopic": "Heart Disease",
+      "question": "A 65-year-old man presents with chest pain...",
+      "choices": [
+        "Option A",
+        "Option B",
+        "Option C",
+        "Option D"
+      ],
+      "answer": "Option B",
+      "explanation": "This scenario describes...",
+      "source": "Step 2 Reference",
+      "created_at": "2023-07-05T10:30:00.000Z",
+      "baseQuestion": "What is the diagnosis?",
+      "patientDetails": { "age": 65, "sex": "M", "symptoms": ["chest pain"] },
+      "entireQuestion": "A 65-year-old man presents... What is the diagnosis?",
+      "shelfSubject": "Internal Medicine"
+    }
+  ],
+  "count": 1,
+  "topic": "Cardiovascular",
+  "subtopic": "Heart Disease",
+  "examType": "Step-2",
   "message": "Retrieved 1 questions"
 }
 ```
 
 ### POST /api/questions
 
-Creates a new question in the database.
+Creates a new question in the database. The request body must match the Step1 or Step2 question structure depending on the `examType`.
 
-#### Request Body
+#### Request Body (Step-1)
 
 ```json
 {
+  "examType": "Step-1",
   "topic": "Cardiovascular",
   "subtopic": "Heart Disease",
   "question": "What is the most common cause of myocardial infarction?",
@@ -109,26 +156,59 @@ Creates a new question in the database.
 }
 ```
 
-#### Example Response
+#### Request Body (Step-2)
+
+```json
+{
+  "examType": "Step-2",
+  "topic": "Cardiovascular",
+  "subtopic": "Heart Disease",
+  "question": "A 65-year-old man presents with chest pain...",
+  "choices": ["Option A", "Option B", "Option C", "Option D"],
+  "answer": "Option B",
+  "explanation": "This scenario describes...",
+  "source": "Step 2 Reference",
+  "baseQuestion": "What is the diagnosis?",
+  "patientDetails": { "age": 65, "sex": "M", "symptoms": ["chest pain"] },
+  "entireQuestion": "A 65-year-old man presents... What is the diagnosis?",
+  "shelfSubject": "Internal Medicine"
+}
+```
+
+#### Example Response (Step-2)
 
 ```json
 {
   "success": true,
   "data": [
     {
+      "examType": "Step-2",
       "topic": "Cardiovascular",
       "subtopic": "Heart Disease",
-      "question": "What is the most common cause of myocardial infarction?",
-      "choices": ["..."],
-      "answer": "Coronary artery thrombosis",
-      "explanation": "The most common cause of myocardial infarction is coronary artery thrombosis...",
-      "source": "Harrison's Principles of Internal Medicine",
-      "created_at": "2023-07-05T10:30:00.000Z"
+      "question": "A 65-year-old man presents with chest pain...",
+      "choices": ["Option A", "Option B", "Option C", "Option D"],
+      "answer": "Option B",
+      "explanation": "This scenario describes...",
+      "source": "Step 2 Reference",
+      "created_at": "2023-07-05T10:30:00.000Z",
+      "baseQuestion": "What is the diagnosis?",
+      "patientDetails": { "age": 65, "sex": "M", "symptoms": ["chest pain"] },
+      "entireQuestion": "A 65-year-old man presents... What is the diagnosis?",
+      "shelfSubject": "Internal Medicine"
     }
   ],
   "message": "Question created successfully"
 }
 ```
+
+## Step1 vs Step2 Questions
+
+- **Step1Question**: Standard question fields (topic, subtopic, question, choices, answer, explanation, source, created_at, embedding)
+- **Step2Question**: All Step1 fields **plus**:
+  - `baseQuestion`: string
+  - `patientDetails`: object
+  - `entireQuestion`: string
+  - `shelfSubject`: string
 
 ## Available Topics
 
@@ -191,29 +271,40 @@ All errors follow a consistent format:
 ### Core Types
 
 ```typescript
-interface QbankQuestion {
-  topic: string
-  subtopic: string
-  question: string
-  choices: string[]
-  answer: string
-  explanation: string
-  source: string
-  created_at: string
-  embedding?: number[]
+interface Step1Question {
+  examType: string;
+  topic: string;
+  subtopic: string;
+  question: string;
+  choices: string[];
+  answer: string;
+  explanation: string;
+  source: string;
+  created_at: string;
+  embedding?: number[];
 }
+
+interface Step2Question extends Step1Question {
+  baseQuestion: string;
+  patientDetails: object;
+  entireQuestion: string;
+  shelfSubject: string;
+}
+
+type MedExamQuestion = Step1Question | Step2Question;
 
 interface ApiResponse<T = any> {
-  success: boolean
-  data?: T
-  error?: string
-  message?: string
+  success: boolean;
+  data?: T;
+  error?: string;
+  message?: string;
 }
 
-interface QuestionsApiResponse extends ApiResponse<QbankQuestion[]> {
-  count?: number
-  topic?: string
-  subtopic?: string
+interface QuestionsApiResponse extends ApiResponse<MedExamQuestion[]> {
+  count?: number;
+  topic?: string;
+  subtopic?: string;
+  examType?: string;
 }
 ```
 
@@ -229,7 +320,8 @@ const result = await QuestionService.getQuestions({
   topic: 'Cardiovascular',
   subtopic: 'Heart Disease',
   limit: 10,
-  offset: 0
+  offset: 0,
+  examType: 'Step-2',
 })
 
 // Create a new question
@@ -248,6 +340,7 @@ const health = await QuestionService.healthCheck()
 
 - **Topic validation**: Must be one of the predefined medical topics
 - **Subtopic validation**: Must be valid for the specified topic
+- **Exam type validation**: Must be "Step-1" or "Step-2"
 - **Required fields**: All required fields are validated
 - **Choices validation**: Must have at least 2 choices
 - **Parameter validation**: Limit and offset parameters are validated
@@ -314,9 +407,10 @@ try {
 
 ```typescript
 // TypeScript fetch example
-async function getQuestions(topic: string, subtopic?: string) {
+async function getQuestions(topic: string, subtopic?: string, examType?: string) {
   const params = new URLSearchParams({ topic })
   if (subtopic) params.append('subtopic', subtopic)
+  if (examType) params.append('examType', examType)
   
   const response = await fetch(`/api/questions?${params}`)
   const data: QuestionsApiResponse = await response.json()
@@ -333,7 +427,7 @@ async function getQuestions(topic: string, subtopic?: string) {
 
 ```typescript
 try {
-  const questions = await getQuestions('Cardiovascular')
+  const questions = await getQuestions('Cardiovascular', undefined, 'Step-2')
   // Handle success
 } catch (error) {
   // Handle error

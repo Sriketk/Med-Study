@@ -11,6 +11,7 @@ The API follows a layered architecture pattern:
 ```
 app/api/questions/
 ├── route.ts              # HTTP handlers (GET, POST, OPTIONS)
+├── [exam]/route.ts       # Dynamic route for exam type (step1, step2)
 ├── lib/services/         # Business logic layer
 ├── lib/schemas/          # Database models
 ├── lib/utils/           # Utility functions
@@ -22,16 +23,18 @@ app/api/questions/
 
 ### Overview
 
-The Questions API provides endpoints to retrieve and create medical education questions organized by topics and subtopics.
+The Questions API provides endpoints to retrieve and create medical education questions organized by topics, subtopics, and exam type (Step-1 or Step-2).
 
 ### File Structure
 
 #### Core Files
 
 1. **`app/api/questions/route.ts`** - Main API route handlers
-2. **`lib/services/question-service.ts`** - Business logic and database operations
-3. **`lib/schemas/question.ts`** - MongoDB schema definition
-4. **`types/index.ts`** - TypeScript type definitions
+2. **`app/api/questions/[exam]/route.ts`** - Dynamic route for exam type (step1, step2)
+3. **`lib/services/question-service.ts`** - Business logic and database operations
+4. **`lib/schemas/question.ts`** - Step1 MongoDB schema definition
+5. **`lib/schemas/step2questions.ts`** - Step2 MongoDB schema definition
+6. **`types/index.ts`** - TypeScript type definitions
 
 #### Supporting Files
 
@@ -44,32 +47,34 @@ The Questions API provides endpoints to retrieve and create medical education qu
 
 #### GET `/api/questions`
 
-**Purpose**: Retrieve questions filtered by topic and optional subtopic
+**Purpose**: Retrieve questions filtered by topic, optional subtopic, and exam type (Step-1 or Step-2)
 
 **Query Parameters**:
 - `topic` (required): Medical topic name
 - `subtopic` (optional): Specific subtopic within the topic
 - `limit` (optional): Number of questions to return (default: 50, max: 100)
 - `offset` (optional): Number of questions to skip for pagination (default: 0)
+- `examType` (optional): Exam type, either "Step-1" or "Step-2"
 
 **Example Requests**:
 ```bash
-# Get all cardiovascular questions
-GET /api/questions?topic=Cardiovascular
+# Get all Step-1 cardiovascular questions
+GET /api/questions?topic=Cardiovascular&examType=Step-1
 
-# Get specific subtopic questions
-GET /api/questions?topic=Cardiovascular&subtopic=Heart Disease
+# Get Step-2 questions for a subtopic
+GET /api/questions?topic=Cardiovascular&subtopic=Heart%20Disease&examType=Step-2
 
 # Get questions with pagination
-GET /api/questions?topic=Cardiovascular&limit=10&offset=20
+GET /api/questions?topic=Cardiovascular&limit=10&offset=20&examType=Step-1
 ```
 
-**Response Format**:
+**Example Response (Step-1):**
 ```json
 {
   "success": true,
   "data": [
     {
+      "examType": "Step-1",
       "topic": "Cardiovascular",
       "subtopic": "Heart Disease",
       "question": "What is the most common cause of heart failure?",
@@ -83,7 +88,37 @@ GET /api/questions?topic=Cardiovascular&limit=10&offset=20
   "count": 150,
   "topic": "Cardiovascular",
   "subtopic": "Heart Disease",
+  "examType": "Step-1",
   "message": "Retrieved 10 questions"
+}
+```
+
+**Example Response (Step-2):**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "examType": "Step-2",
+      "topic": "Cardiovascular",
+      "subtopic": "Heart Disease",
+      "question": "A 65-year-old man presents with chest pain...",
+      "choices": ["Option A", "Option B", "Option C", "Option D"],
+      "answer": "Option B",
+      "explanation": "This scenario describes...",
+      "source": "Step 2 Reference",
+      "created_at": "2024-01-01T00:00:00Z",
+      "baseQuestion": "What is the diagnosis?",
+      "patientDetails": { "age": 65, "sex": "M", "symptoms": ["chest pain"] },
+      "entireQuestion": "A 65-year-old man presents... What is the diagnosis?",
+      "shelfSubject": "Internal Medicine"
+    }
+  ],
+  "count": 1,
+  "topic": "Cardiovascular",
+  "subtopic": "Heart Disease",
+  "examType": "Step-2",
+  "message": "Retrieved 1 questions"
 }
 ```
 
@@ -94,11 +129,12 @@ GET /api/questions?topic=Cardiovascular&limit=10&offset=20
 
 #### POST `/api/questions`
 
-**Purpose**: Create a new question in the database
+**Purpose**: Create a new question in the database. The request body must match the Step1 or Step2 question structure depending on the `examType`.
 
-**Request Body**:
+**Request Body (Step-1):**
 ```json
 {
+  "examType": "Step-1",
   "topic": "Cardiovascular",
   "subtopic": "Heart Disease",
   "question": "What is the most common cause of heart failure?",
@@ -109,29 +145,43 @@ GET /api/questions?topic=Cardiovascular&limit=10&offset=20
 }
 ```
 
-**Required Fields**:
-- `topic`: Must be a valid medical topic
-- `subtopic`: Must be a valid subtopic for the given topic
-- `question`: The question text
-- `choices`: Array with at least 2 choices
-- `answer`: The correct answer
-- `explanation`: Explanation of the correct answer
-- `source`: Reference source
+**Request Body (Step-2):**
+```json
+{
+  "examType": "Step-2",
+  "topic": "Cardiovascular",
+  "subtopic": "Heart Disease",
+  "question": "A 65-year-old man presents with chest pain...",
+  "choices": ["Option A", "Option B", "Option C", "Option D"],
+  "answer": "Option B",
+  "explanation": "This scenario describes...",
+  "source": "Step 2 Reference",
+  "baseQuestion": "What is the diagnosis?",
+  "patientDetails": { "age": 65, "sex": "M", "symptoms": ["chest pain"] },
+  "entireQuestion": "A 65-year-old man presents... What is the diagnosis?",
+  "shelfSubject": "Internal Medicine"
+}
+```
 
-**Response Format**:
+**Response Format (Step-2):**
 ```json
 {
   "success": true,
   "data": [
     {
+      "examType": "Step-2",
       "topic": "Cardiovascular",
       "subtopic": "Heart Disease",
-      "question": "What is the most common cause of heart failure?",
+      "question": "A 65-year-old man presents with chest pain...",
       "choices": ["Option A", "Option B", "Option C", "Option D"],
-      "answer": "Option A",
-      "explanation": "Detailed explanation...",
-      "source": "Medical textbook reference",
-      "created_at": "2024-01-01T00:00:00Z"
+      "answer": "Option B",
+      "explanation": "This scenario describes...",
+      "source": "Step 2 Reference",
+      "created_at": "2024-01-01T00:00:00Z",
+      "baseQuestion": "What is the diagnosis?",
+      "patientDetails": { "age": 65, "sex": "M", "symptoms": ["chest pain"] },
+      "entireQuestion": "A 65-year-old man presents... What is the diagnosis?",
+      "shelfSubject": "Internal Medicine"
     }
   ],
   "message": "Question created successfully"
@@ -154,43 +204,40 @@ GET /api/questions?topic=Cardiovascular&limit=10&offset=20
 
 ### Data Models
 
-#### QbankQuestion Interface
-
+#### Step1Question Interface
 ```typescript
-interface QbankQuestion {
-  topic: string;           // Medical topic (e.g., "Cardiovascular")
-  subtopic: string;        // Subtopic (e.g., "Heart Disease")
-  question: string;        // Question text
-  choices: string[];       // Array of answer choices
-  answer: string;          // Correct answer
-  explanation: string;     // Detailed explanation
-  source: string;          // Reference source
-  created_at: string;      // ISO timestamp
-  embedding?: number[];    // Optional vector embeddings
+interface Step1Question {
+  examType: string;
+  topic: string;
+  subtopic: string;
+  question: string;
+  choices: string[];
+  answer: string;
+  explanation: string;
+  source: string;
+  created_at: string;
+  embedding?: number[];
 }
 ```
+
+#### Step2Question Interface
+```typescript
+interface Step2Question extends Step1Question {
+  baseQuestion: string;
+  patientDetails: object;
+  entireQuestion: string;
+  shelfSubject: string;
+}
+```
+
+type MedExamQuestion = Step1Question | Step2Question;
 
 #### Database Schema
 
-The MongoDB schema includes:
+The MongoDB schemas include:
 
-```javascript
-{
-  topic: { type: String, required: true, index: true },
-  subtopic: { type: String, required: true, index: true },
-  question: { type: String, required: true },
-  choices: { 
-    type: [String], 
-    required: true,
-    validate: { validator: (v) => v.length >= 2 }
-  },
-  answer: { type: String, required: true },
-  explanation: { type: String, required: true },
-  source: { type: String, required: true },
-  created_at: { type: String, required: true },
-  embedding: { type: [Number], default: [] }
-}
-```
+- **Step1Question**: Standard fields (topic, subtopic, question, choices, answer, explanation, source, created_at, embedding)
+- **Step2Question**: All Step1 fields **plus**: baseQuestion, patientDetails, entireQuestion, shelfSubject
 
 **Indexes**:
 - `topic` (single field index)
@@ -237,14 +284,11 @@ The API implements comprehensive error handling:
    - Missing required parameters
    - Invalid topic/subtopic
    - Invalid data format
-
 2. **Database Errors** (503)
    - Connection failures
    - Query execution errors
-
 3. **Not Found Errors** (404)
    - Resource not found
-
 4. **Internal Server Errors** (500)
    - Unexpected application errors
 
@@ -257,11 +301,13 @@ The API implements comprehensive error handling:
    - `subtopic`: Must be a valid subtopic for the given topic
    - `limit`: Integer between 1 and 100
    - `offset`: Non-negative integer
+   - `examType`: Must be "Step-1" or "Step-2" if provided
 
 2. **Request Body Validation**:
    - All required fields must be present
    - `choices` must be an array with at least 2 elements
    - Topic/subtopic must be valid combinations
+   - Step2 questions must include all additional Step2 fields
 
 #### Validation Utilities
 
@@ -286,7 +332,7 @@ The `QuestionService` class handles business logic:
 
 1. **`getQuestions(params)`** - Retrieve questions with filtering and pagination
 2. **`createQuestion(questionData)`** - Create a new question
-3. **`validateParams(topic, subtopic)`** - Validate topic and subtopic parameters
+3. **`validateParams(topic, subtopic, examType)`** - Validate topic, subtopic, and exam type
 4. **`getQuestionStats()`** - Get question statistics by topic
 5. **`healthCheck()`** - Database health check
 
@@ -349,21 +395,26 @@ headers: {
 
 ```typescript
 // Get questions
-const response = await fetch('/api/questions?topic=Cardiovascular&limit=10');
+const response = await fetch('/api/questions?topic=Cardiovascular&examType=Step-2&limit=10');
 const data = await response.json();
 
-// Create question
+// Create Step2 question
 const newQuestion = {
+  examType: "Step-2",
   topic: "Cardiovascular",
   subtopic: "Heart Disease",
-  question: "What is the most common cause of heart failure?",
-  choices: ["Hypertension", "Diabetes", "Coronary artery disease", "Valvular disease"],
-  answer: "Coronary artery disease",
-  explanation: "Coronary artery disease is the leading cause of heart failure...",
-  source: "Braunwald's Heart Disease Textbook"
+  question: "A 65-year-old man presents with chest pain...",
+  choices: ["Option A", "Option B", "Option C", "Option D"],
+  answer: "Option B",
+  explanation: "This scenario describes...",
+  source: "Step 2 Reference",
+  baseQuestion: "What is the diagnosis?",
+  patientDetails: { age: 65, sex: "M", symptoms: ["chest pain"] },
+  entireQuestion: "A 65-year-old man presents... What is the diagnosis?",
+  shelfSubject: "Internal Medicine"
 };
 
-const response = await fetch('/api/questions', {
+const response2 = await fetch('/api/questions', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify(newQuestion)
@@ -373,20 +424,25 @@ const response = await fetch('/api/questions', {
 #### cURL Examples
 
 ```bash
-# Get questions
-curl "http://localhost:3000/api/questions?topic=Cardiovascular&limit=5"
+# Get Step-2 questions
+curl "http://localhost:3000/api/questions?topic=Cardiovascular&examType=Step-2&limit=5"
 
-# Create question
+# Create Step-2 question
 curl -X POST "http://localhost:3000/api/questions" \
   -H "Content-Type: application/json" \
   -d '{
+    "examType": "Step-2",
     "topic": "Cardiovascular",
     "subtopic": "Heart Disease",
-    "question": "What is the most common cause of heart failure?",
+    "question": "A 65-year-old man presents with chest pain...",
     "choices": ["Option A", "Option B", "Option C", "Option D"],
-    "answer": "Option A",
-    "explanation": "Detailed explanation...",
-    "source": "Medical reference"
+    "answer": "Option B",
+    "explanation": "This scenario describes...",
+    "source": "Step 2 Reference",
+    "baseQuestion": "What is the diagnosis?",
+    "patientDetails": { "age": 65, "sex": "M", "symptoms": ["chest pain"] },
+    "entireQuestion": "A 65-year-old man presents... What is the diagnosis?",
+    "shelfSubject": "Internal Medicine"
   }'
 ```
 
@@ -423,6 +479,86 @@ The API can be tested using:
 4. **Question Deletion**: DELETE endpoint for removing questions
 5. **Advanced Filtering**: Filter by difficulty, source, etc.
 6. **Analytics**: Track question usage and performance
+
+---
+
+### Dynamic Route: `/api/questions/[exam]`
+
+You can also use a dynamic route to specify the exam type directly in the URL. This allows you to fetch questions for a specific exam (e.g., `step1` or `step2`) without using the `examType` query parameter.
+
+**Route Pattern:**
+```
+/api/questions/[exam]
+```
+Where `[exam]` can be `step1` or `step2` (case-insensitive).
+
+**Example Requests:**
+```bash
+# Get all Step-1 cardiovascular questions
+GET /api/questions/step1?topic=Cardiovascular
+
+# Get Step-2 questions for a subtopic
+GET /api/questions/step2?topic=Cardiovascular&subtopic=Heart%20Disease
+```
+
+**Example Response (Step-1):**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "examType": "Step-1",
+      "topic": "Cardiovascular",
+      "subtopic": "Heart Disease",
+      "question": "What is the most common cause of heart failure?",
+      "choices": ["Option A", "Option B", "Option C", "Option D"],
+      "answer": "Option A",
+      "explanation": "Detailed explanation...",
+      "source": "Medical textbook reference",
+      "created_at": "2024-01-01T00:00:00Z"
+    }
+  ],
+  "count": 150,
+  "topic": "Cardiovascular",
+  "subtopic": "Heart Disease",
+  "examType": "Step-1",
+  "message": "Retrieved 10 questions"
+}
+```
+
+**Example Response (Step-2):**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "examType": "Step-2",
+      "topic": "Cardiovascular",
+      "subtopic": "Heart Disease",
+      "question": "A 65-year-old man presents with chest pain...",
+      "choices": ["Option A", "Option B", "Option C", "Option D"],
+      "answer": "Option B",
+      "explanation": "This scenario describes...",
+      "source": "Step 2 Reference",
+      "created_at": "2024-01-01T00:00:00Z",
+      "baseQuestion": "What is the diagnosis?",
+      "patientDetails": { "age": 65, "sex": "M", "symptoms": ["chest pain"] },
+      "entireQuestion": "A 65-year-old man presents... What is the diagnosis?",
+      "shelfSubject": "Internal Medicine"
+    }
+  ],
+  "count": 1,
+  "topic": "Cardiovascular",
+  "subtopic": "Heart Disease",
+  "examType": "Step-2",
+  "message": "Retrieved 1 questions"
+}
+```
+
+**Note:**
+- The `[exam]` segment in the URL determines which exam's questions are returned.
+- You can still use all other query parameters (topic, subtopic, limit, offset, etc.).
+- This route is functionally equivalent to using the `examType` query parameter, but is more RESTful and explicit.
 
 ---
 
