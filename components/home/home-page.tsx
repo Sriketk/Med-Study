@@ -12,7 +12,6 @@ interface HomePageProps {
   onStartQuiz: () => void;
   onStartCaseStudy: () => void;
   onStartPrepare: () => void;
-  onViewAnalytics: () => void;
 }
 
 // Reusable Card Component
@@ -59,7 +58,6 @@ export default function HomePage({
   onStartQuiz,
   onStartCaseStudy,
   onStartPrepare,
-  onViewAnalytics,
 }: HomePageProps) {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);

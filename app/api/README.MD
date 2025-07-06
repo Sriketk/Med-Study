@@ -478,7 +478,7 @@ The API can be tested using:
 3. **Question Updates**: PATCH endpoint for updating questions
 4. **Question Deletion**: DELETE endpoint for removing questions
 5. **Advanced Filtering**: Filter by difficulty, source, etc.
-6. **Analytics**: Track question usage and performance
+6. **Performance**: Optimized question retrieval and caching
 
 ---
 

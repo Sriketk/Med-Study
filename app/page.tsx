@@ -20,7 +20,7 @@ export default function Home() {
       onStartQuiz={() => router.push("/quiz")}
       onStartCaseStudy={() => router.push("/case-study")}
       onStartPrepare={() => router.push("/categories")}
-      onViewAnalytics={() => router.push("/analytics")}
+
     />
   )
 }

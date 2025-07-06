@@ -11,7 +11,6 @@ interface ResultsPageProps {
   categories: Category[]
   onTakeAnotherQuiz: () => void
   onPracticeByCategory: () => void
-  onViewAnalytics: () => void
 }
 
 const getPerformanceLevel = (score: number) => {
@@ -28,14 +27,11 @@ export default function ResultsPage({
   categories,
   onTakeAnotherQuiz,
   onPracticeByCategory,
-  onViewAnalytics,
 }: ResultsPageProps) {
   const performance = getPerformanceLevel(results.score)
   const PerformanceIcon = performance.icon
 
-  // Helper to get category stats from stored analytics data (or calculate if not available)
-  // This is a placeholder for a more robust solution where this data would ideally
-  // be passed down from the hook or a central state manager.
+  // Helper to get category stats by calculating from current quiz answers
   const getCategoryStats = (categoryName: string) => {
     // This part is complex to refactor without a larger state management solution.
     // For now, we'll recalculate it here for simplicity, acknowledging it's not ideal.
@@ -198,12 +194,7 @@ export default function ResultsPage({
             Practice by Category
           </button>
 
-          <button
-            onClick={onViewAnalytics}
-            className="bg-secondary text-secondary-foreground border border-border rounded-lg px-8 py-4 text-base font-semibold cursor-pointer shadow-md hover:bg-secondary/80 transition-all duration-200 hover:scale-105 active:scale-95"
-          >
-            View Analytics
-          </button>
+
         </div>
       </div>
     </div>

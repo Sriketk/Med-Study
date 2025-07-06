@@ -5,31 +5,7 @@ export interface OnboardingData {
   uploadedFiles: File[];
 }
 
-export interface AnalyticsSession {
-  id: string;
-  type: "quiz" | "practice";
-  category?: string;
-  date: Date;
-  score: number;
-  correct: number;
-  total: number;
-}
 
-export interface AnalyticsCategoryStats {
-  correct: number;
-  total: number;
-  sessions: number;
-}
-
-export interface AnalyticsData {
-  sessions: AnalyticsSession[];
-  categoryStats: Record<string, AnalyticsCategoryStats>;
-  overallStats: {
-    totalQuestions: number;
-    totalCorrect: number;
-    totalSessions: number;
-  };
-}
 
 export interface Category {
   name: string;

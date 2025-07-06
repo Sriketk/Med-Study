@@ -2,7 +2,6 @@ import {
   Target,
   MessageSquare,
   Microscope,
-  TrendingUp,
   BookOpen,
   Brain,
   Scale,
@@ -76,17 +75,7 @@ export const HOME_CARDS: CardConfig[] = [
       text: "5 Categories",
     },
   },
-  {
-    title: "Analytics",
-    description:
-      "Track your progress and identify areas for improvement and growth",
-    href: "/analytics",
-    icon: TrendingUp,
-    badge: {
-      icon: Target,
-      text: "Progress Tracking",
-    },
-  },
+
   {
     title: "Question Comparison",
     description: "Compare pairs of questions and help identify the better ones",
@@ -112,7 +101,7 @@ export const HOME_CARDS: CardConfig[] = [
 ];
 
 // Export individual sections if needed
-export const QUIZ_CARD = HOME_CARDS[0];
-export const CASE_STUDY_CARD = HOME_CARDS[1];
-export const PRACTICE_CARD = HOME_CARDS[2];
-export const ANALYTICS_CARD = HOME_CARDS[3];
+export const CASE_STUDY_CARD = HOME_CARDS[0];
+export const PRACTICE_CARD = HOME_CARDS[1];
+export const QUESTION_COMPARISON_CARD = HOME_CARDS[2];
+

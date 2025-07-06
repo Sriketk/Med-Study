@@ -35,7 +35,7 @@ export default function Results() {
       categories={categories}
       onTakeAnotherQuiz={() => router.push("/quiz")}
       onPracticeByCategory={() => router.push("/categories")}
-      onViewAnalytics={() => router.push("/analytics")}
+
     />
   )
 } 

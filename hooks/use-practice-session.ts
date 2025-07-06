@@ -1,6 +1,5 @@
 import { useReducer, useEffect, useMemo } from "react"
-import { analyticsStorage } from "@/lib/analytics-storage"
-import { AnalyticsData, Question } from "@/types"
+import { Question } from "@/types"
 
 // Transform API question to match our interface
 interface ApiQuestion {
@@ -179,46 +178,7 @@ export function usePracticeSession(category: string | null) {
     }
   }, [category])
 
-  // --- Analytics Update Effect ---
-  useEffect(() => {
-    if (state.isComplete && state.category) {
-      const { category, questions, answers } = state
-      const correctAnswers = questions.filter((q) => answers[q.id] === q.correct).length
-      const score = Math.round((correctAnswers / questions.length) * 100)
 
-      const newSession = {
-        id: crypto.randomUUID(),
-        type: "practice" as const,
-        category,
-        date: new Date(),
-        score,
-        correct: correctAnswers,
-        total: questions.length,
-      }
-
-      const existingAnalytics = analyticsStorage.getData() ?? { sessions: [], categoryStats: {}, overallStats: { totalQuestions: 0, totalCorrect: 0, totalSessions: 0 } }
-      const categoryStats = existingAnalytics.categoryStats[category] || { correct: 0, total: 0, sessions: 0 }
-
-      const updatedAnalytics: AnalyticsData = {
-        ...existingAnalytics,
-        sessions: [...existingAnalytics.sessions, newSession],
-        categoryStats: {
-          ...existingAnalytics.categoryStats,
-          [category]: {
-            correct: categoryStats.correct + correctAnswers,
-            total: categoryStats.total + questions.length,
-            sessions: categoryStats.sessions + 1,
-          },
-        },
-        overallStats: {
-          totalQuestions: existingAnalytics.overallStats.totalQuestions + questions.length,
-          totalCorrect: existingAnalytics.overallStats.totalCorrect + correctAnswers,
-          totalSessions: existingAnalytics.overallStats.totalSessions + 1,
-        },
-      }
-      analyticsStorage.setData(updatedAnalytics)
-    }
-  }, [state.isComplete, state.category, state.questions, state.answers])
 
   return { state, dispatch }
 } 
