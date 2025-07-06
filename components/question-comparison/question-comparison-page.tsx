@@ -3,22 +3,15 @@
 import { ArrowLeft, Scale } from "lucide-react";
 import Link from "next/link";
 import { categories } from "@/data/categories";
+import { DarkModeToggle } from "@/components/shared/dark-mode-toggle";
 
 export function QuestionComparisonPage() {
   return (
     <div className="min-h-screen bg-background p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-6"
-          >
-            <ArrowLeft size={20} />
-            Back to Home
-          </Link>
-
-          <div className="flex items-center gap-4 mb-4">
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-4">
             <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary">
               <Scale size={24} color="white" />
             </div>
@@ -30,6 +23,16 @@ export function QuestionComparisonPage() {
                 Compare pairs of questions and help identify the better ones
               </p>
             </div>
+          </div>
+
+          <div className="flex gap-3">
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2 bg-secondary text-secondary-foreground border border-border rounded-lg px-4 py-3 text-sm font-medium cursor-pointer transition-all duration-200 hover:bg-secondary/80"
+            >
+              Back to Home
+            </Link>
+            <DarkModeToggle />
           </div>
         </div>
 

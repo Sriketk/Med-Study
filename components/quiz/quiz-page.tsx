@@ -1,8 +1,8 @@
 "use client"
 
-import { useTheme } from "next-themes"
-import { ChevronLeft, ChevronRight, Moon, Sun } from "lucide-react"
+import { ChevronLeft, ChevronRight } from "lucide-react"
 import type { Question } from "@/types"
+import { DarkModeToggle } from "@/components/shared/dark-mode-toggle"
 
 interface QuizPageProps {
   questions: Question[]
@@ -27,7 +27,6 @@ export default function QuizPage({
   onSubmit,
   onQuestionNavigate,
 }: QuizPageProps) {
-  const { theme, setTheme } = useTheme()
   const canSubmitQuiz = () => {
     return Object.keys(answers).length === questions.length
   }
@@ -80,12 +79,7 @@ export default function QuizPage({
                 ))}
               </div>
 
-              <button
-                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                className="bg-card text-foreground border border-border rounded-lg p-2 cursor-pointer shadow-sm transition-all duration-200 hover:bg-card/80"
-              >
-                {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
-              </button>
+              <DarkModeToggle />
             </div>
           </div>
           {/* Progress Bar */}

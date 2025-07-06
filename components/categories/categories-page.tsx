@@ -1,9 +1,9 @@
 "use client"
 
 import type React from "react"
-import { useTheme } from "next-themes"
-import { Moon, Sun, ChevronRight } from "lucide-react"
+import { ChevronRight } from "lucide-react"
 import type { Category } from "@/types"
+import { DarkModeToggle } from "@/components/shared/dark-mode-toggle"
 
 interface CategoriesPageProps {
   categories: Category[]
@@ -16,8 +16,6 @@ export default function CategoriesPage({
   onBackToHome,
   onSelectCategory,
 }: CategoriesPageProps) {
-  const { theme, setTheme } = useTheme()
-
   return (
     <div className="min-h-screen bg-background text-foreground p-8">
       <div className="max-w-5xl mx-auto">
@@ -39,12 +37,7 @@ export default function CategoriesPage({
             >
               Back to Home
             </button>
-            <button
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="bg-card text-foreground border border-border rounded-lg p-3 cursor-pointer shadow-sm transition-all duration-200 hover:bg-card/80"
-            >
-              {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
-            </button>
+            <DarkModeToggle />
           </div>
         </div>
 

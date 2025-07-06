@@ -2,8 +2,8 @@
 
 import { useReducer, useMemo, useState, useEffect } from "react"
 import type React from "react"
-import { useTheme } from "next-themes"
-import { ChevronLeft, ChevronRight, Moon, Sun, Brain } from "lucide-react"
+import { ChevronLeft, ChevronRight, Brain } from "lucide-react"
+import { DarkModeToggle } from "@/components/shared/dark-mode-toggle"
 import AcademicYearStep from "./steps/academic-year-step"
 import ExamTypeStep from "./steps/exam-type-step"
 import ExamDateStep from "./steps/exam-date-step"
@@ -76,7 +76,6 @@ interface OnboardingFlowProps {
 }
 
 export default function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
-  const { theme, setTheme } = useTheme()
   const [state, dispatch] = useReducer(onboardingReducer, initialState)
   const { step, formData } = state
   const [mounted, setMounted] = useState(false)
@@ -121,12 +120,7 @@ export default function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
             </div>
             <h1 className="text-2xl font-bold text-foreground">MedPrep</h1>
           </div>
-          <button
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            className="bg-card text-foreground border border-border rounded-lg p-2 cursor-pointer shadow-sm transition-all duration-200 hover:bg-card/80"
-          >
-            {mounted && <>{theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}</>}
-          </button>
+          <DarkModeToggle />
         </div>
       </header>
 

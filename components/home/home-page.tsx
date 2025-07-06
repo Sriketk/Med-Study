@@ -1,8 +1,8 @@
 "use client";
 
-import { useTheme } from "next-themes";
 import { useState, useEffect } from "react";
-import { Moon, Sun, Brain } from "lucide-react";
+import { Brain } from "lucide-react";
+import { DarkModeToggle } from "@/components/shared/dark-mode-toggle";
 import { OnboardingData } from "@/types";
 import Link from "next/link";
 import { HOME_CARDS, CardConfig } from "./home-config";
@@ -59,7 +59,6 @@ export default function HomePage({
   onStartCaseStudy,
   onStartPrepare,
 }: HomePageProps) {
-  const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
   // Ensure component is mounted to avoid hydration mismatch
@@ -77,12 +76,9 @@ export default function HomePage({
       <div className="absolute -top-1/2 -right-1/4 w-2/5 h-full opacity-5 rounded-full transform -rotate-12 bg-gradient-to-br from-primary to-accent" />
       <div className="absolute -bottom-1/3 -left-1/4 w-1/3 h-3/5 opacity-5 rounded-full bg-gradient-to-tr from-primary to-accent" />
 
-      <button
-        onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-        className="fixed top-6 right-6 bg-card hover:bg-card/80 text-foreground border border-border rounded-lg p-3 cursor-pointer shadow-lg z-50 transition-all duration-200 hover:scale-105 active:scale-95"
-      >
-        {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
-      </button>
+      <div className="fixed top-6 right-6 z-50">
+        <DarkModeToggle />
+      </div>
 
       <div className="flex items-center justify-center min-h-screen p-8 relative z-10">
         <div className="text-center max-w-7xl w-full">

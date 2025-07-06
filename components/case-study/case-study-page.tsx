@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { useTheme } from "next-themes";
-import { Moon, Sun, ThumbsUp, ThumbsDown } from "lucide-react";
+import { ThumbsUp, ThumbsDown } from "lucide-react";
+import { DarkModeToggle } from "@/components/shared/dark-mode-toggle";
 import type { CaseStudyData } from "@/types";
 import { useCaseStudy } from "@/hooks/use-case-study";
 import { useGraph } from "@/hooks/use-graph";
@@ -20,7 +20,6 @@ export default function CaseStudyPage({
   const [sendMessages, setSendMessages] = useState("");
   const [questionFeedback, setQuestionFeedback] = useState<'like' | 'dislike' | null>(null);
 
-  const { theme, setTheme } = useTheme();
   const { state, dispatch, handleSendMessage, streamBotMessage } = useCaseStudy(caseData);
   const [userInput, setUserInput] = useState("");
   const streamingContentRef = useRef("");
@@ -69,16 +68,11 @@ export default function CaseStudyPage({
           <div className="flex gap-3">
             <button
               onClick={onBackToHome}
-              className="bg-secondary text-secondary-foreground border border-border rounded-md px-3 py-2 text-sm font-medium cursor-pointer transition-all duration-200 hover:bg-secondary/80"
+              className="bg-secondary text-secondary-foreground border border-border rounded-lg px-4 py-3 text-sm font-medium cursor-pointer transition-all duration-200 hover:bg-secondary/80"
             >
               Back to Home
             </button>
-            <button
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="bg-card text-foreground border border-border rounded-md p-2 cursor-pointer shadow-sm transition-all duration-200 hover:bg-card/80"
-            >
-              {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
-            </button>
+            <DarkModeToggle />
           </div>
         </div>
 

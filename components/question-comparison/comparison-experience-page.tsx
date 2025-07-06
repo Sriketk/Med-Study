@@ -7,6 +7,7 @@ import { categories } from "@/data/categories"
 import { useQuestionComparison } from "@/hooks/use-question-comparison"
 import { QuestionCard } from "@/components/question-comparison/question-card"
 import { ComparisonCard } from "@/components/question-comparison/comparison-card"
+import { DarkModeToggle } from "@/components/shared/dark-mode-toggle"
 
 interface ComparisonExperiencePageProps {
   category: string
@@ -46,7 +47,7 @@ export function ComparisonExperiencePage({ category }: ComparisonExperiencePageP
             href="/question-comparison"
             className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors"
           >
-            <ArrowLeft size={16} />
+            
             Back to Categories
           </Link>
         </div>
@@ -74,7 +75,7 @@ export function ComparisonExperiencePage({ category }: ComparisonExperiencePageP
           <p className="text-muted-foreground mb-4">{error}</p>
           <Link 
             href="/question-comparison"
-            className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors"
+            className="inline-flex items-center gap-2 bg-secondary text-secondary-foreground border border-border rounded-lg px-4 py-3 text-sm font-medium cursor-pointer transition-all duration-200 hover:bg-secondary/80"
           >
             <ArrowLeft size={16} />
             Back to Categories
@@ -94,7 +95,7 @@ export function ComparisonExperiencePage({ category }: ComparisonExperiencePageP
           </p>
           <Link 
             href="/question-comparison"
-            className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors"
+            className="inline-flex items-center gap-2 bg-secondary text-secondary-foreground border border-border rounded-lg px-4 py-3 text-sm font-medium cursor-pointer transition-all duration-200 hover:bg-secondary/80"
           >
             <ArrowLeft size={16} />
             Back to Categories
@@ -150,16 +151,8 @@ export function ComparisonExperiencePage({ category }: ComparisonExperiencePageP
     <div className="min-h-screen bg-background p-4 md:p-8">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <Link 
-            href="/question-comparison" 
-            className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-6"
-          >
-            <ArrowLeft size={20} />
-            Back to Categories
-          </Link>
-          
-          <div className="flex items-center gap-4 mb-4">
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-4">
             <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/20">
               <IconComponent size={24} className="text-primary" />
             </div>
@@ -173,8 +166,20 @@ export function ComparisonExperiencePage({ category }: ComparisonExperiencePageP
             </div>
           </div>
 
-          {/* Progress Indicator */}
-          <div className="flex items-center justify-center gap-4 mt-6">
+          <div className="flex gap-3">
+            <Link 
+              href="/question-comparison" 
+              className="inline-flex items-center gap-2 bg-secondary text-secondary-foreground border border-border rounded-lg px-4 py-3 text-sm font-medium cursor-pointer transition-all duration-200 hover:bg-secondary/80"
+            >
+              <ArrowLeft size={16} />
+              Back to Categories
+            </Link>
+            <DarkModeToggle />
+          </div>
+        </div>
+
+        {/* Progress Indicator */}
+        <div className="flex items-center justify-center gap-4 mt-6">
             <div className={`flex items-center gap-2 px-3 py-2 rounded-full text-sm transition-colors ${
               currentStep === "question1" 
                 ? "bg-primary text-primary-foreground" 
@@ -208,7 +213,6 @@ export function ComparisonExperiencePage({ category }: ComparisonExperiencePageP
               Compare
             </div>
           </div>
-        </div>
 
         {/* Question Content */}
         <div key={currentStep}>

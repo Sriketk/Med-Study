@@ -1,8 +1,8 @@
 "use client"
 
-import { useTheme } from "next-themes"
-import { Moon, Sun, Award, ThumbsUp, ThumbsDown } from "lucide-react"
+import { Award, ThumbsUp, ThumbsDown } from "lucide-react"
 import { useState, useEffect } from "react"
+import { DarkModeToggle } from "@/components/shared/dark-mode-toggle"
 
 interface PracticeQuestion {
   id: number
@@ -43,7 +43,6 @@ export default function PracticePage({
   onNextQuestion,
   onPracticeAgain,
 }: PracticePageProps) {
-  const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
   const [questionFeedback, setQuestionFeedback] = useState<Record<number, 'like' | 'dislike' | null>>({})
 
@@ -201,12 +200,7 @@ export default function PracticePage({
               >
                 Back to Categories
               </button>
-              <button
-                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                className="bg-card text-foreground border border-border rounded-lg p-3 cursor-pointer shadow-sm transition-all duration-200 hover:bg-card/80"
-              >
-                {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
-              </button>
+              <DarkModeToggle />
             </div>
           </div>
 
