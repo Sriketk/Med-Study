@@ -1,6 +1,5 @@
 "use client"
 
-import { motion } from "framer-motion"
 import { useTheme } from "next-themes"
 import { Moon, Sun, Brain, BookOpen, Target, TrendingUp, TrendingDown } from "lucide-react"
 
@@ -83,20 +82,10 @@ export default function AnalyticsPage({
   const weakestAreas = categoryPerformance.filter((cat) => cat.accuracy < 80).slice(-3)
 
   return (
-    <motion.div
-      className="min-h-screen bg-background text-foreground p-8"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-    >
+    <div className="min-h-screen bg-background text-foreground p-8">
       <div className="max-w-5xl mx-auto">
         {/* Header */}
-        <motion.div
-          className="flex items-center justify-between mb-12"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
+        <div className="flex items-center justify-between mb-12">
           <div>
             <h1 className="text-4xl font-black text-foreground mb-2">
               Performance Analytics
@@ -120,15 +109,10 @@ export default function AnalyticsPage({
               {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
             </button>
           </div>
-        </motion.div>
+        </div>
 
         {/* Overview Stats */}
-        <motion.div
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-        >
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           <div className="bg-card border border-border rounded-lg shadow-lg p-6 text-center">
             <div className="text-4xl font-black text-primary mb-2">
               {overallAccuracy}%
@@ -164,15 +148,10 @@ export default function AnalyticsPage({
               Total Questions
             </div>
           </div>
-        </motion.div>
+        </div>
 
         {/* Performance by Category */}
-        <motion.div
-          className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-        >
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
           <div className="lg:col-span-2 bg-card border border-border rounded-lg shadow-lg p-8">
             <h3 className="text-2xl font-bold text-card-foreground mb-6">
               Performance by Category
@@ -304,15 +283,10 @@ export default function AnalyticsPage({
               )}
             </div>
           </div>
-        </motion.div>
+        </div>
 
         {/* Recent Sessions */}
-        <motion.div
-          className="bg-card border border-border rounded-lg shadow-lg p-8"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-        >
+        <div className="bg-card border border-border rounded-lg shadow-lg p-8">
           <h3 className="text-2xl font-bold text-card-foreground mb-6">
             Recent Sessions
           </h3>
@@ -360,8 +334,8 @@ export default function AnalyticsPage({
               <p className="text-sm">Your recent quiz and practice sessions will appear here</p>
             </div>
           )}
-        </motion.div>
+        </div>
       </div>
-    </motion.div>
+    </div>
   )
 }

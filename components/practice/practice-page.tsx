@@ -1,6 +1,5 @@
 "use client"
 
-import { motion } from "framer-motion"
 import { useTheme } from "next-themes"
 import { Moon, Sun, Award, ThumbsUp, ThumbsDown } from "lucide-react"
 import { useState, useEffect } from "react"
@@ -57,27 +56,12 @@ export default function PracticePage({
 
   if (practiceComplete) {
     return (
-      <motion.div
-        className="min-h-screen bg-background text-foreground flex items-center justify-center p-8"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
-      >
+      <div className="min-h-screen bg-background text-foreground flex items-center justify-center p-8">
         <div className="text-center max-w-md">
-          <motion.div
-            className="text-center"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <motion.div
-              className="inline-flex items-center justify-center w-16 h-16 bg-green-500 rounded-full mb-6"
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-            >
+          <div className="text-center">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-green-500 rounded-full mb-6">
               <Award size={24} color="white" />
-            </motion.div>
+            </div>
 
             <h2 className="text-3xl font-black text-card-foreground mb-4">
               Practice Complete!
@@ -102,9 +86,9 @@ export default function PracticePage({
                 Choose Another Category
               </button>
             </div>
-          </motion.div>
+          </div>
         </div>
-      </motion.div>
+      </div>
     )
   }
 
@@ -134,12 +118,7 @@ export default function PracticePage({
   }
 
   return (
-    <motion.div
-      className="min-h-screen bg-background text-foreground"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-    >
+    <div className="min-h-screen bg-background text-foreground">
       {/* Header */}
       <div className="sticky top-0 bg-background/80 backdrop-blur-md border-b border-border z-40">
         <div className="max-w-5xl mx-auto p-4">
@@ -181,13 +160,9 @@ export default function PracticePage({
 
       {/* Main Content */}
       <div className="max-w-5xl mx-auto p-4 pb-8">
-        <motion.div
+        <div
           key={currentQuestionIndex}
           className="bg-card border border-border rounded-lg shadow-lg p-8 mb-8 min-h-[60vh] flex flex-col justify-between"
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -20 }}
-          transition={{ duration: 0.3 }}
         >
           <div>
             <div className="mb-6">
@@ -227,7 +202,7 @@ export default function PracticePage({
 
             <div className="grid gap-3">
               {currentQuestion.options.map((option, index) => (
-                <motion.button
+                <button
                   key={index}
                   onClick={() => !showFeedback && onAnswerSelect(currentQuestion.id, index)}
                   disabled={showFeedback}
@@ -237,7 +212,7 @@ export default function PracticePage({
                     {String.fromCharCode(65 + index)}.
                   </span>
                   {option}
-                </motion.button>
+                </button>
               ))}
             </div>
           </div>
@@ -294,8 +269,8 @@ export default function PracticePage({
               </div>
             )}
           </div>
-        </motion.div>
+        </div>
       </div>
-    </motion.div>
+    </div>
   )
 }

@@ -1,6 +1,5 @@
 "use client"
 
-import { motion, Transition } from "framer-motion"
 import { Target } from "lucide-react"
 
 interface ExamTypeStepProps {
@@ -20,50 +19,13 @@ const examTypes = [
   "Other",
 ]
 
-const pageVariants = {
-  initial: { opacity: 0, x: 20 },
-  in: { opacity: 1, x: 0 },
-  out: { opacity: 0, x: -20 },
-}
-
-const pageTransition: Transition = {
-  type: "tween",
-  ease: "anticipate",
-  duration: 0.4,
-}
-
-const listContainerVariants = {
-  show: {
-    transition: {
-      staggerChildren: 0.05,
-    },
-  },
-};
-
-const listItemVariants = {
-  hidden: { opacity: 0, y: 10 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.2 } },
-};
-
 export default function ExamTypeStep({ selectedExam, onExamSelect }: ExamTypeStepProps) {
   return (
-    <motion.div
-      key="step2"
-      variants={pageVariants}
-      initial="initial"
-      animate="in"
-      exit="out"
-      transition={pageTransition}
-    >
+    <div key="step2">
       <div className="text-center mb-8">
-        <motion.div
-          className="inline-flex items-center justify-center w-12 h-12 bg-accent rounded-full mb-4"
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ duration: 0.3, delay: 0.2 }}
-        >
+        <div className="inline-flex items-center justify-center w-12 h-12 bg-accent rounded-full mb-4">
           <Target size={24} className="text-primary" />
-        </motion.div>
+        </div>
         <h2 className="text-2xl font-bold text-foreground mb-2">
           Which exam are you studying for?
         </h2>
@@ -85,6 +47,6 @@ export default function ExamTypeStep({ selectedExam, onExamSelect }: ExamTypeSte
           </button>
         ))}
       </div>
-    </motion.div>
+    </div>
   )
 }

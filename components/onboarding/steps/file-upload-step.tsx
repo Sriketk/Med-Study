@@ -2,7 +2,6 @@
 
 import type React from "react";
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { Upload, FileText, X, Plus } from "lucide-react";
 
 interface FileUploadStepProps {
@@ -10,18 +9,6 @@ interface FileUploadStepProps {
   onFileUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onFileRemove: (index: number) => void;
 }
-
-const pageVariants = {
-  initial: { opacity: 0, x: 20 },
-  in: { opacity: 1, x: 0 },
-  out: { opacity: 0, x: -20 },
-};
-
-const pageTransition = {
-  type: "tween" as const,
-  ease: "anticipate" as const,
-  duration: 0.4,
-};
 
 export default function FileUploadStep({
   uploadedFiles,
@@ -71,23 +58,11 @@ export default function FileUploadStep({
   };
 
   return (
-    <motion.div
-      key="step4"
-      variants={pageVariants}
-      initial="initial"
-      animate="in"
-      exit="out"
-      transition={pageTransition}
-    >
+    <div key="step4">
       <div className="text-center mb-8">
-        <motion.div
-          className="inline-flex items-center justify-center w-12 h-12 bg-accent rounded-full mb-4"
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ duration: 0.3, delay: 0.2 }}
-        >
+        <div className="inline-flex items-center justify-center w-12 h-12 bg-accent rounded-full mb-4">
           <Upload size={24} className="text-primary" />
-        </motion.div>
+        </div>
         <h2 className="text-2xl font-bold text-foreground mb-2">
           Upload your study materials
         </h2>
@@ -97,20 +72,14 @@ export default function FileUploadStep({
       </div>
 
       <div className="max-w-xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: 0.2 }}
-          className="mb-8"
-        >
-          <motion.div
+        <div className="mb-8">
+          <div
             onDragOver={handleDragOver}
             onDragEnter={handleDragEnter}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
             className={`border-2 dashed rounded-lg p-12 text-center cursor-pointer transition-all duration-200 ease-in-out
               ${isDragOver ? "border-primary bg-accent scale-105" : "border-border bg-card hover:border-primary/50 hover:bg-accent"}`}
-            whileTap={{ scale: 0.98 }}
           >
             <div className={`mb-6 transition-transform duration-200 ease-in-out ${isDragOver ? "scale-110" : ""}`}>
               <Upload
@@ -143,57 +112,45 @@ export default function FileUploadStep({
               <Plus size={16} />
               Choose Files
             </label>
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
 
         {uploadedFiles.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: 0.3 }}
-          >
+          <div>
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-base font-semibold text-foreground">
                 Uploaded Files ({uploadedFiles.length})
               </h3>
             </div>
             <div className="space-y-3 max-h-48 overflow-y-auto pr-2">
-              <AnimatePresence>
-                {uploadedFiles.map((file, index) => (
-                  <motion.div
-                    key={index}
-                    layout
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, x: -20, transition: { duration: 0.2 } }}
-                    className="flex items-center justify-between p-3 bg-card border rounded-lg"
-                  >
-                    <div className="flex items-center gap-3">
-                      <FileText size={20} className="text-primary" />
-                      <div className="flex flex-col">
-                        <span className="text-sm font-medium text-foreground truncate max-w-xs">
-                          {file.name}
-                        </span>
-                        <span className="text-xs text-muted-foreground">
-                          {(file.size / 1024).toFixed(1)} KB
-                        </span>
-                      </div>
+              {uploadedFiles.map((file, index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-between p-3 bg-card border rounded-lg"
+                >
+                  <div className="flex items-center gap-3">
+                    <FileText size={20} className="text-primary" />
+                    <div className="flex flex-col">
+                      <span className="text-sm font-medium text-foreground truncate max-w-xs">
+                        {file.name}
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        {(file.size / 1024).toFixed(1)} KB
+                      </span>
                     </div>
-                    <motion.button
-                      onClick={() => onFileRemove(index)}
-                      className="p-1.5 rounded-full text-muted-foreground hover:bg-accent hover:text-destructive"
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
-                    >
-                      <X size={16} />
-                    </motion.button>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
+                  </div>
+                  <button
+                    onClick={() => onFileRemove(index)}
+                    className="p-1.5 rounded-full text-muted-foreground hover:bg-accent hover:text-destructive transition-all duration-200 hover:scale-110 active:scale-95"
+                  >
+                    <X size={16} />
+                  </button>
+                </div>
+              ))}
             </div>
-          </motion.div>
+          </div>
         )}
       </div>
-    </motion.div>
+    </div>
   );
 }

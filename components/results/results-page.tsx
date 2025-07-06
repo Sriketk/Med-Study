@@ -1,6 +1,5 @@
 "use client"
 
-import { motion } from "framer-motion"
 import { Award, TrendingUp, TrendingDown, AlertCircle } from "lucide-react"
 import type { Question, Category } from "@/types"
 import type { QuizResult } from "@/hooks/use-results"
@@ -67,29 +66,16 @@ export default function ResultsPage({
   const allDifficulties = [...new Set(questions.map(q => q.difficulty))];
 
   return (
-    <motion.div
-      className="min-h-screen bg-background text-foreground p-8"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-    >
+    <div className="min-h-screen bg-background text-foreground p-8">
       <div className="max-w-5xl mx-auto">
         {/* Header */}
-        <motion.div
-          className="text-center mb-12"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          <motion.div
+        <div className="text-center mb-12">
+          <div
             className="inline-flex items-center justify-center w-20 h-20 rounded-full mb-6"
             style={{ backgroundColor: performance.color }}
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
           >
             <PerformanceIcon size={32} color="white" />
-          </motion.div>
+          </div>
 
           <h1 className="text-5xl font-black text-foreground mb-2">
             Quiz Complete!
@@ -105,15 +91,10 @@ export default function ResultsPage({
           <p className="text-xl text-muted-foreground">
             You scored {results.score}% ({results.correctAnswers}/{results.totalQuestions} correct)
           </p>
-        </motion.div>
+        </div>
 
         {/* Results Grid */}
-        <motion.div
-          className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-        >
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
           {/* Category Performance */}
           <div className="bg-card border border-border rounded-lg shadow-lg p-8">
             <h3 className="text-2xl font-bold text-card-foreground mb-6">
@@ -199,43 +180,32 @@ export default function ResultsPage({
               })}
             </div>
           </div>
-        </motion.div>
+        </div>
 
         {/* Actions */}
-        <motion.div
-          className="flex gap-4 justify-center flex-wrap"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.5 }}
-        >
-          <motion.button
+        <div className="flex gap-4 justify-center flex-wrap">
+          <button
             onClick={onTakeAnotherQuiz}
-            className="bg-primary text-primary-foreground border-0 rounded-lg px-8 py-4 text-base font-semibold cursor-pointer shadow-md hover:bg-primary/90 transition-colors"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+            className="bg-primary text-primary-foreground border-0 rounded-lg px-8 py-4 text-base font-semibold cursor-pointer shadow-md hover:bg-primary/90 transition-all duration-200 hover:scale-105 active:scale-95"
           >
             Take Another Quiz
-          </motion.button>
+          </button>
 
-          <motion.button
+          <button
             onClick={onPracticeByCategory}
-            className="bg-secondary text-secondary-foreground border border-border rounded-lg px-8 py-4 text-base font-semibold cursor-pointer shadow-md hover:bg-secondary/80 transition-colors"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+            className="bg-secondary text-secondary-foreground border border-border rounded-lg px-8 py-4 text-base font-semibold cursor-pointer shadow-md hover:bg-secondary/80 transition-all duration-200 hover:scale-105 active:scale-95"
           >
             Practice by Category
-          </motion.button>
+          </button>
 
-          <motion.button
+          <button
             onClick={onViewAnalytics}
-            className="bg-secondary text-secondary-foreground border border-border rounded-lg px-8 py-4 text-base font-semibold cursor-pointer shadow-md hover:bg-secondary/80 transition-colors"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+            className="bg-secondary text-secondary-foreground border border-border rounded-lg px-8 py-4 text-base font-semibold cursor-pointer shadow-md hover:bg-secondary/80 transition-all duration-200 hover:scale-105 active:scale-95"
           >
             View Analytics
-          </motion.button>
-        </motion.div>
+          </button>
+        </div>
       </div>
-    </motion.div>
+    </div>
   )
 }

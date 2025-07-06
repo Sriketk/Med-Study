@@ -2,7 +2,6 @@
 
 import type React from "react"
 import { useTheme } from "next-themes"
-import { motion } from "framer-motion"
 import { Moon, Sun, ChevronRight } from "lucide-react"
 import type { Category } from "@/types"
 
@@ -54,16 +53,11 @@ export default function CategoriesPage({
           {categories.map((category) => {
             const Icon = category.icon
             return (
-              <motion.div
+              <div
                 key={category.name}
                 onClick={() => onSelectCategory(category.name)}
-                className="group bg-card border-2 border-border rounded-lg shadow-lg p-8 cursor-pointer transition-all duration-150 hover:border-[var(--hover-border-color)]"
+                className="group bg-card border-2 border-border rounded-lg shadow-lg p-8 cursor-pointer transition-all duration-150 hover:border-[var(--hover-border-color)] hover:-translate-y-1 hover:shadow-xl"
                 style={{ '--hover-border-color': category.color } as React.CSSProperties}
-                whileHover={{
-                  y: -4,
-                  boxShadow: "var(--shadow-xl)",
-                }}
-                transition={{ duration: 0.15 }}
               >
                 <div className="flex items-center mb-4">
                   <div
@@ -92,7 +86,7 @@ export default function CategoriesPage({
                   </span>
                   <ChevronRight size={20} className="text-muted-foreground" />
                 </div>
-              </motion.div>
+              </div>
             )
           })}
         </div>

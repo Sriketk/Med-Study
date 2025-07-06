@@ -1,6 +1,5 @@
 "use client"
 
-import { motion } from "framer-motion"
 import { useTheme } from "next-themes"
 import { ChevronLeft, ChevronRight, Moon, Sun } from "lucide-react"
 import type { Question } from "@/types"
@@ -49,12 +48,7 @@ export default function QuizPage({
   }
 
   return (
-    <motion.div
-      className="min-h-screen bg-background text-foreground"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-    >
+    <div className="min-h-screen bg-background text-foreground">
       {/* Header */}
       <div
         data-header
@@ -106,13 +100,9 @@ export default function QuizPage({
 
       {/* Main Content - Single Question */}
       <div className="max-w-5xl mx-auto p-4 pb-8">
-        <motion.div
+        <div
           key={currentQuestion}
           className="bg-card border border-border rounded-lg shadow-lg p-8 mb-8 min-h-[60vh] flex flex-col justify-between"
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -20 }}
-          transition={{ duration: 0.3 }}
         >
           <div>
             <div className="mb-6">
@@ -135,7 +125,7 @@ export default function QuizPage({
 
             <div className="grid gap-3">
               {currentQuestionData.options.map((option, optionIndex) => (
-                <motion.button
+                <button
                   key={optionIndex}
                   onClick={() => onAnswerSelect(currentQuestionData.id, optionIndex)}
                   className={`w-full p-4 text-left rounded-lg text-base transition-all hover:border-primary hover:bg-primary/10 duration-200 border-2 ${
@@ -148,11 +138,11 @@ export default function QuizPage({
                     {String.fromCharCode(65 + optionIndex)}.
                   </span>
                   {option}
-                </motion.button>
+                </button>
               ))}
             </div>
           </div>
-        </motion.div>
+        </div>
 
         {/* Navigation and Submit Panel */}
         <div className="sticky bottom-8 bg-card border border-border rounded-lg shadow-lg p-4 flex items-center justify-between">
@@ -203,6 +193,6 @@ export default function QuizPage({
           </div>
         </div>
       </div>
-    </motion.div>
+    </div>
   )
 }

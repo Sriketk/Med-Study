@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { motion } from "framer-motion";
 import { useTheme } from "next-themes";
 import { Moon, Sun, ThumbsUp, ThumbsDown } from "lucide-react";
 import type { CaseStudyData } from "@/types";
@@ -54,20 +53,10 @@ export default function CaseStudyPage({
   };
 
   return (
-    <motion.div
-      className="h-screen bg-background text-foreground p-6 flex flex-col overflow-hidden"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-    >
+    <div className="h-screen bg-background text-foreground p-6 flex flex-col overflow-hidden">
       <div className="max-w-7xl mx-auto h-full flex flex-col">
         {/* Header */}
-        <motion.div
-          className="flex items-center justify-between mb-6 flex-shrink-0"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
+        <div className="flex items-center justify-between mb-6 flex-shrink-0">
           <div>
             <h1 className="text-3xl font-black text-foreground mb-1">
               {caseData.title}
@@ -91,19 +80,14 @@ export default function CaseStudyPage({
               {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
             </button>
           </div>
-        </motion.div>
+        </div>
 
         <div className="grid grid-cols-2 gap-6 flex-1 min-h-0">
           {/* Case Information and Question */}
           <div className="flex flex-col gap-4 min-h-0">
             
             {/* Case Scenario */}
-            <motion.div
-              className="bg-card border border-border rounded-lg shadow-lg p-6 flex-shrink-0"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-            >
+            <div className="bg-card border border-border rounded-lg shadow-lg p-6 flex-shrink-0">
               <h2 className="text-xl font-bold text-card-foreground mb-3">
                 Case Scenario
                 
@@ -111,15 +95,10 @@ export default function CaseStudyPage({
               <p className="text-sm text-muted-foreground leading-relaxed">
                 {caseData.scenario}
               </p>
-            </motion.div>
+            </div>
 
             {/* Question and Answer */}
-            <motion.div
-              className="bg-card border border-border rounded-lg shadow-lg p-6 flex-1 min-h-0 flex flex-col"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-            >
+            <div className="bg-card border border-border rounded-lg shadow-lg p-6 flex-1 min-h-0 flex flex-col">
               <div className="flex-1 overflow-y-auto">
                 <h2 className="text-xl font-bold text-card-foreground mb-3">
                   What is the next best step?
@@ -150,7 +129,7 @@ export default function CaseStudyPage({
 
                 <div className="grid gap-3 mb-4">
                   {caseData.options.map((option, index) => (
-                    <motion.button
+                    <button
                       key={index}
                       onClick={() =>
                         dispatch({ type: "SELECT_ANSWER", payload: index })
@@ -170,19 +149,17 @@ export default function CaseStudyPage({
                         {String.fromCharCode(65 + index)}.
                       </span>
                       {option}
-                    </motion.button>
+                    </button>
                   ))}
                 </div>
 
                 {showFeedback && (
-                  <motion.div
+                  <div
                     className={`p-4 bg-secondary rounded-md border mb-4 ${
                       selectedAnswer === caseData.correct
                         ? "border-green-500"
                         : "border-red-500"
                     }`}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
                   >
                     <h3
                       className={`text-base font-bold mb-2 ${
@@ -198,7 +175,7 @@ export default function CaseStudyPage({
                     <p className="text-sm text-muted-foreground leading-relaxed">
                       {caseData.explanation}
                     </p>
-                  </motion.div>
+                  </div>
                 )}
               </div>
 
@@ -224,16 +201,11 @@ export default function CaseStudyPage({
                   </button>
                 )}
               </div>
-            </motion.div>
+            </div>
           </div>
 
           {/* Chat Interface */}
-          <motion.div
-            className="bg-card border border-border rounded-lg shadow-lg p-6 flex flex-col min-h-0"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-          >
+          <div className="bg-card border border-border rounded-lg shadow-lg p-6 flex flex-col min-h-0">
             <h2 className="text-xl font-bold text-card-foreground mb-2">
               Ask about the case
             </h2>
@@ -286,9 +258,9 @@ export default function CaseStudyPage({
                 </button>
               </form>
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }

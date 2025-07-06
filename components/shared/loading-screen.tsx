@@ -1,7 +1,5 @@
 "use client"
 
-import { motion } from "framer-motion"
-
 interface LoadingScreenProps {
   progress: number
   step: string
@@ -18,7 +16,7 @@ export default function LoadingScreen({
   onButtonClick,
 }: LoadingScreenProps) {
   return (
-    <motion.div
+    <div
       style={{
         minHeight: "100vh",
         backgroundColor: "var(--background)",
@@ -27,12 +25,9 @@ export default function LoadingScreen({
         alignItems: "center",
         justifyContent: "center",
       }}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
     >
       <div style={{ textAlign: "center", maxWidth: "24rem" }}>
-        <motion.div
+        <div
           style={{
             width: "4rem",
             height: "4rem",
@@ -40,9 +35,8 @@ export default function LoadingScreen({
             borderTop: "4px solid var(--primary)",
             borderRadius: "50%",
             margin: "0 auto 2rem auto",
+            animation: "spin 1s linear infinite",
           }}
-          animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
         />
         <h2
           style={{
@@ -72,15 +66,14 @@ export default function LoadingScreen({
             overflow: "hidden",
           }}
         >
-          <motion.div
+          <div
             style={{
               height: "100%",
               backgroundColor: "var(--primary)",
               borderRadius: "9999px",
+              width: `${progress}%`,
+              transition: "width 0.3s ease-in-out",
             }}
-            initial={{ width: "0%" }}
-            animate={{ width: `${progress}%` }}
-            transition={{ duration: 0.3 }}
           />
         </div>
         <p
@@ -93,7 +86,7 @@ export default function LoadingScreen({
           {progress}% complete
         </p>
         {showButton && (
-          <motion.button
+          <button
             onClick={onButtonClick}
             style={{
               marginTop: "2rem",
@@ -105,14 +98,24 @@ export default function LoadingScreen({
               fontSize: "1rem",
               fontWeight: "500",
               cursor: "pointer",
+              transition: "opacity 0.2s ease-in-out, transform 0.1s ease-in-out",
             }}
-            whileHover={{ opacity: 0.9 }}
-            whileTap={{ scale: 0.98 }}
+            onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.9")}
+            onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
+            onMouseDown={(e) => (e.currentTarget.style.transform = "scale(0.98)")}
+            onMouseUp={(e) => (e.currentTarget.style.transform = "scale(1)")}
           >
             {buttonText}
-          </motion.button>
+          </button>
         )}
+        
+        <style jsx>{`
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `}</style>
       </div>
-    </motion.div>
+    </div>
   )
 }
