@@ -4,6 +4,7 @@ import { ArrowLeft, Scale } from "lucide-react";
 import Link from "next/link";
 import { categories } from "@/data/categories";
 import { DarkModeToggle } from "@/components/shared/dark-mode-toggle";
+import { CategoryCard } from "@/components/shared/category-card";
 
 export function QuestionComparisonPage() {
   return (
@@ -38,38 +39,14 @@ export function QuestionComparisonPage() {
 
         {/* Category Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {categories.map((category, index) => {
-            const IconComponent = category.icon;
-
-            return (
-              <Link
-                key={category.name}
-                href={`/question-comparison/${category.name.toLowerCase()}`}
-                className="block"
-              >
-                <div className="bg-card border-2 border-border rounded-lg shadow-lg p-8 cursor-pointer transition-all duration-150 hover:border-primary hover:-translate-y-1 hover:shadow-xl text-center">
-                  <div className="inline-flex items-center justify-center w-12 h-12 rounded-full mb-4 bg-primary">
-                    <IconComponent size={24} color="white" />
-                  </div>
-
-                  <div>
-                    <h3 className="text-2xl font-bold text-card-foreground">
-                      {category.name}
-                    </h3>
-                  </div>
-
-                  <p className="text-sm text-muted-foreground leading-relaxed mb-4">
-                    {category.description}
-                  </p>
-
-                  <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-                    <Scale size={16} />
-                    <span>Compare questions</span>
-                  </div>
-                </div>
-              </Link>
-            );
-          })}
+          {categories.map((category) => (
+            <CategoryCard
+              key={category.name}
+              category={category}
+              href={`/question-comparison/${category.name.toLowerCase()}`}
+              variant="comparison"
+            />
+          ))}
         </div>
 
         {/* Instructions */}

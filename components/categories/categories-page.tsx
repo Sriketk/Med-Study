@@ -1,9 +1,9 @@
 "use client"
 
 import type React from "react"
-import { ChevronRight } from "lucide-react"
 import type { Category } from "@/types"
 import { DarkModeToggle } from "@/components/shared/dark-mode-toggle"
+import { CategoryCard } from "@/components/shared/category-card"
 
 interface CategoriesPageProps {
   categories: Category[]
@@ -43,38 +43,14 @@ export default function CategoriesPage({
 
         {/* Categories Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {categories.map((category) => {
-            const Icon = category.icon
-            return (
-              <div
-                key={category.name}
-                onClick={() => onSelectCategory(category.name)}
-                className="group bg-card border-2 border-border rounded-lg shadow-lg p-8 cursor-pointer transition-all duration-150 hover:border-primary hover:-translate-y-1 hover:shadow-xl"
-              >
-                <div className="flex items-center mb-4">
-                  <div className="flex items-center justify-center w-12 h-12 rounded-full mr-4 bg-primary">
-                    <Icon size={24} color="white" />
-                  </div>
-                  <div>
-                    <h3 className="text-2xl font-bold text-card-foreground">
-                      {category.name}
-                    </h3>
-                  </div>
-                </div>
-
-                <p className="text-base text-muted-foreground leading-6 mb-6">
-                  {category.description}
-                </p>
-
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground font-medium">
-                    Click to start practicing
-                  </span>
-                  <ChevronRight size={20} className="text-muted-foreground" />
-                </div>
-              </div>
-            )
-          })}
+          {categories.map((category) => (
+            <CategoryCard
+              key={category.name}
+              category={category}
+              onClick={() => onSelectCategory(category.name)}
+              variant="practice"
+            />
+          ))}
         </div>
       </div>
     </div>
