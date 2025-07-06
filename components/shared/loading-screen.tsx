@@ -16,105 +16,37 @@ export default function LoadingScreen({
   onButtonClick,
 }: LoadingScreenProps) {
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        backgroundColor: "var(--background)",
-        color: "var(--foreground)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
-      <div style={{ textAlign: "center", maxWidth: "24rem" }}>
-        <div
-          style={{
-            width: "4rem",
-            height: "4rem",
-            border: "4px solid var(--muted)",
-            borderTop: "4px solid var(--primary)",
-            borderRadius: "50%",
-            margin: "0 auto 2rem auto",
-            animation: "spin 1s linear infinite",
-          }}
-        />
-        <h2
-          style={{
-            fontSize: "1.5rem",
-            fontWeight: "700",
-            color: "var(--foreground)",
-            marginBottom: "1rem",
-          }}
-        >
+    <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
+      <div className="text-center max-w-sm">
+        <div className="w-16 h-16 border-4 border-muted border-t-primary rounded-full mx-auto mb-8 animate-spin" />
+        
+        <h2 className="text-2xl font-bold text-foreground mb-4">
           Analyzing Your Performance
         </h2>
-        <p
-          style={{
-            fontSize: "1rem",
-            color: "var(--muted-foreground)",
-            marginBottom: "2rem",
-          }}
-        >
+        
+        <p className="text-base text-muted-foreground mb-8">
           {step}
         </p>
-        <div
-          style={{
-            width: "100%",
-            height: "0.5rem",
-            backgroundColor: "var(--muted)",
-            borderRadius: "9999px",
-            overflow: "hidden",
-          }}
-        >
-          <div
-            style={{
-              height: "100%",
-              backgroundColor: "var(--primary)",
-              borderRadius: "9999px",
-              width: `${progress}%`,
-              transition: "width 0.3s ease-in-out",
-            }}
+        
+        <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+          <div 
+            className="h-full bg-primary rounded-full transition-all duration-300 ease-in-out"
+            style={{ width: `${progress}%` }}
           />
         </div>
-        <p
-          style={{
-            fontSize: "0.875rem",
-            color: "var(--muted-foreground)",
-            marginTop: "1rem",
-          }}
-        >
+        
+        <p className="text-sm text-muted-foreground mt-4">
           {progress}% complete
         </p>
+        
         {showButton && (
           <button
             onClick={onButtonClick}
-            style={{
-              marginTop: "2rem",
-              backgroundColor: "var(--primary)",
-              color: "var(--primary-foreground)",
-              border: "none",
-              borderRadius: "var(--radius)",
-              padding: "0.75rem 1.5rem",
-              fontSize: "1rem",
-              fontWeight: "500",
-              cursor: "pointer",
-              transition: "opacity 0.2s ease-in-out, transform 0.1s ease-in-out",
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.9")}
-            onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
-            onMouseDown={(e) => (e.currentTarget.style.transform = "scale(0.98)")}
-            onMouseUp={(e) => (e.currentTarget.style.transform = "scale(1)")}
+            className="mt-8 bg-primary text-primary-foreground border-none rounded px-6 py-3 text-base font-medium cursor-pointer transition-all duration-200 hover:opacity-90 active:scale-98"
           >
             {buttonText}
           </button>
         )}
-        
-        <style jsx>{`
-          @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-          }
-        `}</style>
       </div>
     </div>
   )

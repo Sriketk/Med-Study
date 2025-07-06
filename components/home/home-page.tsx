@@ -74,18 +74,8 @@ export default function HomePage({
   return (
     <div className="min-h-screen bg-background text-foreground relative overflow-hidden">
       {/* Background decoration */}
-      <div
-        className="absolute -top-1/2 -right-1/4 w-2/5 h-full opacity-5 rounded-full transform -rotate-12"
-        style={{
-          background: `linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%)`,
-        }}
-      />
-      <div
-        className="absolute -bottom-1/3 -left-1/4 w-1/3 h-3/5 opacity-5 rounded-full"
-        style={{
-          background: `linear-gradient(45deg, var(--primary) 0%, var(--accent) 100%)`,
-        }}
-      />
+      <div className="absolute -top-1/2 -right-1/4 w-2/5 h-full opacity-5 rounded-full transform -rotate-12 bg-gradient-to-br from-primary to-accent" />
+      <div className="absolute -bottom-1/3 -left-1/4 w-1/3 h-3/5 opacity-5 rounded-full bg-gradient-to-tr from-primary to-accent" />
 
       <button
         onClick={() => setTheme(theme === "dark" ? "light" : "dark")}

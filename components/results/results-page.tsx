@@ -66,10 +66,7 @@ export default function ResultsPage({
       <div className="max-w-5xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
-          <div
-            className="inline-flex items-center justify-center w-20 h-20 rounded-full mb-6"
-            style={{ backgroundColor: performance.color }}
-          >
+          <div className="inline-flex items-center justify-center w-20 h-20 rounded-full mb-6 bg-primary">
             <PerformanceIcon size={32} color="white" />
           </div>
 
@@ -77,10 +74,7 @@ export default function ResultsPage({
             Quiz Complete!
           </h1>
 
-          <p
-            className="text-2xl font-semibold mb-4"
-            style={{ color: performance.color }}
-          >
+          <p className="text-2xl font-semibold mb-4 text-primary">
             {performance.level}
           </p>
 
@@ -110,10 +104,7 @@ export default function ResultsPage({
                   >
                     <div className="flex items-center gap-3">
                       {categoryInfo && (
-                        <div
-                          className="flex items-center justify-center w-8 h-8 rounded-full"
-                          style={{ backgroundColor: categoryInfo.color }}
-                        >
+                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary">
                           <categoryInfo.icon size={16} color="white" />
                         </div>
                       )}
@@ -164,7 +155,7 @@ export default function ResultsPage({
                           {percentage}%
                         </div>
                         <div className="w-16 h-1 bg-muted rounded-full overflow-hidden mt-1">
-                          <div
+                          <div 
                             className={`h-full rounded-full transition-all duration-300 ${getProgressBarColor(percentage)}`}
                             style={{ width: `${percentage}%` }}
                           />

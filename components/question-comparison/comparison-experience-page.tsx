@@ -160,11 +160,8 @@ export function ComparisonExperiencePage({ category }: ComparisonExperiencePageP
           </Link>
           
           <div className="flex items-center gap-4 mb-4">
-            <div 
-              className="inline-flex items-center justify-center w-12 h-12 rounded-full"
-              style={{ backgroundColor: `${categoryData.color}20` }}
-            >
-              <IconComponent size={24} style={{ color: categoryData.color }} />
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/20">
+              <IconComponent size={24} className="text-primary" />
             </div>
             <div>
               <h1 className="text-3xl md:text-4xl font-bold text-foreground">

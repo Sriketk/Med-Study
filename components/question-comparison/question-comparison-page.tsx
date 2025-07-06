@@ -45,14 +45,8 @@ export function QuestionComparisonPage() {
                 className="block"
               >
                 <div className="bg-card hover:bg-card/80 border border-border rounded-lg p-6 text-center transition-all duration-200 hover:shadow-lg hover:border-primary/50">
-                  <div
-                    className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-4"
-                    style={{ backgroundColor: `${category.color}20` }}
-                  >
-                    <IconComponent
-                      size={32}
-                      style={{ color: category.color }}
-                    />
+                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-4 bg-primary/20">
+                    <IconComponent size={32} className="text-primary" />
                   </div>
 
                   <h3 className="text-xl font-semibold text-card-foreground mb-2">

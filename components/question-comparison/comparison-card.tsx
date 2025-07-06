@@ -52,21 +52,15 @@ function QuestionSummary({
     <div
       className={`bg-card border rounded-lg p-6 transition-all duration-200 cursor-pointer hover:shadow-md ${
         isSelected
-          ? "border-2 shadow-lg"
+          ? "border-2 shadow-lg border-primary"
           : "border-border hover:border-primary/50"
       }`}
-      style={{
-        borderColor: isSelected ? categoryColor : undefined,
-      }}
       onClick={onSelect}
     >
       {/* Question Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <div
-            className="inline-flex items-center justify-center w-8 h-8 rounded-full text-white font-bold"
-            style={{ backgroundColor: categoryColor }}
-          >
+          <div className="inline-flex items-center justify-center w-8 h-8 rounded-full text-white font-bold bg-primary">
             {questionNumber}
           </div>
           <h3 className="text-lg font-semibold text-card-foreground">
@@ -145,15 +139,9 @@ function QuestionSummary({
 
       {/* Selection Indicator */}
       {isSelected && (
-        <div
-          className="flex items-center justify-center gap-2 mt-4 p-2 rounded-lg"
-          style={{ backgroundColor: `${categoryColor}20` }}
-        >
-          <Award size={16} style={{ color: categoryColor }} />
-          <span
-            className="text-sm font-medium"
-            style={{ color: categoryColor }}
-          >
+        <div className="flex items-center justify-center gap-2 mt-4 p-2 rounded-lg bg-primary/20">
+          <Award size={16} className="text-primary" />
+          <span className="text-sm font-medium text-primary">
             Selected as Better Question
           </span>
         </div>
@@ -177,7 +165,7 @@ export function ComparisonCard({
       {/* Comparison Header */}
       <div className="text-center mb-8">
         <div className="flex items-center justify-center gap-3 mb-4">
-          <Scale size={32} style={{ color: categoryColor }} />
+          <Scale size={32} className="text-primary" />
         </div>
         <h2 className="text-2xl font-bold text-card-foreground mb-2">
           Which question is better?
@@ -251,11 +239,10 @@ export function ComparisonCard({
               Question {selectedBetter} selected. You can change your selection
               or submit.
             </p>
-            <Button
-              onClick={onSubmitComparison}
-              style={{ backgroundColor: categoryColor }}
-              className="text-white hover:opacity-90 px-8 py-2"
-            >
+                          <Button
+                onClick={onSubmitComparison}
+                className="bg-primary text-white hover:opacity-90 px-8 py-2"
+              >
               Submit Comparison
             </Button>
           </div>

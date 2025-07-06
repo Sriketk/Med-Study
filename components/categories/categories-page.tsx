@@ -56,14 +56,10 @@ export default function CategoriesPage({
               <div
                 key={category.name}
                 onClick={() => onSelectCategory(category.name)}
-                className="group bg-card border-2 border-border rounded-lg shadow-lg p-8 cursor-pointer transition-all duration-150 hover:border-[var(--hover-border-color)] hover:-translate-y-1 hover:shadow-xl"
-                style={{ '--hover-border-color': category.color } as React.CSSProperties}
+                className="group bg-card border-2 border-border rounded-lg shadow-lg p-8 cursor-pointer transition-all duration-150 hover:border-primary hover:-translate-y-1 hover:shadow-xl"
               >
                 <div className="flex items-center mb-4">
-                  <div
-                    className="flex items-center justify-center w-12 h-12 rounded-full mr-4"
-                    style={{ backgroundColor: category.color }}
-                  >
+                  <div className="flex items-center justify-center w-12 h-12 rounded-full mr-4 bg-primary">
                     <Icon size={24} color="white" />
                   </div>
                   <div>

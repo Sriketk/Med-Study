@@ -55,10 +55,7 @@ export function QuestionCard({
       {/* Question Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <div
-            className="inline-flex items-center justify-center w-8 h-8 rounded-full text-white font-bold"
-            style={{ backgroundColor: categoryColor }}
-          >
+          <div className="inline-flex items-center justify-center w-8 h-8 rounded-full text-white font-bold bg-primary">
             {questionNumber}
           </div>
           <h2 className="text-xl font-semibold text-card-foreground">
@@ -130,15 +127,11 @@ export function QuestionCard({
 
       {/* Result Section */}
       {showResult && (
-        <div
-          className="mb-6 p-4 rounded-lg border"
-          style={{
-            borderColor:
-              selectedAnswer === question.answer ? "#10b981" : "#ef4444",
-            backgroundColor:
-              selectedAnswer === question.answer ? "#10b98110" : "#ef444410",
-          }}
-        >
+        <div className={`mb-6 p-4 rounded-lg border ${
+            selectedAnswer === question.answer 
+              ? "border-green-500 bg-green-500/10" 
+              : "border-red-500 bg-red-500/10"
+          }`}>
           <div className="flex items-center gap-2 mb-2">
             {selectedAnswer === question.answer ? (
               <CheckCircle size={20} className="text-green-600" />
@@ -169,8 +162,7 @@ export function QuestionCard({
         {showResult ? (
           <Button
             onClick={handleContinue}
-            style={{ backgroundColor: categoryColor }}
-            className="text-white hover:opacity-90"
+            className="bg-primary text-white hover:opacity-90"
           >
             Continue to Question {questionNumber === 1 ? "2" : "Comparison"}
           </Button>
@@ -178,8 +170,7 @@ export function QuestionCard({
           <Button
             onClick={handleSubmit}
             disabled={!selectedAnswer}
-            style={{ backgroundColor: categoryColor }}
-            className="text-white hover:opacity-90 disabled:opacity-50"
+            className="bg-primary text-white hover:opacity-90 disabled:opacity-50"
           >
             Submit Answer
           </Button>
