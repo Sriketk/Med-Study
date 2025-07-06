@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { ArrowLeft, Scale } from "lucide-react";
 import Link from "next/link";
 import { categories } from "@/data/categories";
@@ -10,12 +9,7 @@ export function QuestionComparisonPage() {
     <div className="min-h-screen bg-background p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <motion.div
-          className="mb-8"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
+        <div className="mb-8">
           <Link
             href="/"
             className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-6"
@@ -37,15 +31,10 @@ export function QuestionComparisonPage() {
               </p>
             </div>
           </div>
-        </motion.div>
+        </div>
 
         {/* Category Grid */}
-        <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-        >
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {categories.map((category, index) => {
             const IconComponent = category.icon;
 
@@ -55,14 +44,7 @@ export function QuestionComparisonPage() {
                 href={`/question-comparison/${category.name.toLowerCase()}`}
                 className="block"
               >
-                <motion.div
-                  className="bg-card hover:bg-card/80 border border-border rounded-lg p-6 text-center transition-all duration-200 hover:shadow-lg hover:border-primary/50"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: 0.1 * index }}
-                  whileHover={{ y: -2 }}
-                  whileTap={{ scale: 0.98 }}
-                >
+                <div className="bg-card hover:bg-card/80 border border-border rounded-lg p-6 text-center transition-all duration-200 hover:shadow-lg hover:border-primary/50">
                   <div
                     className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-4"
                     style={{ backgroundColor: `${category.color}20` }}
@@ -85,19 +67,14 @@ export function QuestionComparisonPage() {
                     <Scale size={16} />
                     <span>Compare questions</span>
                   </div>
-                </motion.div>
+                </div>
               </Link>
             );
           })}
-        </motion.div>
+        </div>
 
         {/* Instructions */}
-        <motion.div
-          className="mt-12 bg-card border border-border rounded-lg p-6"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-        >
+        <div className="mt-12 bg-card border border-border rounded-lg p-6">
           <h2 className="text-lg font-semibold text-card-foreground mb-3">
             How it works
           </h2>
@@ -127,7 +104,7 @@ export function QuestionComparisonPage() {
               </p>
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
     </div>
   );

@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import { motion } from "framer-motion"
 import { ArrowLeft, Scale, Trophy, Target, AlertCircle } from "lucide-react"
 import Link from "next/link"
 import { categories } from "@/data/categories"
@@ -18,7 +17,6 @@ type ComparisonStep = "question1" | "question2" | "comparison"
 interface QuestionResult {
   selectedAnswer: string
   isCorrect: boolean
-  timeSpent: number
 }
 
 export function ComparisonExperiencePage({ category }: ComparisonExperiencePageProps) {
@@ -106,20 +104,18 @@ export function ComparisonExperiencePage({ category }: ComparisonExperiencePageP
     )
   }
 
-  const handleQuestion1Answer = (selectedAnswer: string, isCorrect: boolean, timeSpent: number) => {
+  const handleQuestion1Answer = (selectedAnswer: string, isCorrect: boolean) => {
     setQuestion1Result({
       selectedAnswer,
-      isCorrect,
-      timeSpent
+      isCorrect
     })
     setCurrentStep("question2")
   }
 
-  const handleQuestion2Answer = (selectedAnswer: string, isCorrect: boolean, timeSpent: number) => {
+  const handleQuestion2Answer = (selectedAnswer: string, isCorrect: boolean) => {
     setQuestion2Result({
       selectedAnswer,
-      isCorrect,
-      timeSpent
+      isCorrect
     })
     setCurrentStep("comparison")
   }
@@ -154,12 +150,7 @@ export function ComparisonExperiencePage({ category }: ComparisonExperiencePageP
     <div className="min-h-screen bg-background p-4 md:p-8">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <motion.div
-          className="mb-8"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
+        <div className="mb-8">
           <Link 
             href="/question-comparison" 
             className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-6"
@@ -220,16 +211,10 @@ export function ComparisonExperiencePage({ category }: ComparisonExperiencePageP
               Compare
             </div>
           </div>
-        </motion.div>
+        </div>
 
         {/* Question Content */}
-        <motion.div
-          key={currentStep}
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -20 }}
-          transition={{ duration: 0.4 }}
-        >
+        <div key={currentStep}>
           {currentStep === "question1" && (
             <QuestionCard
               question={questionPair.question1}
@@ -260,22 +245,12 @@ export function ComparisonExperiencePage({ category }: ComparisonExperiencePageP
               categoryColor={categoryData.color}
             />
           )}
-        </motion.div>
+        </div>
 
         {/* Success Message */}
         {showSuccessMessage && (
-          <motion.div
-            className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <motion.div
-              className="bg-card border border-border rounded-lg p-8 text-center max-w-md mx-4"
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: 0.1 }}
-            >
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+            <div className="bg-card border border-border rounded-lg p-8 text-center max-w-md mx-4">
               <Trophy size={48} className="text-yellow-500 mx-auto mb-4" />
               <h2 className="text-2xl font-bold text-card-foreground mb-2">
                 Thanks for your feedback!
@@ -286,8 +261,8 @@ export function ComparisonExperiencePage({ category }: ComparisonExperiencePageP
               <p className="text-sm text-muted-foreground">
                 Loading next pair...
               </p>
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
         )}
       </div>
     </div>

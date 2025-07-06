@@ -1,10 +1,8 @@
 "use client";
 
-import { motion } from "framer-motion";
 import {
   CheckCircle,
   XCircle,
-  Clock,
   ThumbsUp,
   Scale,
   Award,
@@ -22,7 +20,6 @@ interface Question {
 interface QuestionResult {
   selectedAnswer: string;
   isCorrect: boolean;
-  timeSpent: number;
 }
 
 interface ComparisonCardProps {
@@ -52,17 +49,15 @@ function QuestionSummary({
   onSelect: () => void;
 }) {
   return (
-    <motion.div
-      className={`bg-card border rounded-lg p-6 transition-all duration-200 cursor-pointer ${
+    <div
+      className={`bg-card border rounded-lg p-6 transition-all duration-200 cursor-pointer hover:shadow-md ${
         isSelected
           ? "border-2 shadow-lg"
-          : "border-border hover:border-primary/50 hover:shadow-md"
+          : "border-border hover:border-primary/50"
       }`}
       style={{
         borderColor: isSelected ? categoryColor : undefined,
       }}
-      whileHover={!isSelected ? { y: -2 } : {}}
-      whileTap={{ scale: 0.98 }}
       onClick={onSelect}
     >
       {/* Question Header */}
@@ -81,14 +76,6 @@ function QuestionSummary({
 
         <div className="flex items-center gap-4">
           {/* Performance Stats */}
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Clock size={14} />
-            <span>
-              {Math.floor(result.timeSpent / 60)}:
-              {(result.timeSpent % 60).toString().padStart(2, "0")}
-            </span>
-          </div>
-
           <div
             className={`flex items-center gap-1 text-sm ${
               result.isCorrect ? "text-green-600" : "text-red-600"
@@ -158,12 +145,9 @@ function QuestionSummary({
 
       {/* Selection Indicator */}
       {isSelected && (
-        <motion.div
+        <div
           className="flex items-center justify-center gap-2 mt-4 p-2 rounded-lg"
           style={{ backgroundColor: `${categoryColor}20` }}
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.3 }}
         >
           <Award size={16} style={{ color: categoryColor }} />
           <span
@@ -172,9 +156,9 @@ function QuestionSummary({
           >
             Selected as Better Question
           </span>
-        </motion.div>
+        </div>
       )}
-    </motion.div>
+    </div>
   );
 }
 
@@ -189,12 +173,7 @@ export function ComparisonCard({
   categoryColor,
 }: ComparisonCardProps) {
   return (
-    <motion.div
-      className="space-y-6"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-    >
+    <div className="space-y-6">
       {/* Comparison Header */}
       <div className="text-center mb-8">
         <div className="flex items-center justify-center gap-3 mb-4">
@@ -231,12 +210,7 @@ export function ComparisonCard({
 
       {/* Comparison Criteria */}
       {!selectedBetter && (
-        <motion.div
-          className="bg-card border border-border rounded-lg p-6"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-        >
+        <div className="bg-card border border-border rounded-lg p-6">
           <h3 className="text-lg font-semibold text-card-foreground mb-3">
             Consider these factors:
           </h3>
@@ -262,7 +236,7 @@ export function ComparisonCard({
               </ul>
             </div>
           </div>
-        </motion.div>
+        </div>
       )}
 
       {/* Submit Section */}
@@ -272,11 +246,7 @@ export function ComparisonCard({
             Click on a question above to select it as the better one
           </p>
         ) : (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-          >
+          <div>
             <p className="text-sm text-muted-foreground mb-4">
               Question {selectedBetter} selected. You can change your selection
               or submit.
@@ -288,9 +258,9 @@ export function ComparisonCard({
             >
               Submit Comparison
             </Button>
-          </motion.div>
+          </div>
         )}
       </div>
-    </motion.div>
+    </div>
   );
 }

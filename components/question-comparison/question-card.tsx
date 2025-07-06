@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { CheckCircle, XCircle, Clock } from "lucide-react";
+import { useState } from "react";
+import { CheckCircle, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface Question {
@@ -18,8 +17,7 @@ interface QuestionCardProps {
   questionNumber: 1 | 2;
   onAnswer: (
     selectedAnswer: string,
-    isCorrect: boolean,
-    timeSpent: number
+    isCorrect: boolean
   ) => void;
   categoryColor: string;
 }
@@ -32,16 +30,6 @@ export function QuestionCard({
 }: QuestionCardProps) {
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [showResult, setShowResult] = useState(false);
-  const [startTime] = useState(Date.now());
-  const [timeSpent, setTimeSpent] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setTimeSpent(Math.floor((Date.now() - startTime) / 1000));
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [startTime]);
 
   const handleAnswerSelect = (answer: string) => {
     if (showResult) return;
@@ -51,31 +39,19 @@ export function QuestionCard({
   const handleSubmit = () => {
     if (!selectedAnswer) return;
 
-    const finalTimeSpent = Math.floor((Date.now() - startTime) / 1000);
     const isCorrect = selectedAnswer === question.answer;
     setShowResult(true);
-
-    // Auto-advance after showing result
-    setTimeout(() => {
-      onAnswer(selectedAnswer, isCorrect, finalTimeSpent);
-    }, 3000);
   };
 
   const handleContinue = () => {
     if (!selectedAnswer) return;
 
-    const finalTimeSpent = Math.floor((Date.now() - startTime) / 1000);
     const isCorrect = selectedAnswer === question.answer;
-    onAnswer(selectedAnswer, isCorrect, finalTimeSpent);
+    onAnswer(selectedAnswer, isCorrect);
   };
 
   return (
-    <motion.div
-      className="bg-card border border-border rounded-lg p-6 md:p-8"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-    >
+    <div className="bg-card border border-border rounded-lg p-6 md:p-8">
       {/* Question Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
@@ -88,14 +64,6 @@ export function QuestionCard({
           <h2 className="text-xl font-semibold text-card-foreground">
             Question {questionNumber}
           </h2>
-        </div>
-
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Clock size={16} />
-          <span>
-            {Math.floor(timeSpent / 60)}:
-            {(timeSpent % 60).toString().padStart(2, "0")}
-          </span>
         </div>
       </div>
 
@@ -115,7 +83,7 @@ export function QuestionCard({
           const isIncorrect = showResult && isSelected && !isCorrect;
 
           return (
-            <motion.button
+            <button
               key={index}
               onClick={() => handleAnswerSelect(choice)}
               disabled={showResult}
@@ -130,8 +98,6 @@ export function QuestionCard({
                   ? "border-primary bg-primary/5"
                   : "border-border bg-card hover:border-primary/50 hover:bg-card/80"
               }`}
-              whileHover={!showResult ? { scale: 1.01 } : {}}
-              whileTap={!showResult ? { scale: 0.99 } : {}}
             >
               <div className="flex items-start gap-3">
                 <div
@@ -157,14 +123,14 @@ export function QuestionCard({
                 </div>
                 <span className="text-card-foreground">{choice}</span>
               </div>
-            </motion.button>
+            </button>
           );
         })}
       </div>
 
       {/* Result Section */}
       {showResult && (
-        <motion.div
+        <div
           className="mb-6 p-4 rounded-lg border"
           style={{
             borderColor:
@@ -172,9 +138,6 @@ export function QuestionCard({
             backgroundColor:
               selectedAnswer === question.answer ? "#10b98110" : "#ef444410",
           }}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
         >
           <div className="flex items-center gap-2 mb-2">
             {selectedAnswer === question.answer ? (
@@ -198,7 +161,7 @@ export function QuestionCard({
               </p>
             )}
           </div>
-        </motion.div>
+        </div>
       )}
 
       {/* Action Button */}
@@ -222,6 +185,6 @@ export function QuestionCard({
           </Button>
         )}
       </div>
-    </motion.div>
+    </div>
   );
 }

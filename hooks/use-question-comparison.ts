@@ -75,7 +75,7 @@ export function useQuestionComparison(category: string): UseQuestionComparisonRe
     }
     
     const topic = topicMap[category.toLowerCase()] || category
-    const url = `/api/questions?topic=${encodeURIComponent(topic)}&limit=20`
+    const url = `/api/questions/Step-1?topic=${encodeURIComponent(topic)}&limit=20`
     
     console.log('🔍 Fetching questions from:', url)
     console.log('📝 Category mapping:', category, '->', topic)
