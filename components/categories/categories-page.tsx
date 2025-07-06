@@ -70,9 +70,6 @@ export default function CategoriesPage({
                     <h3 className="text-2xl font-bold text-card-foreground">
                       {category.name}
                     </h3>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      {category.questionCount} questions
-                    </p>
                   </div>
                 </div>
 

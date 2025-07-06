@@ -36,7 +36,7 @@ export interface Category {
   icon: React.ComponentType<{ size: number; color: string }>;
   color: string;
   description: string;
-  questionCount: number;
+  questionCount: number | null;
 }
 
 export interface Question {

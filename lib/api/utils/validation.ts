@@ -26,7 +26,7 @@ export function isValidNonNegativeInteger(value: string | null): boolean {
 export function parseLimit(
   limitParam: string | null,
   defaultLimit: number = 50,
-  maxLimit: number = 100
+  maxLimit: number = 1000
 ): number {
   if (!limitParam) return defaultLimit;
 

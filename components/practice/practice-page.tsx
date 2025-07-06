@@ -19,6 +19,8 @@ interface PracticePageProps {
   answers: Record<number, number>
   showFeedback: boolean
   practiceComplete: boolean
+  loading: boolean
+  error: string | null
   onBackToCategories: () => void
   onAnswerSelect: (questionId: number, answerIndex: number) => void
   onSubmitAnswer: () => void
@@ -33,6 +35,8 @@ export default function PracticePage({
   answers,
   showFeedback,
   practiceComplete,
+  loading,
+  error,
   onBackToCategories,
   onAnswerSelect,
   onSubmitAnswer,
@@ -50,6 +54,64 @@ export default function PracticePage({
 
   if (!mounted) {
     return null
+  }
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-lg text-muted-foreground">Loading questions for {selectedCategory}...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <div className="min-h-screen bg-background text-foreground flex items-center justify-center p-8">
+        <div className="text-center max-w-md">
+          <div className="text-red-500 mb-4">
+            <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h2 className="text-2xl font-bold text-card-foreground mb-4">Unable to Load Questions</h2>
+          <p className="text-muted-foreground mb-6">{error}</p>
+          <button
+            onClick={onBackToCategories}
+            className="bg-primary text-primary-foreground border-none rounded-lg px-6 py-3 text-base font-semibold cursor-pointer shadow-md transition-all duration-200 hover:opacity-90"
+          >
+            Back to Categories
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  // Show empty state if no questions
+  if (questions.length === 0) {
+    return (
+      <div className="min-h-screen bg-background text-foreground flex items-center justify-center p-8">
+        <div className="text-center max-w-md">
+          <div className="text-muted-foreground mb-4">
+            <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+          </div>
+          <h2 className="text-2xl font-bold text-card-foreground mb-4">No Questions Available</h2>
+          <p className="text-muted-foreground mb-6">There are no practice questions available for {selectedCategory} at this time.</p>
+          <button
+            onClick={onBackToCategories}
+            className="bg-primary text-primary-foreground border-none rounded-lg px-6 py-3 text-base font-semibold cursor-pointer shadow-md transition-all duration-200 hover:opacity-90"
+          >
+            Back to Categories
+          </button>
+        </div>
+      </div>
+    )
   }
 
   const currentQuestion = questions[currentQuestionIndex]
