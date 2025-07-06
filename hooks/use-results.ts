@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { quizQuestions } from "@/data/quiz-data"
-import { quizResultsStorage } from "@/lib/mongo/quiz-results-storage"
+import { quizResultsStorage } from "@/lib/quiz-results-storage"
 import { analyticsStorage } from "@/lib/analytics-storage"
 import { AnalyticsData, Question } from "@/types"
 

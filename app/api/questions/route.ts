@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { QuestionService } from "@/lib/services/question-service";
+import { QuestionService } from "@/lib/api/services/question-service";
 import { QuestionsApiResponse, GetQuestionsParams, ApiError } from "@/types";
 import {
   parseLimit,
   parseOffset,
   validateRequiredFields,
-} from "@/lib/utils/validation";
-import { handleApiError, createErrorResponse } from "@/lib/utils/errors";
+} from "@/lib/api/utils/validation";
+import { handleApiError, createErrorResponse } from "@/lib/api/utils/errors";
 
 /**
  * GET /api/questions
