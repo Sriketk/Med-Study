@@ -6,6 +6,7 @@ import { session } from "@/db/auth/schema/session";
 import { verification } from "@/db/auth/schema/verification";
 import { account } from "@/db/auth/schema/account";
 import { nextCookies } from "better-auth/next-js";
+
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "pg",
@@ -29,5 +30,8 @@ export const auth = betterAuth({
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     },
   },
-  plugins: [nextCookies()],
+  plugins: [
+    nextCookies(),
+  ],
 });
+ 

@@ -10,7 +10,7 @@ export default function OnboardingPage() {
 
   const handleOnboardingComplete = (data: OnboardingData) => {
     onboardingStorage.setData(data);
-    router.push("/");
+    router.push("/home");
   };
 
   return <OnboardingFlow onComplete={handleOnboardingComplete} />;

@@ -28,7 +28,7 @@ export function QuestionComparisonPage() {
 
           <div className="flex gap-3">
             <Link
-              href="/"
+              href="/home"
               className="inline-flex items-center gap-2 bg-secondary text-secondary-foreground border border-border rounded-lg px-4 py-3 text-sm font-medium cursor-pointer transition-all duration-200 hover:bg-secondary/80"
             >
               Back to Home

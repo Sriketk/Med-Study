@@ -10,7 +10,7 @@ export default function CaseStudy() {
   return (
     <CaseStudyPage
       caseData={caseStudyData}
-      onBackToHome={() => router.push("/")}
+      onBackToHome={() => router.push("/home")}
     />
   )
 } 
