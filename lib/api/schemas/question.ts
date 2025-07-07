@@ -68,8 +68,8 @@ export const Step1QuestionSchema = new Schema<Step1QuestionDocument>(
 );
 
 // Compound indexes for better query performance
-Step1QuestionSchema.index({ topic: 1, subtopic: 1 });
-Step1QuestionSchema.index({ topic: 1, createdAt: -1 });
+// Step1QuestionSchema.index({ topic: 1, subtopic: 1 });
+// Step1QuestionSchema.index({ topic: 1, createdAt: -1 });
 
 // Create and export the model
 export const Step1QuestionModel: Model<Step1QuestionDocument> =
