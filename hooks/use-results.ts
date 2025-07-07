@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
+import { useSearchParams } from "next/navigation"
 import { quizQuestions } from "@/data/quiz-data"
-import { quizResultsStorage } from "@/lib/quiz-results-storage"
 import { Question } from "@/types"
 
 export interface QuizResult {
@@ -25,16 +25,22 @@ export function useResults() {
   const [results, setResults] = useState<QuizResult | null>(null)
   const [answers, setAnswers] = useState<Record<number, number> | null>(null)
   const [loading, setLoading] = useState(true)
+  const searchParams = useSearchParams()
 
   useEffect(() => {
-    const storedAnswers = quizResultsStorage.get()
-    if (storedAnswers) {
-      const calculated = calculateResults(storedAnswers)
-      setResults(calculated)
-      setAnswers(storedAnswers)
+    const answersParam = searchParams.get('answers')
+    if (answersParam) {
+      try {
+        const parsedAnswers = JSON.parse(decodeURIComponent(answersParam))
+        const calculated = calculateResults(parsedAnswers)
+        setResults(calculated)
+        setAnswers(parsedAnswers)
+      } catch (error) {
+        console.error("Failed to parse quiz answers from URL", error)
+      }
     }
     setLoading(false)
-  }, [])
+  }, [searchParams])
 
   return { results, answers, loading }
 } 

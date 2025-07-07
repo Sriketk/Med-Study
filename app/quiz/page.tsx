@@ -2,7 +2,6 @@
 
 import { useRouter } from "next/navigation"
 import { useQuiz } from "@/hooks/use-quiz"
-import { quizResultsStorage } from "@/lib/quiz-results-storage"
 import QuizPage from "@/components/quiz/quiz-page"
 
 export default function Quiz() {
@@ -10,8 +9,9 @@ export default function Quiz() {
   const router = useRouter()
 
   const handleSubmit = () => {
-    quizResultsStorage.set(state.answers)
-    router.push("/results")
+    // Pass quiz answers as URL parameters
+    const answersParam = encodeURIComponent(JSON.stringify(state.answers))
+    router.push(`/results?answers=${answersParam}`)
   }
 
   return (
