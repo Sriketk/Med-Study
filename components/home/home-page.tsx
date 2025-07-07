@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Brain } from "lucide-react";
 import { DarkModeToggle } from "@/components/shared/dark-mode-toggle";
-import { OnboardingData } from "@/types";
+import { OnboardingData } from "@/lib/types";
 import Link from "next/link";
 import { HOME_CARDS, CardConfig } from "./home-config";
 

@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import type { Category } from "@/types"
+import type { Category } from "@/lib/types"
 import { DarkModeToggle } from "@/components/shared/dark-mode-toggle"
 import { CategoryCard } from "@/components/shared/category-card"
 import { BackToHomeButton } from "@/components/shared/back-to-home-button"

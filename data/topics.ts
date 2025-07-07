@@ -1,4 +1,4 @@
-import { QbankTopics } from '@/types'
+import { QbankTopics } from '@/lib/types'
 
 /**
  * Medical education topics and their associated subtopics

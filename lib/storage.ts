@@ -1,4 +1,4 @@
-import { OnboardingData } from "@/types"
+import { OnboardingData } from "@/lib/types"
 
 const ONBOARDING_COMPLETE_KEY = "onboardingComplete"
 const ONBOARDING_DATA_KEY = "onboardingData"

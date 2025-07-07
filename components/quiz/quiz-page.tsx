@@ -1,7 +1,7 @@
 "use client"
 
 import { ChevronLeft, ChevronRight } from "lucide-react"
-import type { Question } from "@/types"
+import type { Question } from "@/lib/types"
 import { DarkModeToggle } from "@/components/shared/dark-mode-toggle"
 
 interface QuizPageProps {

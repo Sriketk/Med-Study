@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { ApiError, ValidationError } from "@/types";
+import { ApiError, ValidationError } from "@/lib/types";
 
 /**
  * Custom error classes for different types of application errors

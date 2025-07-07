@@ -1,7 +1,7 @@
 "use client"
 
 import { Award, TrendingUp, TrendingDown, AlertCircle } from "lucide-react"
-import type { Question, Category } from "@/types"
+import type { Question, Category } from "@/lib/types"
 import type { QuizResult } from "@/hooks/use-results"
 
 interface ResultsPageProps {

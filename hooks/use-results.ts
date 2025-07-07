@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import { useSearchParams } from "next/navigation"
 import { quizQuestions } from "@/data/quiz-data"
-import { Question } from "@/types"
+import { Question } from "@/lib/types"
 
 export interface QuizResult {
   score: number

@@ -8,7 +8,7 @@ import AcademicYearStep from "./steps/academic-year-step"
 import ExamTypeStep from "./steps/exam-type-step"
 import ExamDateStep from "./steps/exam-date-step"
 import FileUploadStep from "./steps/file-upload-step"
-import type { OnboardingData } from "@/types"
+import type { OnboardingData } from "@/lib/types"
 
 // --- Constants (moved outside) ---
 const onboardingSteps = [

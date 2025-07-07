@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import OnboardingFlow from '@/components/onboarding/onboarding-flow';
-import { OnboardingData } from '@/types';
+import { OnboardingData } from '@/lib/types';
 import { onboardingStorage } from '@/lib/storage';
 
 export default function OnboardingPage() {

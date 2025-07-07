@@ -2,7 +2,7 @@
 
 import { ChevronRight, Scale } from "lucide-react";
 import Link from "next/link";
-import type { Category } from "@/types";
+import type { Category } from "@/lib/types";
 
 interface CategoryCardProps {
   category: Category;

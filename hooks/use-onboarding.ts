@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { OnboardingData } from "@/types"
+import { OnboardingData } from "@/lib/types"
 import { onboardingStorage } from "@/lib/storage"
 
 type OnboardingStatus = "loading" | "redirecting" | "authenticated"

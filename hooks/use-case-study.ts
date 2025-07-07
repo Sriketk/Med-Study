@@ -1,5 +1,5 @@
 import { useReducer } from "react";
-import { CaseStudyData } from "@/types";
+import { CaseStudyData } from "@/lib/types";
 
 // --- State and Actions ---
 export interface ChatMessage {

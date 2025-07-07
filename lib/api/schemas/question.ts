@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
-import { Step1Question, Step2Question } from "@/types";
+import { Step1Question, Step2Question } from "@/lib/types";
 
 // MongoDB document interface extending the base interface
 export interface Step1QuestionDocument extends Step1Question, Document {

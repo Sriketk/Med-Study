@@ -1,5 +1,5 @@
 import { useReducer, useEffect, useMemo } from "react"
-import { Question } from "@/types"
+import { Question } from "@/lib/types"
 
 // Transform API question to match our interface
 interface ApiQuestion {

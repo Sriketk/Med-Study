@@ -13,7 +13,7 @@ import {
   MedExamQuestion,
   GetQuestionsParams,
   ValidationError,
-} from "@/types";
+} from "@/lib/types";
 import {
   isValidTopic,
   isValidSubtopic,

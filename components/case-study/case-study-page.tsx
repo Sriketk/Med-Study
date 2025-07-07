@@ -4,7 +4,7 @@ import { useState, useRef } from "react";
 import { ThumbsUp, ThumbsDown } from "lucide-react";
 import { DarkModeToggle } from "@/components/shared/dark-mode-toggle"
 import { BackToHomeButton } from "@/components/shared/back-to-home-button";
-import type { CaseStudyData } from "@/types";
+import type { CaseStudyData } from "@/lib/types";
 import { useCaseStudy } from "@/hooks/use-case-study";
 import { useGraph } from "@/hooks/use-graph";
 import ReactMarkdown from "react-markdown";
