@@ -1,10 +1,10 @@
 "use client";
 
-import { ArrowLeft, Scale } from "lucide-react";
-import Link from "next/link";
+import { Scale } from "lucide-react";
 import { categories } from "@/data/categories";
 import { DarkModeToggle } from "@/components/shared/dark-mode-toggle";
 import { CategoryCard } from "@/components/shared/category-card";
+import { BackToHomeButton } from "@/components/shared/back-to-home-button";
 
 export function QuestionComparisonPage() {
   return (
@@ -27,12 +27,7 @@ export function QuestionComparisonPage() {
           </div>
 
           <div className="flex gap-3">
-            <Link
-              href="/home"
-              className="inline-flex items-center gap-2 bg-secondary text-secondary-foreground border border-border rounded-lg px-4 py-3 text-sm font-medium cursor-pointer transition-all duration-200 hover:bg-secondary/80"
-            >
-              Back to Home
-            </Link>
+            <BackToHomeButton />
             <DarkModeToggle />
           </div>
         </div>

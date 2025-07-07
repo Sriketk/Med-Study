@@ -14,7 +14,6 @@ export default function Categories() {
   return (
     <CategoriesPage
       categories={categories}
-      onBackToHome={() => router.push("/home")}
       onSelectCategory={selectCategory}
     />
   );

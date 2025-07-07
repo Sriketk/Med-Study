@@ -2,7 +2,8 @@
 
 import { useState, useRef } from "react";
 import { ThumbsUp, ThumbsDown } from "lucide-react";
-import { DarkModeToggle } from "@/components/shared/dark-mode-toggle";
+import { DarkModeToggle } from "@/components/shared/dark-mode-toggle"
+import { BackToHomeButton } from "@/components/shared/back-to-home-button";
 import type { CaseStudyData } from "@/types";
 import { useCaseStudy } from "@/hooks/use-case-study";
 import { useGraph } from "@/hooks/use-graph";
@@ -10,12 +11,10 @@ import ReactMarkdown from "react-markdown";
 
 interface CaseStudyPageProps {
   caseData: CaseStudyData;
-  onBackToHome: () => void;
 }
 
 export default function CaseStudyPage({
   caseData,
-  onBackToHome,
 }: CaseStudyPageProps) {
   const [sendMessages, setSendMessages] = useState("");
   const [questionFeedback, setQuestionFeedback] = useState<'like' | 'dislike' | null>(null);
@@ -66,12 +65,7 @@ export default function CaseStudyPage({
           </div>
 
           <div className="flex gap-3">
-            <button
-              onClick={onBackToHome}
-              className="bg-secondary text-secondary-foreground border border-border rounded-lg px-4 py-3 text-sm font-medium cursor-pointer transition-all duration-200 hover:bg-secondary/80"
-            >
-              Back to Home
-            </button>
+            <BackToHomeButton />
             <DarkModeToggle />
           </div>
         </div>

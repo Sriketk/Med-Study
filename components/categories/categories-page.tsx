@@ -4,16 +4,15 @@ import type React from "react"
 import type { Category } from "@/types"
 import { DarkModeToggle } from "@/components/shared/dark-mode-toggle"
 import { CategoryCard } from "@/components/shared/category-card"
+import { BackToHomeButton } from "@/components/shared/back-to-home-button"
 
 interface CategoriesPageProps {
   categories: Category[]
-  onBackToHome: () => void
   onSelectCategory: (categoryName: string) => void
 }
 
 export default function CategoriesPage({
   categories,
-  onBackToHome,
   onSelectCategory,
 }: CategoriesPageProps) {
   return (
@@ -31,12 +30,7 @@ export default function CategoriesPage({
           </div>
 
           <div className="flex gap-3">
-            <button
-              onClick={onBackToHome}
-              className="bg-secondary text-secondary-foreground border border-border rounded-lg px-4 py-3 text-sm font-medium cursor-pointer transition-all duration-200 hover:bg-secondary/80"
-            >
-              Back to Home
-            </button>
+            <BackToHomeButton />
             <DarkModeToggle />
           </div>
         </div>
