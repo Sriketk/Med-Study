@@ -50,7 +50,7 @@ export function QuestionComparisonPage() {
         </div>
 
         {/* Instructions */}
-        <div className="mt-12 bg-card border-2 border-border rounded-lg shadow-lg p-8 transition-all duration-150 hover:border-primary hover:-translate-y-1 hover:shadow-xl">
+        <div className="mt-12 bg-card border-2 border-border rounded-lg shadow-lg p-8 transition-all duration-150 ">
           <h2 className="text-lg font-semibold text-card-foreground mb-3">
             How it works
           </h2>
