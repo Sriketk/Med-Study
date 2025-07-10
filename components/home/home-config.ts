@@ -54,7 +54,7 @@ export const HOME_CARDS: CardConfig[] = [
   //   },
   // },
   {
-    title: "Case Study",
+    title: "Clinicals",
     description:
       "Interactive clinical case with chat-based information gathering",
     href: "/case-study",
