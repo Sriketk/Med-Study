@@ -127,7 +127,7 @@ export default function LandingPage() {
               ].map((stat, index) => (
                 <NeonGradientCard key={index} className="text-center p-6">
                   <div className="flex justify-center mb-3">
-                    <div className="h-12 w-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                    <div className="h-12 w-12 rounded-full bg-gradient-to-br from-white to-purple-600 flex items-center justify-center">
                       <stat.icon className="h-6 w-6 text-white" />
                     </div>
                   </div>
