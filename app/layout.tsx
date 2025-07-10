@@ -13,8 +13,8 @@ const merriweather = Merriweather({
 })
 
 export const metadata: Metadata = {
-  title: "USMLE Step 1 Prep Quiz",
-  description: "Test your medical knowledge with our USMLE Step 1 preparation quiz",
+  title: "MedPrep AI - Master Your Medical Studies with AI",
+  description: "Accelerate your USMLE Step 1 preparation with unlimited practice questions, interactive clinical cases, and AI-powered study tools designed for medical excellence.",
 }
 
 export default function RootLayout({
