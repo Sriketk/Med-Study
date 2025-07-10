@@ -33,7 +33,7 @@ export default function LandingPage() {
       </div>
 
       {/* Header */}
-      <header className="relative z-50 border-b border-border/40 bg-background/80 backdrop-blur-sm">
+      <header className="fixed top-0 left-0 right-0 z-50 border-b border-border/40 bg-background/95 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
@@ -48,17 +48,18 @@ export default function LandingPage() {
               </div>
             </div>
             <div className="flex items-center space-x-4">
-              <nav className="hidden md:flex space-x-6">
-                <Link href="#features" className="text-sm font-medium hover:text-primary transition-colors">
-                  Features
-                </Link>
-                <Link href="#testimonials" className="text-sm font-medium hover:text-primary transition-colors">
-                  Success Stories
-                </Link>
-                <Link href="#pricing" className="text-sm font-medium hover:text-primary transition-colors">
-                  Pricing
-                </Link>
-              </nav>
+              <div className="hidden sm:flex items-center space-x-3">
+                <Button variant="ghost" size="sm" asChild>
+                  <Link href="/login">
+                    Login
+                  </Link>
+                </Button>
+                <Button size="sm" className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white" asChild>
+                  <Link href="/signup">
+                    Sign Up
+                  </Link>
+                </Button>
+              </div>
               <DarkModeToggle />
             </div>
           </div>
@@ -66,7 +67,7 @@ export default function LandingPage() {
       </header>
 
       {/* Hero Section */}
-      <section className="relative py-16 md:py-24 lg:py-32">
+      <section className="relative pt-32 pb-16 md:pt-40 md:pb-24 lg:pt-48 lg:pb-32">
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-4xl text-center">
             <BlurFade delay={0.1}>
@@ -127,7 +128,7 @@ export default function LandingPage() {
               ].map((stat, index) => (
                 <NeonGradientCard key={index} className="text-center p-6">
                   <div className="flex justify-center mb-3">
-                    <div className="h-12 w-12 rounded-full bg-gradient-to-br from-white to-purple-600 flex items-center justify-center">
+                    <div className="h-12 w-12 rounded-full bg-gradient-to-br from-white-0 to-purple-600 flex items-center justify-center">
                       <stat.icon className="h-6 w-6 text-white" />
                     </div>
                   </div>
@@ -454,30 +455,6 @@ export default function LandingPage() {
                   <p className="text-sm text-muted-foreground">Medical Schools</p>
                 </div>
               </div>
-            </div>
-          </BlurFade>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-16 bg-gradient-to-br from-blue-500 to-purple-600 text-white">
-        <div className="container mx-auto px-4 text-center">
-          <BlurFade delay={0.1}>
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Ready to Transform Your Medical Career?
-            </h2>
-            <p className="text-lg opacity-90 mb-8 max-w-2xl mx-auto">
-              Join thousands of medical students who have already started their journey to success. 
-              Begin your transformation today with our comprehensive study platform.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-100 shadow-lg">
-                Start Your Free Trial
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-              <Button size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10">
-                Schedule Demo
-              </Button>
             </div>
           </BlurFade>
         </div>

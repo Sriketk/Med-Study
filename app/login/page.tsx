@@ -11,16 +11,8 @@ export default function LoginPage() {
           href="/"
           className="flex items-center gap-2 self-center font-medium"
         >
-          <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
-            <Image
-              width={50}
-              height={50}
-              src={"/better-auth-starter.png"}
-              alt="Better Auth Starter Logo"
-              priority
-            />
-          </div>
-          Better Auth Starter
+        
+          
         </Link>
         <LoginForm />
       </div>

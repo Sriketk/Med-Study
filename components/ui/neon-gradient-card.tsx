@@ -20,8 +20,8 @@ export default function NeonGradientCard({
   borderSize = 2,
   borderRadius = 20,
   neonColors = {
-    firstColor: "#3b82f6",
-    secondColor: "#8b5cf6",
+    firstColor: "#dbeafe", // Very light blue
+    secondColor: "#ede9fe", // Very light purple
   },
 }: NeonGradientCardProps) {
   return (
