@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { LoginForm } from "@/components/forms/login-form"
+import { LoginForm } from "@/components/forms/login-form";
 import Image from "next/image";
 
 export default function LoginPage() {
@@ -10,10 +10,7 @@ export default function LoginPage() {
         <Link
           href="/"
           className="flex items-center gap-2 self-center font-medium"
-        >
-        
-          
-        </Link>
+        />
         <LoginForm />
       </div>
     </div>
