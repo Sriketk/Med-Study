@@ -1,11 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Brain } from "lucide-react";
+import { Brain, LogOut } from "lucide-react";
 import { DarkModeToggle } from "@/components/shared/dark-mode-toggle";
 import { OnboardingData } from "@/lib/types";
 import Link from "next/link";
 import { HOME_CARDS, CardConfig } from "./home-config";
+import { authClient } from "@/lib/auth/auth-client";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 interface HomePageProps {
   onboardingData: OnboardingData;
@@ -60,11 +63,32 @@ export default function HomePage({
   onStartPrepare,
 }: HomePageProps) {
   const [mounted, setMounted] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const router = useRouter();
 
   // Ensure component is mounted to avoid hydration mismatch
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    try {
+      await authClient.signOut({
+        fetchOptions: {
+          onSuccess: () => {
+            toast.success("Logged out successfully");
+            router.push("/");
+          },
+        },
+      });
+    } catch (error) {
+      toast.error("Failed to logout");
+      console.error("Logout error:", error);
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
 
   if (!mounted) {
     return null;
@@ -76,7 +100,15 @@ export default function HomePage({
       <div className="absolute -top-1/2 -right-1/4 w-2/5 h-full opacity-5 rounded-full transform -rotate-12 bg-gradient-to-br from-primary to-accent" />
       <div className="absolute -bottom-1/3 -left-1/4 w-1/3 h-3/5 opacity-5 rounded-full bg-gradient-to-tr from-primary to-accent" />
 
-      <div className="fixed top-6 right-6 z-50">
+      <div className="fixed top-6 right-6 z-50 flex items-center gap-3">
+        <button
+          onClick={handleLogout}
+          disabled={isLoggingOut}
+          className="bg-card text-foreground border border-border rounded-lg p-3 cursor-pointer shadow-sm transition-all duration-200 hover:bg-card/80 disabled:opacity-50 disabled:cursor-not-allowed"
+          aria-label="Logout"
+        >
+          <LogOut size={16} />
+        </button>
         <DarkModeToggle />
       </div>
 
