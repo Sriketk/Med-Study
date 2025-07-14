@@ -1,58 +1,66 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { ArrowLeft, Scale, Trophy, Target, AlertCircle } from "lucide-react"
-import Link from "next/link"
-import { categories } from "@/data/categories"
-import { useQuestionComparison } from "@/hooks/use-question-comparison"
-import { QuestionCard } from "@/components/question-comparison/question-card"
-import { ComparisonCard } from "@/components/question-comparison/comparison-card"
-import { DarkModeToggle } from "@/components/shared/dark-mode-toggle"
+import { useState } from "react";
+import { ArrowLeft, Scale, Trophy, Target, AlertCircle } from "lucide-react";
+import Link from "next/link";
+import { categories } from "@/data/categories";
+import { useQuestionComparison } from "@/hooks/use-question-comparison";
+import { QuestionCard } from "@/components/question-comparison/question-card";
+import { ComparisonCard } from "@/components/question-comparison/comparison-card";
+import { DarkModeToggle } from "@/components/shared/dark-mode-toggle";
+import { BackToCategoriesButton } from "@/components/shared/back-to-categories-button";
 
 interface ComparisonExperiencePageProps {
-  category: string
+  category: string;
 }
 
-type ComparisonStep = "question1" | "question2" | "comparison"
+type ComparisonStep = "question1" | "question2" | "comparison";
 
 interface QuestionResult {
-  selectedAnswer: string
-  isCorrect: boolean
+  selectedAnswer: string;
+  isCorrect: boolean;
 }
 
-export function ComparisonExperiencePage({ category }: ComparisonExperiencePageProps) {
-  const [currentStep, setCurrentStep] = useState<ComparisonStep>("question1")
-  const [question1Result, setQuestion1Result] = useState<QuestionResult | null>(null)
-  const [question2Result, setQuestion2Result] = useState<QuestionResult | null>(null)
-  const [selectedBetterQuestion, setSelectedBetterQuestion] = useState<1 | 2 | null>(null)
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false)
+export function ComparisonExperiencePage({
+  category,
+}: ComparisonExperiencePageProps) {
+  const [currentStep, setCurrentStep] = useState<ComparisonStep>("question1");
+  const [question1Result, setQuestion1Result] = useState<QuestionResult | null>(
+    null
+  );
+  const [question2Result, setQuestion2Result] = useState<QuestionResult | null>(
+    null
+  );
+  const [selectedBetterQuestion, setSelectedBetterQuestion] = useState<
+    1 | 2 | null
+  >(null);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
   // Find category data
   const categoryData = categories.find(
     (cat) => cat.name.toLowerCase() === category.toLowerCase()
-  )
-  
+  );
+
   // Use the API hook to fetch questions
-  const { questionPair, loading, error, fetchNewPair } = useQuestionComparison(category)
+  const { questionPair, loading, error, fetchNewPair } =
+    useQuestionComparison(category);
 
   if (!categoryData) {
     return (
       <div className="min-h-screen bg-background p-4 md:p-8 flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-foreground mb-2">Category Not Found</h1>
+          <h1 className="text-2xl font-bold text-foreground mb-2">
+            Category Not Found
+          </h1>
           <p className="text-muted-foreground mb-4">
             Sorry, we couldn't find this category.
           </p>
-          <Link 
-            href="/question-comparison"
-            className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors"
-          >
-            
-            Back to Categories
-          </Link>
+          <div className="flex justify-center">
+            <BackToCategoriesButton href="/question-comparison" />
+          </div>
         </div>
       </div>
-    )
+    );
   }
 
   if (loading) {
@@ -63,7 +71,7 @@ export function ComparisonExperiencePage({ category }: ComparisonExperiencePageP
           <p className="text-muted-foreground">Loading questions...</p>
         </div>
       </div>
-    )
+    );
   }
 
   if (error) {
@@ -71,81 +79,84 @@ export function ComparisonExperiencePage({ category }: ComparisonExperiencePageP
       <div className="min-h-screen bg-background p-4 md:p-8 flex items-center justify-center">
         <div className="text-center">
           <AlertCircle size={48} className="text-red-500 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-foreground mb-2">Error Loading Questions</h1>
+          <h1 className="text-2xl font-bold text-foreground mb-2">
+            Error Loading Questions
+          </h1>
           <p className="text-muted-foreground mb-4">{error}</p>
-          <Link 
-            href="/question-comparison"
-            className="inline-flex items-center gap-2 bg-secondary text-secondary-foreground border border-border rounded-lg px-4 py-3 text-sm font-medium cursor-pointer transition-all duration-200 hover:bg-secondary/80"
-          >
-            <ArrowLeft size={16} />
-            Back to Categories
-          </Link>
+          <div className="flex justify-center">
+            <BackToCategoriesButton href="/question-comparison" />
+          </div>
         </div>
       </div>
-    )
+    );
   }
 
   if (!questionPair) {
     return (
       <div className="min-h-screen bg-background p-4 md:p-8 flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-foreground mb-2">No Questions Available</h1>
+          <h1 className="text-2xl font-bold text-foreground mb-2">
+            No Questions Available
+          </h1>
           <p className="text-muted-foreground mb-4">
-            Sorry, there aren't enough questions available for comparison in this category.
-          </p>
-          <Link 
-            href="/question-comparison"
-            className="inline-flex items-center gap-2 bg-secondary text-secondary-foreground border border-border rounded-lg px-4 py-3 text-sm font-medium cursor-pointer transition-all duration-200 hover:bg-secondary/80"
-          >
-            <ArrowLeft size={16} />
-            Back to Categories
-          </Link>
+                                  Sorry, there aren't enough questions available for comparison in
+             this category.
+           </p>
+           <div className="flex justify-center">
+             <BackToCategoriesButton href="/question-comparison" />
+           </div>
         </div>
       </div>
-    )
+    );
   }
 
-  const handleQuestion1Answer = (selectedAnswer: string, isCorrect: boolean) => {
+  const handleQuestion1Answer = (
+    selectedAnswer: string,
+    isCorrect: boolean
+  ) => {
     setQuestion1Result({
       selectedAnswer,
-      isCorrect
-    })
-    setCurrentStep("question2")
-  }
+      isCorrect,
+    });
+    setCurrentStep("question2");
+  };
 
-  const handleQuestion2Answer = (selectedAnswer: string, isCorrect: boolean) => {
+  const handleQuestion2Answer = (
+    selectedAnswer: string,
+    isCorrect: boolean
+  ) => {
     setQuestion2Result({
       selectedAnswer,
-      isCorrect
-    })
-    setCurrentStep("comparison")
-  }
+      isCorrect,
+    });
+    setCurrentStep("comparison");
+  };
 
   const handleComparisonSelection = (betterQuestion: 1 | 2) => {
-    setSelectedBetterQuestion(betterQuestion)
-  }
+    setSelectedBetterQuestion(betterQuestion);
+  };
 
   const handleSubmitComparison = async () => {
-    if (!selectedBetterQuestion) return
-    
+    if (!selectedBetterQuestion) return;
+
     // Here you could save the comparison result to your backend
-    console.log("User selected question", selectedBetterQuestion, "as better")
-    
+    console.log("User selected question", selectedBetterQuestion, "as better");
+
     // Show success message
-    setShowSuccessMessage(true)
-    
+    setShowSuccessMessage(true);
+
     // Reset for next comparison after showing success message
     setTimeout(async () => {
-      await fetchNewPair()
-      setQuestion1Result(null)
-      setQuestion2Result(null)
-      setSelectedBetterQuestion(null)
-      setShowSuccessMessage(false)
-      setCurrentStep("question1")
-    }, 1500)
-  }
+      await fetchNewPair();
+      setQuestion1Result(null);
+      setQuestion2Result(null);
+      setSelectedBetterQuestion(null);
+      setShowSuccessMessage(false);
+      setCurrentStep("question1");
+    }, 1500);
+  };
 
-  const IconComponent = categoryData.icon
+  const IconComponent = categoryData.icon;
 
   return (
     <div className="min-h-screen bg-background p-4 md:p-8">
@@ -166,53 +177,53 @@ export function ComparisonExperiencePage({ category }: ComparisonExperiencePageP
             </div>
           </div>
 
-          <div className="flex gap-3">
-            <Link 
-              href="/question-comparison" 
-              className="inline-flex items-center gap-2 bg-secondary text-secondary-foreground border border-border rounded-lg px-4 py-3 text-sm font-medium cursor-pointer transition-all duration-200 hover:bg-secondary/80"
-            >
-              <ArrowLeft size={16} />
-              Back to Categories
-            </Link>
+          <div className="flex items-center gap-3">
+            <BackToCategoriesButton href="/question-comparison" />
             <DarkModeToggle />
           </div>
         </div>
 
         {/* Progress Indicator */}
         <div className="flex items-center justify-center gap-4 mt-6">
-            <div className={`flex items-center gap-2 px-3 py-2 rounded-full text-sm transition-colors ${
-              currentStep === "question1" 
-                ? "bg-primary text-primary-foreground" 
-                : question1Result 
-                  ? "bg-green-500/20 text-green-600" 
-                  : "bg-muted text-muted-foreground"
-            }`}>
-              <Target size={16} />
-              Question 1
-            </div>
-            <div className="w-8 h-px bg-border"></div>
-            <div className={`flex items-center gap-2 px-3 py-2 rounded-full text-sm transition-colors ${
-              currentStep === "question2" 
-                ? "bg-primary text-primary-foreground" 
-                : question2Result 
-                  ? "bg-green-500/20 text-green-600" 
-                  : "bg-muted text-muted-foreground"
-            }`}>
-              <Target size={16} />
-              Question 2
-            </div>
-            <div className="w-8 h-px bg-border"></div>
-            <div className={`flex items-center gap-2 px-3 py-2 rounded-full text-sm transition-colors ${
-              currentStep === "comparison" 
-                ? "bg-primary text-primary-foreground" 
-                : selectedBetterQuestion 
-                  ? "bg-green-500/20 text-green-600" 
-                  : "bg-muted text-muted-foreground"
-            }`}>
-              <Scale size={16} />
-              Compare
-            </div>
+          <div
+            className={`flex items-center gap-2 px-3 py-2 rounded-full text-sm transition-colors ${
+              currentStep === "question1"
+                ? "bg-primary text-primary-foreground"
+                : question1Result
+                ? "bg-green-500/20 text-green-600"
+                : "bg-muted text-muted-foreground"
+            }`}
+          >
+            <Target size={16} />
+            Question 1
           </div>
+          <div className="w-8 h-px bg-border"></div>
+          <div
+            className={`flex items-center gap-2 px-3 py-2 rounded-full text-sm transition-colors ${
+              currentStep === "question2"
+                ? "bg-primary text-primary-foreground"
+                : question2Result
+                ? "bg-green-500/20 text-green-600"
+                : "bg-muted text-muted-foreground"
+            }`}
+          >
+            <Target size={16} />
+            Question 2
+          </div>
+          <div className="w-8 h-px bg-border"></div>
+          <div
+            className={`flex items-center gap-2 px-3 py-2 rounded-full text-sm transition-colors ${
+              currentStep === "comparison"
+                ? "bg-primary text-primary-foreground"
+                : selectedBetterQuestion
+                ? "bg-green-500/20 text-green-600"
+                : "bg-muted text-muted-foreground"
+            }`}
+          >
+            <Scale size={16} />
+            Compare
+          </div>
+        </div>
 
         {/* Question Content */}
         <div key={currentStep}>
@@ -234,18 +245,20 @@ export function ComparisonExperiencePage({ category }: ComparisonExperiencePageP
             />
           )}
 
-          {currentStep === "comparison" && question1Result && question2Result && (
-            <ComparisonCard
-              question1={questionPair.question1}
-              question2={questionPair.question2}
-              result1={question1Result}
-              result2={question2Result}
-              onSelectBetter={handleComparisonSelection}
-              onSubmitComparison={handleSubmitComparison}
-              selectedBetter={selectedBetterQuestion}
-              categoryColor={categoryData.color}
-            />
-          )}
+          {currentStep === "comparison" &&
+            question1Result &&
+            question2Result && (
+              <ComparisonCard
+                question1={questionPair.question1}
+                question2={questionPair.question2}
+                result1={question1Result}
+                result2={question2Result}
+                onSelectBetter={handleComparisonSelection}
+                onSubmitComparison={handleSubmitComparison}
+                selectedBetter={selectedBetterQuestion}
+                categoryColor={categoryData.color}
+              />
+            )}
         </div>
 
         {/* Success Message */}
@@ -267,5 +280,5 @@ export function ComparisonExperiencePage({ category }: ComparisonExperiencePageP
         )}
       </div>
     </div>
-  )
-} 
+  );
+}

@@ -1,13 +1,12 @@
-"use client"
+"use client";
 
-import { BackToHomeButton } from "@/components/shared/back-to-home-button"
-import { CategoryCard } from "@/components/shared/category-card"
-import { DarkModeToggle } from "@/components/shared/dark-mode-toggle"
-import { caseStudyData } from "@/data/casestudydata"
-import { Scale } from "lucide-react"
-import { categories } from "@/data/categories"
+import { BackToHomeButton } from "@/components/shared/back-to-home-button";
+import { DarkModeToggle } from "@/components/shared/dark-mode-toggle";
+import { categories } from "@/data/categories";
+import { CategoryCard } from "@/components/shared/category-card";
+import { Scale } from "lucide-react";
 
-export default function CaseStudy() {
+export default function Practice() {
   return (
     <div className="min-h-screen bg-background p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
@@ -19,10 +18,10 @@ export default function CaseStudy() {
             </div>
             <div>
               <h1 className="text-3xl md:text-4xl font-bold text-foreground">
-                Clinicals
+                Practice
               </h1>
               <p className="text-lg text-muted-foreground mt-2">
-                Case Studies
+                Practice Questions
               </p>
             </div>
           </div>
@@ -39,8 +38,8 @@ export default function CaseStudy() {
             <CategoryCard
               key={category.name}
               category={category}
-              href={`/case-study/${category.name.toLowerCase()}`}
-              variant="comparison"
+              href={`/practice/${category.name.toLowerCase()}`}
+              variant="practice"
             />
           ))}
         </div>

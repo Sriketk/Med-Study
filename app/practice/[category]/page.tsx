@@ -60,7 +60,7 @@ export default function Practice() {
       practiceComplete={state.isComplete}
       loading={state.loading}
       error={state.error}
-      onBackToCategories={() => router.push("/categories")}
+
       onAnswerSelect={(questionId, answerIndex) =>
         dispatch({ type: "ANSWER", questionId, answerIndex })
       }

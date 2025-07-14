@@ -8,12 +8,13 @@ import type { CaseStudyData } from "@/lib/types";
 import { useCaseStudy } from "@/hooks/use-case-study";
 import { useGraph } from "@/hooks/use-graph";
 import ReactMarkdown from "react-markdown";
+import { BackToCategoriesButton } from "../shared/back-to-categories-button";
 
 interface CaseStudyPageProps {
   caseData: CaseStudyData;
 }
 
-export default function CaseStudyPage({
+export default function CaseStudyQuestions({
   caseData,
 }: CaseStudyPageProps) {
   const [sendMessages, setSendMessages] = useState("");
@@ -65,7 +66,7 @@ export default function CaseStudyPage({
           </div>
 
           <div className="flex gap-3">
-            <BackToHomeButton />
+            <BackToCategoriesButton href="/case-study"/>
             <DarkModeToggle />
           </div>
         </div>

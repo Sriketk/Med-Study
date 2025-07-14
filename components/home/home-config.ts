@@ -68,7 +68,7 @@ export const HOME_CARDS: CardConfig[] = [
     title: "Study & Practice",
     description:
       "Study specific topics with detailed explanations and immediate feedback",
-    href: "/categories",
+    href: "/practice",
     icon: Microscope,
     badge: {
       icon: BookOpen,
@@ -104,4 +104,3 @@ export const HOME_CARDS: CardConfig[] = [
 export const CASE_STUDY_CARD = HOME_CARDS[0];
 export const PRACTICE_CARD = HOME_CARDS[1];
 export const QUESTION_COMPARISON_CARD = HOME_CARDS[2];
-
