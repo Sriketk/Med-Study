@@ -1,6 +1,6 @@
 import { useReducer, useEffect, useMemo } from "react";
 import { Question, Step1Question } from "@/lib/types";
-import { step1TopicMap, transformApiQuestion } from "@/lib/utils";
+import { fetchQuestionsApi, transformApiQuestion } from "@/lib/utils";
 
 // --- State and Actions ---
 interface PracticeState {
@@ -103,55 +103,7 @@ const initialState: PracticeState = {
 export function usePracticeSession(category: string | null) {
   const [state, dispatch] = useReducer(practiceReducer, initialState);
 
-  const fetchQuestions = async (category: string): Promise<Step1Question[]> => {
-    // Map category to topic name
-    const topic = step1TopicMap[category.toLowerCase()] || category;
 
-    // Fetch ALL questions by setting a very high limit
-    const url = `/api/questions/Step-1?topic=${encodeURIComponent(
-      topic
-    )}&limit=1000`;
-
-    console.log("🔍 Fetching ALL practice questions from:", url);
-    console.log("📝 Category mapping:", category, "->", topic);
-
-    const response = await fetch(url);
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("❌ API Error:", response.status, errorText);
-      throw new Error(
-        `Failed to fetch questions: ${response.status} ${response.statusText}`
-      );
-    }
-
-    const data = await response.json();
-    console.log("✅ API Response:", {
-      success: data.success,
-      count: data.count,
-      dataLength: data.data?.length,
-      topic: data.topic,
-      message: data.message,
-    });
-
-    if (!data.success) {
-      throw new Error(data.message || "API returned unsuccessful response");
-    }
-
-    if (!data.data || data.data.length === 0) {
-      throw new Error(
-        `No questions available for "${topic}". Please try a different category.`
-      );
-    }
-
-    console.log(
-      "📊 Successfully fetched",
-      data.data.length,
-      "questions for",
-      topic
-    );
-    return data.data;
-  };
 
   useEffect(() => {
     if (category) {
@@ -160,7 +112,11 @@ export function usePracticeSession(category: string | null) {
           dispatch({ type: "START_LOADING", category });
           console.log("🚀 Loading practice questions for category:", category);
 
-          const apiQuestions = await fetchQuestions(category);
+          const apiQuestions = await fetchQuestionsApi(category, {
+            limit: 1000,
+            minRequired: 1,
+            context: "practice",
+          });
           const questions = apiQuestions.map((q, index) =>
             transformApiQuestion(q, index + 1)
           );

@@ -42,6 +42,82 @@ export const transformApiQuestionForComparison = (
   };
 };
 
+/**
+ * Shared function to fetch questions from the API
+ * @param category - The category to fetch questions for
+ * @param options - Configuration options
+ */
+export const fetchQuestionsApi = async (
+  category: string,
+  options: {
+    limit?: number;
+    minRequired?: number;
+    examType?: string;
+    context?: string;
+  } = {}
+): Promise<Step1Question[]> => {
+  const {
+    limit = 50,
+    minRequired = 1,
+    examType = "Step-1",
+    context = "questions",
+  } = options;
+
+  // Map category to topic name
+  const topic = step1TopicMap[category.toLowerCase()] || category;
+  const url = `/api/questions/${examType}?topic=${encodeURIComponent(
+    topic
+  )}&limit=${limit}`;
+
+  console.log(`🔍 Fetching ${context} from:`, url);
+  console.log("📝 Category mapping:", category, "->", topic);
+
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error("❌ API Error:", response.status, errorText);
+    throw new Error(
+      `Failed to fetch questions: ${response.status} ${response.statusText}`
+    );
+  }
+
+  const data = await response.json();
+  console.log("✅ API Response:", {
+    success: data.success,
+    count: data.count,
+    dataLength: data.data?.length,
+    topic: data.topic,
+    message: data.message,
+  });
+
+  if (!data.success) {
+    throw new Error(data.message || "API returned unsuccessful response");
+  }
+
+  if (!data.data || data.data.length < minRequired) {
+    if (minRequired === 1) {
+      throw new Error(
+        `No questions available for "${topic}". Please try a different category.`
+      );
+    } else {
+      throw new Error(
+        `Not enough questions available for ${context} in "${topic}". Found ${
+          data.data?.length || 0
+        } questions, but need at least ${minRequired} for ${context}.`
+      );
+    }
+  }
+
+  console.log(
+    "📊 Successfully fetched",
+    data.data.length,
+    "questions for",
+    topic
+  );
+  return data.data;
+};
+
 export const step2TopicMap: { [key: string]: string } = {
   biochemistry: "Biochemistry",
   cardiology: "Cardiovascular",

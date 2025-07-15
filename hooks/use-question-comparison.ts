@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Step1Question, ComparisonQuestion } from "@/lib/types";
-import { step1TopicMap, transformApiQuestionForComparison } from "@/lib/utils";
+import { fetchQuestionsApi, transformApiQuestionForComparison } from "@/lib/utils";
 
 interface QuestionPair {
   question1: ComparisonQuestion;
@@ -21,57 +21,7 @@ export function useQuestionComparison(
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchQuestions = async (): Promise<Step1Question[]> => {
-    // Map URL category to actual database topic names
 
-    const topic = step1TopicMap[category.toLowerCase()] || category;
-    const url = `/api/questions/Step-1?topic=${encodeURIComponent(
-      topic
-    )}&limit=20`;
-
-    console.log("🔍 Fetching questions from:", url);
-    console.log("📝 Category mapping:", category, "->", topic);
-
-    const response = await fetch(url);
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("❌ API Error:", response.status, errorText);
-      throw new Error(
-        `Failed to fetch questions: ${response.status} ${response.statusText}`
-      );
-    }
-
-    const data = await response.json();
-    console.log("✅ API Response:", {
-      success: data.success,
-      count: data.count,
-      dataLength: data.data?.length,
-      topic: data.topic,
-      message: data.message,
-    });
-
-    if (!data.success) {
-      throw new Error(data.message || "API returned unsuccessful response");
-    }
-
-    if (!data.data || data.data.length < 2) {
-      const actualTopic = step1TopicMap[category.toLowerCase()] || category;
-      throw new Error(
-        `Not enough questions available for comparison in "${actualTopic}". Found ${
-          data.data?.length || 0
-        } questions, but need at least 2 for comparison.`
-      );
-    }
-
-    console.log(
-      "📊 Successfully fetched",
-      data.data.length,
-      "questions for",
-      topic
-    );
-    return data.data;
-  };
 
   const selectRandomPair = (questions: ComparisonQuestion[]): QuestionPair => {
     const shuffled = [...questions].sort(() => 0.5 - Math.random());
@@ -87,7 +37,11 @@ export function useQuestionComparison(
       setError(null);
       console.log("🔄 Fetching new question pair for category:", category);
 
-      const apiQuestions = await fetchQuestions();
+      const apiQuestions = await fetchQuestionsApi(category, {
+        limit: 20,
+        minRequired: 2,
+        context: "comparison",
+      });
       const questions = apiQuestions.map((q, index) =>
         transformApiQuestionForComparison(q, index + 1)
       );
@@ -111,8 +65,7 @@ export function useQuestionComparison(
   const testApiConnection = async () => {
     try {
       console.log("🧪 Testing API connection...");
-      const response = await fetch("/api/questions?topic=Biochemistry&limit=1");
-      const data = await response.json();
+      const data = await fetchQuestionsApi("biochemistry", { limit: 1 });
       console.log("🧪 Test result:", data);
       return data;
     } catch (err) {
