@@ -1,6 +1,8 @@
-import { caseStudyData } from "@/data/casestudydata";
 import CaseStudyQuestions from "@/components/case-study/case-study-page";
-import { step2TopicMap } from "@/lib/utils";
+import { fetchQuestionsApi } from "@/lib/utils";
+import { Suspense } from "react";
+import CaseStudyLoading from "./loading";
+import { Step2Question } from "@/lib/types";
 
 export default async function CaseStudyPage({
   params,
@@ -8,10 +10,16 @@ export default async function CaseStudyPage({
   params: { category: string };
 }) {
   const { category } = await params;
-  const topic = step2TopicMap[category.toLowerCase()] || category;
-  const url = `/api/questions/Step-2?topic=${encodeURIComponent(
-    topic
-  )}&limit=20`;
-  console.log(category);
-  return <CaseStudyQuestions caseData={caseStudyData} />;
+  
+  const apiQuestions = await fetchQuestionsApi(category, {
+    limit: 10,
+    examType: "Step-2",
+    context: "case-study",
+  });
+
+  return (
+    <Suspense fallback={<CaseStudyLoading />}>
+      <CaseStudyQuestions questions={apiQuestions as Step2Question[]} />
+    </Suspense>
+  );
 }

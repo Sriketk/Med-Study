@@ -1,5 +1,5 @@
 import { useReducer } from "react";
-import { CaseStudyData } from "@/lib/types";
+import { Step2Question } from "@/lib/types";
 
 // --- State and Actions ---
 export interface ChatMessage {
@@ -9,6 +9,8 @@ export interface ChatMessage {
 }
 
 interface CaseStudyState {
+  questions: Step2Question[];
+  currentQuestionIndex: number;
   messages: ChatMessage[];
   selectedAnswer: number | null;
   isSubmitted: boolean;
@@ -20,6 +22,8 @@ type CaseStudyAction =
   | { type: "SUBMIT_ANSWER" }
   | { type: "ADD_MESSAGE"; payload: ChatMessage }
   | { type: "UPDATE_LAST_BOT_MESSAGE"; payload: string }
+  | { type: "NEXT_QUESTION" }
+  | { type: "PREVIOUS_QUESTION" }
   | { type: "RESET" };
 
 // --- Reducer ---
@@ -47,23 +51,64 @@ function caseStudyReducer(
       }
       return { ...state, messages: updatedMessages };
     }
+    case "NEXT_QUESTION":
+      if (state.currentQuestionIndex < state.questions.length - 1) {
+        return {
+          ...state,
+          currentQuestionIndex: state.currentQuestionIndex + 1,
+          selectedAnswer: null,
+          isSubmitted: false,
+          showFeedback: false,
+          messages: [],
+        };
+      }
+      return state;
+    case "PREVIOUS_QUESTION":
+      if (state.currentQuestionIndex > 0) {
+        return {
+          ...state,
+          currentQuestionIndex: state.currentQuestionIndex - 1,
+          selectedAnswer: null,
+          isSubmitted: false,
+          showFeedback: false,
+          messages: [],
+        };
+      }
+      return state;
     case "RESET":
-      return { ...initialState };
+      return {
+        ...state,
+        selectedAnswer: null,
+        isSubmitted: false,
+        showFeedback: false,
+        messages: [],
+      };
     default:
       return state;
   }
 }
 
-const initialState: CaseStudyState = {
-  messages: [],
-  selectedAnswer: null,
-  isSubmitted: false,
-  showFeedback: false,
+// Helper function to convert answer string to index
+const getCorrectAnswerIndex = (question: Step2Question): number => {
+  return question.choices.findIndex(choice => choice === question.answer);
 };
 
 // --- Hook ---
-export function useCaseStudy(caseData: CaseStudyData) {
+export function useCaseStudy(questions: Step2Question[]) {
+  const initialState: CaseStudyState = {
+    questions,
+    currentQuestionIndex: 0,
+    messages: [],
+    selectedAnswer: null,
+    isSubmitted: false,
+    showFeedback: false,
+  };
+
   const [state, dispatch] = useReducer(caseStudyReducer, initialState);
+
+  // Get current question
+  const currentQuestion = state.questions[state.currentQuestionIndex] || null;
+  const correctAnswerIndex = currentQuestion ? getCorrectAnswerIndex(currentQuestion) : -1;
 
   const handleSendMessage = (messageContent: string) => {
     if (!messageContent.trim()) return;
@@ -87,5 +132,12 @@ export function useCaseStudy(caseData: CaseStudyData) {
     dispatch({ type: "UPDATE_LAST_BOT_MESSAGE", payload: content });
   };
 
-  return { state, dispatch, handleSendMessage, streamBotMessage };
+  return { 
+    state, 
+    dispatch, 
+    handleSendMessage, 
+    streamBotMessage, 
+    currentQuestion,
+    correctAnswerIndex,
+  };
 }

@@ -31,6 +31,7 @@ export async function GET(
 ): Promise<NextResponse> {
   try {
     // Extract query parameters
+    console.log("GET /api/questions");
     const exam = (await params).exam;
     const { searchParams } = new URL(request.url);
     const topic = searchParams.get("topic");

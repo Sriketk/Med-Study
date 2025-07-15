@@ -1,6 +1,11 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { Step1Question, Question, ComparisonQuestion } from "@/lib/types";
+import {
+  Step1Question,
+  Step2Question,
+  Question,
+  ComparisonQuestion,
+} from "@/lib/types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -55,23 +60,25 @@ export const fetchQuestionsApi = async (
     examType?: string;
     context?: string;
   } = {}
-): Promise<Step1Question[]> => {
+): Promise<Step1Question[] | Step2Question[]> => {
   const {
-    limit = 50,
+    limit = 20,
     minRequired = 1,
     examType = "Step-1",
     context = "questions",
   } = options;
-
+  let topic = "";
   // Map category to topic name
-  const topic = step1TopicMap[category.toLowerCase()] || category;
-  const url = `/api/questions/${examType}?topic=${encodeURIComponent(
-    topic
-  )}&limit=${limit}`;
+  if (examType == "Step-1") {
+    topic = step1TopicMap[category.toLowerCase()] || category;
+  } else if (examType == "Step-2") {
+    topic = step2TopicMap[category.toLowerCase()] || category;
+  }
+  const url = `${process.env.NEXT_PUBLIC_API_URL}/api/questions/${examType}?topic=${topic}&limit=${limit}`;
 
   console.log(`🔍 Fetching ${context} from:`, url);
   console.log("📝 Category mapping:", category, "->", topic);
-
+  console.log("we fetching?");
   const response = await fetch(url);
 
   if (!response.ok) {
@@ -83,6 +90,7 @@ export const fetchQuestionsApi = async (
   }
 
   const data = await response.json();
+  // console.log(data);
   console.log("✅ API Response:", {
     success: data.success,
     count: data.count,
@@ -123,7 +131,7 @@ export const step2TopicMap: { [key: string]: string } = {
   cardiology: "Cardiovascular",
   pharmacology: "Pharmacology",
   endocrinology: "EndocrineAndDiabetesAndMetabolism",
-  immunology: "AllergiesAndImmunology",
+  immunology: "AllergyAndImmunology",
   pediatrics: "Pediatrics", // This might not have questions yet
   microbiology: "Microbiology",
   dermatology: "Dermatology",

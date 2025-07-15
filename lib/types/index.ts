@@ -61,10 +61,23 @@ export interface Step1Question {
   embedding?: number[];
 }
 
+export interface PatientDetails {
+  medications: string[];
+  allergies: string[];
+  familyHistory: string[];
+  labResults: string[];
+  bloodPresure: string;
+  respirations: string;
+  pulse: string;
+  physicalExamination: string;
+  temperature: string;
+  history: string;
+  demographics: string;
+}
+
 export interface Step2Question extends Step1Question {
   baseQuestion: string;
-  patientDetails: Object;
-  entireQuestion: string;
+  patientDetails: PatientDetails;
   shelfSubject: string;
 }
 

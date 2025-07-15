@@ -8,6 +8,17 @@ export async function useGraph({
   options,
   questionAnswered,
   chatMessage,
+  medications,
+  allergies,
+  familyHistory,
+  labResults,
+  bloodPresure,
+  respirations,
+  pulse,
+  physicalExamination,
+  temperature,
+  history,
+  demographics,
   setSendMessages,
 }: {
   question: string;
@@ -17,6 +28,17 @@ export async function useGraph({
   options: string[];
   questionAnswered: boolean;
   chatMessage: string;
+  medications: string[];
+  allergies: string[];
+  familyHistory: string[];
+  labResults: string[];
+  bloodPresure: string;
+  respirations: string;
+  pulse: string;
+  physicalExamination: string;
+  temperature: string;
+  history: string;
+  demographics: string;
   setSendMessages: (updater: (prev: string) => string) => void;
 }) {
   const client = new Client({ apiUrl: process.env.NEXT_PUBLIC_AI_SERVER });
@@ -25,7 +47,7 @@ export async function useGraph({
     answer,
     userAnswer,
     questionAnswered,
-    context,
+    // context,
     options,
     chatMessage
   );
@@ -56,19 +78,19 @@ export async function useGraph({
       options: options,
 
       // Medical information arrays
-      medications: [""],
-      allergies: [""],
-      familyHistory: [""],
-      labResults: [""],
+      medications: medications,
+      allergies: allergies,
+      familyHistory: familyHistory,
+      labResults: labResults,
 
       // Vital signs and examination data
-      bloodPresure: "50 bpm", // Fixed typo from bloodPresure
-      respirations: "10 bpm",
-      pulse: "10 bpm",
-      physicalExamination: "50 bpm",
-      temperature: "40 c",
-      history: "None",
-      demographics: "Not Relevant",
+      bloodPresure: bloodPresure,
+      respirations: respirations,
+      pulse: pulse,
+      physicalExamination: physicalExamination,
+      temperature: temperature,
+      history: history,
+      demographics: demographics,
 
       // Note: Removed duplicate fields that were listed twice in your original structure
       // (familyHistory, allergies, medications were both arrays and strings)

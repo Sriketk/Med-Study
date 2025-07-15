@@ -3,7 +3,6 @@
 import { BackToHomeButton } from "@/components/shared/back-to-home-button"
 import { CategoryCard } from "@/components/shared/category-card"
 import { DarkModeToggle } from "@/components/shared/dark-mode-toggle"
-import { caseStudyData } from "@/data/casestudydata"
 import { Scale } from "lucide-react"
 import { categories } from "@/data/categories"
 

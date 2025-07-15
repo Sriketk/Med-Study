@@ -1,34 +1,62 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { ThumbsUp, ThumbsDown } from "lucide-react";
-import { DarkModeToggle } from "@/components/shared/dark-mode-toggle"
+import { ThumbsUp, ThumbsDown, ChevronLeft, ChevronRight } from "lucide-react";
+import { DarkModeToggle } from "@/components/shared/dark-mode-toggle";
 import { BackToHomeButton } from "@/components/shared/back-to-home-button";
-import type { CaseStudyData } from "@/lib/types";
+import type { Step2Question } from "@/lib/types";
 import { useCaseStudy } from "@/hooks/use-case-study";
 import { useGraph } from "@/hooks/use-graph";
 import ReactMarkdown from "react-markdown";
 import { BackToCategoriesButton } from "../shared/back-to-categories-button";
 
 interface CaseStudyPageProps {
-  caseData: CaseStudyData;
+  questions: Step2Question[];
 }
 
-export default function CaseStudyQuestions({
-  caseData,
-}: CaseStudyPageProps) {
+export default function CaseStudyQuestions({ questions }: CaseStudyPageProps) {
   const [sendMessages, setSendMessages] = useState("");
-  const [questionFeedback, setQuestionFeedback] = useState<'like' | 'dislike' | null>(null);
+  const [questionFeedback, setQuestionFeedback] = useState<
+    "like" | "dislike" | null
+  >(null);
 
-  const { state, dispatch, handleSendMessage, streamBotMessage } = useCaseStudy(caseData);
+  const {
+    state,
+    dispatch,
+    handleSendMessage,
+    streamBotMessage,
+    currentQuestion,
+    correctAnswerIndex,
+  } = useCaseStudy(questions);
+  
   const [userInput, setUserInput] = useState("");
   const streamingContentRef = useRef("");
 
-  const { messages, selectedAnswer, isSubmitted, showFeedback } = state;
-  console.log(sendMessages)
-  console.log(isSubmitted)
+  const { 
+    currentQuestionIndex, 
+    messages, 
+    selectedAnswer, 
+    isSubmitted, 
+    showFeedback, 
+  } = state;
 
-  const userSelection = caseData.options[selectedAnswer ?? 0];
+  console.log(sendMessages);
+  console.log(isSubmitted);
+
+  // No questions state
+  if (!currentQuestion || questions.length === 0) {
+    return (
+      <div className="h-screen bg-background text-foreground p-6 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-lg text-muted-foreground mb-4">No questions available for this category.</p>
+          <BackToCategoriesButton href="/case-study" />
+        </div>
+      </div>
+    );
+  }
+
+  const userSelection = currentQuestion.choices[selectedAnswer ?? 0];
+  
   const onMessageSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!userInput.trim()) return;
@@ -36,15 +64,25 @@ export default function CaseStudyQuestions({
     setUserInput("");
     streamingContentRef.current = "";
     await useGraph({
-      question: caseData.question,
-      answer: "Pernicious anemia",
+      question: currentQuestion.question,
+      answer: currentQuestion.answer,
       userAnswer: userSelection,
-      context: caseData.scenario,
-      options: caseData.options,
+      context:  currentQuestion.question,
+      options: currentQuestion.choices,
       chatMessage: userInput,
       questionAnswered: isSubmitted,
+      medications: currentQuestion.patientDetails.medications,
+      allergies: currentQuestion.patientDetails.allergies,
+      familyHistory: currentQuestion.patientDetails.familyHistory,
+      labResults: currentQuestion.patientDetails.labResults,
+      bloodPresure: currentQuestion.patientDetails.bloodPresure,
+      respirations: currentQuestion.patientDetails.respirations,
+      pulse: currentQuestion.patientDetails.pulse,
+      physicalExamination: currentQuestion.patientDetails.physicalExamination,
+      temperature: currentQuestion.patientDetails.temperature,
+      history: currentQuestion.patientDetails.history,
+      demographics: currentQuestion.patientDetails.demographics,
       setSendMessages: (updater) => {
-        // updater is (prev: string) => string
         streamingContentRef.current = updater(streamingContentRef.current);
         streamBotMessage(streamingContentRef.current);
       },
@@ -58,15 +96,15 @@ export default function CaseStudyQuestions({
         <div className="flex items-center justify-between mb-6 flex-shrink-0">
           <div>
             <h1 className="text-3xl font-black text-foreground mb-1">
-              {caseData.title}
+              Case Study - {currentQuestion.topic}
             </h1>
             <p className="text-sm text-muted-foreground">
-              Interactive clinical case study
+              Interactive clinical case study ({currentQuestionIndex + 1} of {questions.length})
             </p>
           </div>
 
           <div className="flex gap-3">
-            <BackToCategoriesButton href="/case-study"/>
+            <BackToCategoriesButton href="/case-study" />
             <DarkModeToggle />
           </div>
         </div>
@@ -74,16 +112,19 @@ export default function CaseStudyQuestions({
         <div className="grid grid-cols-2 gap-6 flex-1 min-h-0">
           {/* Case Information and Question */}
           <div className="flex flex-col gap-4 min-h-0">
-            
             {/* Case Scenario */}
             <div className="bg-card border-2 border-border rounded-lg shadow-lg p-8 transition-all duration-150 flex-shrink-0">
               <h2 className="text-xl font-bold text-card-foreground mb-3">
                 Case Scenario
-                
               </h2>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                {caseData.scenario}
+                {currentQuestion.baseQuestion || currentQuestion.question}
               </p>
+              {currentQuestion.subtopic && (
+                <div className="mt-3 text-xs text-muted-foreground border-t pt-3">
+                  <strong>Subtopic:</strong> {currentQuestion.subtopic}
+                </div>
+              )}
             </div>
 
             {/* Question and Answer */}
@@ -92,32 +133,48 @@ export default function CaseStudyQuestions({
                 <h2 className="text-xl font-bold text-card-foreground mb-3">
                   What is the next best step?
                 </h2>
-                <p className="text-sm text-muted-foreground leading-relaxed mb-4">
-                  {caseData.question}
-                </p>
+                {/* <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+                  {currentQuestion.question}
+                </p> */}
 
                 {/* Like/Dislike Buttons */}
                 <div className="flex gap-4 mt-1 mb-4">
                   <button
                     type="button"
                     aria-label="Like question"
-                    className={`flex items-center gap-1 px-3 py-1 rounded-md border transition-colors duration-150 ${questionFeedback === 'like' ? 'bg-green-100 border-green-500 text-green-700' : 'bg-secondary border-border text-muted-foreground hover:bg-green-50'}`}
-                    onClick={() => setQuestionFeedback(fb => fb === 'like' ? null : 'like')}
+                    className={`flex items-center gap-1 px-3 py-1 rounded-md border transition-colors duration-150 ${
+                      questionFeedback === "like"
+                        ? "bg-green-100 border-green-500 text-green-700"
+                        : "bg-secondary border-border text-muted-foreground hover:bg-green-50"
+                    }`}
+                    onClick={() =>
+                      setQuestionFeedback((fb) =>
+                        fb === "like" ? null : "like"
+                      )
+                    }
                   >
                     <ThumbsUp size={16} /> Like
                   </button>
                   <button
                     type="button"
                     aria-label="Dislike question"
-                    className={`flex items-center gap-1 px-3 py-1 rounded-md border transition-colors duration-150 ${questionFeedback === 'dislike' ? 'bg-red-100 border-red-500 text-red-700' : 'bg-secondary border-border text-muted-foreground hover:bg-red-50'}`}
-                    onClick={() => setQuestionFeedback(fb => fb === 'dislike' ? null : 'dislike')}
+                    className={`flex items-center gap-1 px-3 py-1 rounded-md border transition-colors duration-150 ${
+                      questionFeedback === "dislike"
+                        ? "bg-red-100 border-red-500 text-red-700"
+                        : "bg-secondary border-border text-muted-foreground hover:bg-red-50"
+                    }`}
+                    onClick={() =>
+                      setQuestionFeedback((fb) =>
+                        fb === "dislike" ? null : "dislike"
+                      )
+                    }
                   >
                     <ThumbsDown size={16} /> Dislike
                   </button>
                 </div>
 
                 <div className="grid gap-3 mb-4">
-                  {caseData.options.map((option, index) => (
+                  {currentQuestion.choices.map((option, index) => (
                     <button
                       key={index}
                       onClick={() =>
@@ -126,7 +183,7 @@ export default function CaseStudyQuestions({
                       className={`w-full p-4 text-left text-base border-2 rounded-lg cursor-pointer transition-all duration-200 ${
                         selectedAnswer === index
                           ? showFeedback
-                            ? index === caseData.correct
+                            ? index === correctAnswerIndex
                               ? "bg-green-100 text-green-900 border-green-500"
                               : "bg-red-100 text-red-900 border-red-500"
                             : "bg-primary/20 border-primary text-primary-foreground"
@@ -145,50 +202,70 @@ export default function CaseStudyQuestions({
                 {showFeedback && (
                   <div
                     className={`p-4 bg-secondary rounded-md border mb-4 ${
-                      selectedAnswer === caseData.correct
+                      selectedAnswer === correctAnswerIndex
                         ? "border-green-500"
                         : "border-red-500"
                     }`}
                   >
                     <h3
                       className={`text-base font-bold mb-2 ${
-                        selectedAnswer === caseData.correct
+                        selectedAnswer === correctAnswerIndex
                           ? "text-green-500"
                           : "text-red-500"
                       }`}
                     >
-                      {selectedAnswer === caseData.correct
+                      {selectedAnswer === correctAnswerIndex
                         ? "Correct"
                         : "Incorrect"}
                     </h3>
                     <p className="text-sm text-muted-foreground leading-relaxed">
-                      {caseData.explanation}
+                      {currentQuestion.explanation}
                     </p>
                   </div>
                 )}
               </div>
 
-              <div className="flex justify-end mt-4 flex-shrink-0">
-                {isSubmitted ? (
+              {/* Question Navigation and Actions */}
+              <div className="flex justify-between items-center mt-4 flex-shrink-0">
+                <div className="flex gap-2">
                   <button
-                    onClick={() => dispatch({ type: "RESET" })}
-                    className="px-4 py-2 text-sm bg-primary text-primary-foreground border-none rounded-md cursor-pointer hover:bg-primary/90 transition-colors duration-200"
+                    onClick={() => dispatch({ type: "PREVIOUS_QUESTION" })}
+                    disabled={currentQuestionIndex === 0}
+                    className="flex items-center gap-1 px-3 py-2 text-sm bg-secondary text-secondary-foreground border border-border rounded-md cursor-pointer hover:bg-secondary/80 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Try Another Case
+                    <ChevronLeft size={16} /> Previous
                   </button>
-                ) : (
                   <button
-                    onClick={() => dispatch({ type: "SUBMIT_ANSWER" })}
-                    disabled={selectedAnswer === null}
-                    className={`px-4 py-2 text-sm border-none rounded-md cursor-pointer transition-colors duration-200 ${
-                      selectedAnswer !== null
-                        ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                        : "bg-muted text-muted-foreground cursor-not-allowed"
-                    }`}
+                    onClick={() => dispatch({ type: "NEXT_QUESTION" })}
+                    disabled={currentQuestionIndex === questions.length - 1}
+                    className="flex items-center gap-1 px-3 py-2 text-sm bg-secondary text-secondary-foreground border border-border rounded-md cursor-pointer hover:bg-secondary/80 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Submit Answer
+                    Next <ChevronRight size={16} />
                   </button>
-                )}
+                </div>
+
+                <div className="flex gap-2">
+                  {isSubmitted ? (
+                    <button
+                      onClick={() => dispatch({ type: "RESET" })}
+                      className="px-4 py-2 text-sm bg-primary text-primary-foreground border-none rounded-md cursor-pointer hover:bg-primary/90 transition-colors duration-200"
+                    >
+                      Try Again
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => dispatch({ type: "SUBMIT_ANSWER" })}
+                      disabled={selectedAnswer === null}
+                      className={`px-4 py-2 text-sm border-none rounded-md cursor-pointer transition-colors duration-200 ${
+                        selectedAnswer !== null
+                          ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                          : "bg-muted text-muted-foreground cursor-not-allowed"
+                      }`}
+                    >
+                      Submit Answer
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           </div>
