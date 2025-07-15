@@ -25,6 +25,17 @@ export interface Question {
   explanation: string;
 }
 
+// Question format specifically for comparison feature
+export interface ComparisonQuestion {
+  id: number;
+  question: string;
+  choices: string[];
+  answer: string;
+  explanation: string;
+  category: string;
+  difficulty: string;
+}
+
 export interface CaseStudyData {
   id: number;
   title: string;

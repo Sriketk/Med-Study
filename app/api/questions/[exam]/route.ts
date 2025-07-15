@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { QuestionService } from "@/lib/api/services/question-service";
-import { QuestionsApiResponse, GetQuestionsParams, ApiError } from "@/lib/types";
+import {
+  QuestionsApiResponse,
+  GetQuestionsParams,
+  ApiError,
+} from "@/lib/types";
 import {
   parseLimit,
   parseOffset,
