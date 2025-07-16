@@ -24,6 +24,7 @@ interface QuestionResult {
 export function ComparisonExperiencePage({
   category,
 }: ComparisonExperiencePageProps) {
+  console.log(category);
   const [currentStep, setCurrentStep] = useState<ComparisonStep>("question1");
   const [question1Result, setQuestion1Result] = useState<QuestionResult | null>(
     null
@@ -99,12 +100,12 @@ export function ComparisonExperiencePage({
             No Questions Available
           </h1>
           <p className="text-muted-foreground mb-4">
-                                  Sorry, there aren't enough questions available for comparison in
-             this category.
-           </p>
-           <div className="flex justify-center">
-             <BackToCategoriesButton href="/question-comparison" />
-           </div>
+            Sorry, there aren't enough questions available for comparison in
+            this category.
+          </p>
+          <div className="flex justify-center">
+            <BackToCategoriesButton href="/question-comparison" />
+          </div>
         </div>
       </div>
     );

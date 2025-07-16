@@ -75,7 +75,7 @@ export const fetchQuestionsApi = async (
     topic = step2TopicMap[category.toLowerCase()] || category;
   }
   const url = `${process.env.NEXT_PUBLIC_API_URL}/api/questions/${examType}?topic=${topic}&limit=${limit}`;
-
+  console.log(url);
   console.log(`🔍 Fetching ${context} from:`, url);
   console.log("📝 Category mapping:", category, "->", topic);
   console.log("we fetching?");

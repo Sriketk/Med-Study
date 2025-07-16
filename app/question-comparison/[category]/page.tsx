@@ -4,6 +4,12 @@ interface Params {
   category: string;
 }
 
-export default function CategoryComparison({ params }: { params: Params }) {
-  return <ComparisonExperiencePage category={params.category} />;
+export default async function CategoryComparison({
+  params,
+}: {
+  params: Params;
+}) {
+  const { category } = await params;
+  console.log(category);
+  return <ComparisonExperiencePage category={category} />;
 }

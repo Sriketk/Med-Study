@@ -32,18 +32,18 @@ export default function Practice() {
     }
   }, [category, state.category, state.questions]);
 
-  // Only redirect if we're initialized and the category is definitely invalid
-  useEffect(() => {
-    if (
-      isInitialized &&
-      category &&
-      state.category === null &&
-      state.questions.length === 0
-    ) {
-      console.log("Redirecting - invalid category:", category);
-      router.push("/categories");
-    }
-  }, [isInitialized, category, state.category, state.questions, router]);
+  // // Only redirect if we're initialized and the category is definitely invalid
+  // useEffect(() => {
+  //   if (
+  //     isInitialized &&
+  //     category &&
+  //     state.category === null &&
+  //     state.questions.length === 0
+  //   ) {
+  //     console.log("Redirecting - invalid category:", category);
+  //     router.push("/categories");
+  //   }
+  // }, [isInitialized, category, state.category, state.questions, router]);
 
   // Show loading while initializing or if no category is set yet
   if (!isInitialized || !state.category) {
