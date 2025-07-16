@@ -101,18 +101,16 @@ export default function LandingPage() {
 
             <BlurFade delay={0.4}>
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <ShineBorder
-                  className="p-1"
-                  color={["#3b82f6", "#8b5cf6", "#06b6d4"]}
-                  borderRadius={8}
-                >
-                  <Button size="lg" className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-lg">
+                <Button size="lg" className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-lg" asChild>
+                  <Link href="/signup">
                     Start Free Trial
                     <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </ShineBorder>
-                <Button size="lg" variant="outline" className="border-2 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 dark:hover:from-blue-900/20 dark:hover:to-purple-900/20">
-                  View Demo
+                  </Link>
+                </Button>
+                <Button size="lg" variant="outline" className="border-2 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 dark:hover:from-blue-900/20 dark:hover:to-purple-900/20" asChild>
+                  <Link href="/home">
+                    View Demo
+                  </Link>
                 </Button>
               </div>
             </BlurFade>
@@ -126,18 +124,18 @@ export default function LandingPage() {
                 { label: "Success Rate", value: 95, suffix: "%", icon: Trophy },
                 { label: "Study Hours Saved", value: 500, suffix: "+", icon: Clock },
               ].map((stat, index) => (
-                <NeonGradientCard key={index} className="text-center p-6">
+                <Card key={index} className="text-center p-6 border-2 bg-card/50 backdrop-blur-sm hover:shadow-lg transition-all duration-300">
                   <div className="flex justify-center mb-3">
-                    <div className="h-12 w-12 rounded-full bg-gradient-to-br from-white-0 to-purple-600 flex items-center justify-center">
-                      <stat.icon className="h-6 w-6 text-white" />
+                    <div className="h-12 w-12 rounded-full bg-primary flex items-center justify-center">
+                      <stat.icon className="h-6 w-6 text-primary-foreground" />
                     </div>
                   </div>
-                  <div className="text-3xl font-bold mb-1">
+                  <div className="text-3xl font-bold mb-1 text-foreground">
                     <NumberTicker value={stat.value} />
                     {stat.suffix}
                   </div>
                   <p className="text-sm text-muted-foreground">{stat.label}</p>
-                </NeonGradientCard>
+                </Card>
               ))}
             </div>
           </BlurFade>
@@ -460,51 +458,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
-              <div className="flex items-center space-x-2 mb-4">
-                <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                  <Brain className="h-5 w-5 text-white" />
-                </div>
-                <span className="text-xl font-bold">MedStudy</span>
-              </div>
-              <p className="text-gray-400 text-sm">
-                Empowering the next generation of medical professionals through innovative learning technology.
-              </p>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-3">Product</h4>
-              <ul className="space-y-2 text-sm text-gray-400">
-                <li><Link href="#" className="hover:text-white transition-colors">Features</Link></li>
-                <li><Link href="#" className="hover:text-white transition-colors">Pricing</Link></li>
-                <li><Link href="#" className="hover:text-white transition-colors">API</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-3">Company</h4>
-              <ul className="space-y-2 text-sm text-gray-400">
-                <li><Link href="#" className="hover:text-white transition-colors">About</Link></li>
-                <li><Link href="#" className="hover:text-white transition-colors">Blog</Link></li>
-                <li><Link href="#" className="hover:text-white transition-colors">Careers</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-3">Support</h4>
-              <ul className="space-y-2 text-sm text-gray-400">
-                <li><Link href="#" className="hover:text-white transition-colors">Help Center</Link></li>
-                <li><Link href="#" className="hover:text-white transition-colors">Contact</Link></li>
-                <li><Link href="#" className="hover:text-white transition-colors">Status</Link></li>
-              </ul>
-            </div>
-          </div>
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-400">
-            <p>&copy; 2024 MedStudy. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
+
     </div>
   );
 } 
